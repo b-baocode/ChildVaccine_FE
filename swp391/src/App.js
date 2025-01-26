@@ -12,6 +12,8 @@ import PriceList from './components/PriceList';
 import Disease from './components/Disease';
 import News from './components/News';
 import VaccineRegistration from './components/VaccineRegistration';
+import Staff from './components/Staff';
+import ChildProfiles from './components/ChildProfiles';
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
             <Route path="/disease" element={<Disease />} />
             <Route path="/news" element={<News />} />
             <Route path="/register-vaccine" element={<VaccineRegistration />} />
+            <Route path="/staff" element={<Staff />} />
+            <Route path="/childProfiles" element={<ChildProfiles />} />
           </Routes>
         </div>
       </Router>
