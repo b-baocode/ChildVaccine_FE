@@ -1,0 +1,86 @@
+.staff-management {
+    padding: 20px;
+  }
+  
+  .header {
+    margin-bottom: 20px;
+  }
+  
+  .header h1 {
+    margin-bottom: 15px;
+  }
+  
+  .search-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .search-field {
+    flex: 1;
+    position: relative;
+  }
+  
+  .search-field input,
+  .search-field select {
+    width: 100%;
+    padding: 10px;
+    padding-left: 35px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .search-field svg {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+  }
+  
+  .staff-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .staff-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .staff-details h2 {
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .staff-details p {
+    margin: 5px 0;
+    color: #666;
+  }
+  
+  .staff-details button {
+    margin-right: 10px;
+    margin-top: 10px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .staff-details button:first-of-type {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .staff-details button:last-of-type {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .staff-details button:hover {
+    opacity: 0.9;
+  }
