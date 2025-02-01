@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../components/shared/AdminSidebar';
 import { Bell, Mail, ChevronDown } from 'lucide-react';
-import '../styles/AdminLayout.css';
+import '../styles/AdminStyles/AdminLayout.css';
 
 const AdminLayout = () => {
   const location = useLocation();

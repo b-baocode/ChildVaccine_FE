@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Star } from 'lucide-react';
-import '../../styles/AdminFeedback.css';
+import '../../styles/AdminStyles/AdminFeedback.css';
 
 const Feedback = () => {
   // Fake data

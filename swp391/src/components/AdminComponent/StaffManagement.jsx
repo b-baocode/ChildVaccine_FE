@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
-import '../../styles/StaffManagement.css';
+import '../../styles/AdminStyles/StaffManagement.css';
 
 const StaffManagement = () => {
     const [staffList, setStaffList] = useState([

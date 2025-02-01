@@ -1,6 +1,6 @@
 import React from 'react';
 import { Users, Calendar, DollarSign, Activity } from 'lucide-react';
-import '../../styles/Dashboard.css';
+import '../../styles/AdminStyles/Dashboard.css';
 
 const Dashboard = () => {
   return (

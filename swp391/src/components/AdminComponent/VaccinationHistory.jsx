@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
-import '../../styles/VaccinationHistory.css';
+import '../../styles/AdminStyles/VaccinationHistory.css';
 
 const VaccinationHistory = () => {
   const [searchTerm, setSearchTerm] = useState('');

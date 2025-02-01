@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import '../../styles/Revenue.css';
+import '../../styles/AdminStyles/Revenue.css';
 
 const Revenue = () => {
   // Data mẫu cho biểu đồ

@@ -20,6 +20,8 @@ import StaffManagement from './components/AdminComponent/StaffManagement';
 import VaccinationHistory from './components/AdminComponent/VaccinationHistory';
 import Feedback from './components/AdminComponent/Feedback';
 import Revenue from './components/AdminComponent/Revenue';
+import Profile from './components/CusComponent/Profile';
+import AddChildForm from './components/CusComponent/AddChildForm';
 function App() {
   return (
     <AuthProvider>
@@ -45,6 +47,8 @@ function App() {
               <Route path="revenue" element={<Revenue />} />
             </Route>
           </Routes>
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/add-child" element={<AddChildForm />} />
         </div>
       </Router>
     </AuthProvider>
