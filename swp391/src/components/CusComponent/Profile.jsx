@@ -11,7 +11,7 @@ import {
   FaPlus
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import '../styles/CusStyles/Profile.css';
+import '../../styles/CusStyles/Profile.css';
 
 const Profile = () => {
   const navigate = useNavigate();

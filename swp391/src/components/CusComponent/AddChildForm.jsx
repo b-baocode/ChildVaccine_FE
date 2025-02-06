@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaSave } from 'react-icons/fa';
-import '../styles/CusStyles/AddChildForm.css';
+import '../../styles/CusStyles/AddChildForm.css';
 
 const AddChildForm = () => {
   const navigate = useNavigate();
