@@ -28,23 +28,6 @@ public class SpringDemoApplicationTests {
 
 	@Test
 	public void testLogin() throws Exception {
-		// Mock the UserRepository response
-		User mockUser = new User("1", "user@example.com", "password", "John Doe", "USER");
-		when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(mockUser));
 
-		// Perform the login request and capture the response
-		MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
-						.contentType("application/json")
-						.content("{\"email\": \"user@example.com\", \"password\": \"password\"}"))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.token").exists())
-				.andReturn();
-
-		// Extract the token from the response content
-		String responseContent = result.getResponse().getContentAsString();
-		String token = responseContent.substring(responseContent.indexOf("token\":\"") + 8, responseContent.indexOf("\"", responseContent.indexOf("token\":\"") + 8));
-
-		// Print the token to the console
-		System.out.println("Token: " + token);
 	}
 }

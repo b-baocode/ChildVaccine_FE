@@ -2,6 +2,7 @@ package com.example.Spring_demo.controller;
 
 import com.example.Spring_demo.entities.User;
 import com.example.Spring_demo.Repository.UserRepository;
+import com.example.Spring_demo.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +12,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
@@ -34,8 +37,9 @@ public class AuthController {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (user.getPassword().equals(password)) {
+                String token = jwtUtil.generateToken(user.getEmail());
                 Map<String, Object> response = new HashMap<>();
-                response.put("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."); // Generate a real token here
+                response.put("token", token);
                 Map<String, Object> userInfo = new HashMap<>();
                 userInfo.put("id", user.getId());
                 userInfo.put("email", user.getEmail());
