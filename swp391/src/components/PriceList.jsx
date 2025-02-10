@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/PriceList.css';
-import { 
+import {
     FaCalendarAlt,
     FaUser,
     FaCalendar,
@@ -13,6 +13,7 @@ import {
     FaSyringe,
     FaShieldAlt
 } from 'react-icons/fa';
+
 
 const vaccineCategories = [
     {
@@ -99,6 +100,7 @@ const vaccineCategories = [
     }
 ];
 
+
 const PriceList = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
@@ -107,6 +109,7 @@ const PriceList = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const dropdownRef = useRef(null);
 
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -114,20 +117,24 @@ const PriceList = () => {
             }
         };
 
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
 
+
     const handleLoginClick = () => {
         navigate('/login');
     };
+
 
     const handleLogoutClick = () => {
         logout();
         setShowDropdown(false);
     };
+
 
     const handleVaccineRegister = () => {
         if (!user) {
@@ -140,14 +147,16 @@ const PriceList = () => {
                     <button class="login-btn">Đăng nhập</button>
                 </div>
             `;
-            
+           
             document.body.appendChild(modal);
+
 
             const loginBtn = modal.querySelector('.login-btn');
             loginBtn.addEventListener('click', () => {
                 document.body.removeChild(modal);
                 navigate('/login');
             });
+
 
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
@@ -159,28 +168,27 @@ const PriceList = () => {
         }
     };
 
-    const filteredCategories = vaccineCategories.filter(category => 
+
+    const filteredCategories = vaccineCategories.filter(category =>
         selectedCategory === 'all' || category.id === parseInt(selectedCategory)
     );
+
 
     return (
         <div className="price-list-page">
             {/* Header */}
             <div className="header">
                 <div className="logo">
-                    <img src="https://i.gyazo.com/f738ee4c4bf9e15d9fa2239bbb11fcc6.png" alt="VNVC Logo" />
+                    <img src="https://vnvc.vn/img/logo-tet-vnvc.png" alt="VNVC Logo" />
                 </div>
                 <div className="header-actions">
-                    <div className="action-item" onClick={handleVaccineRegister}>
-                        <FaCalendarAlt />
-                        <span>ĐĂNG KÝ TIÊM</span>
-                    </div>
                     <div className="hotline">
                         Hotline: 028 7102 6595
                         <div className="sub-text">Mở cửa 7h30 - 17h00 / T2 - CN xuyên trưa*</div>
                     </div>
                 </div>
             </div>
+
 
             {/* Navigation */}
             <nav className="main-nav">
@@ -191,8 +199,11 @@ const PriceList = () => {
                     <li onClick={() => navigate('/price-list')} className="active">BẢNG GIÁ</li>
                     <li onClick={() => navigate('/disease')}>BỆNH HỌC</li>
                     <li onClick={() => navigate('/news')}>TIN TỨC</li>
+                    <li onClick={() => navigate('/child-profiles')}>HỒ SƠ TRẺ EM</li>
+                    <li onClick={() => navigate('/child-profiles')}>PHẢN ỨNG SAU TIÊM</li>
                 </ul>
             </nav>
+
 
             {/* Search Bar */}
             <div className="search-container">
@@ -208,7 +219,7 @@ const PriceList = () => {
                 </button>
                 {user ? (
                     <div className="user-dropdown" ref={dropdownRef}>
-                        <button 
+                        <button
                             className="user-menu-button"
                             onClick={() => setShowDropdown(!showDropdown)}
                         >
@@ -216,7 +227,7 @@ const PriceList = () => {
                             <span>{user.fullName}</span>
                             <FaCaretDown className={`dropdown-icon ${showDropdown ? 'rotate' : ''}`} />
                         </button>
-                        
+                       
                         {showDropdown && (
                             <div className="dropdown-menu">
                                 <div className="dropdown-header">
@@ -240,7 +251,7 @@ const PriceList = () => {
                                     Thông tin hồ sơ trẻ em
                                 </button>
                                 <div className="dropdown-divider"></div>
-                                <button 
+                                <button
                                     className="dropdown-item logout-item"
                                     onClick={handleLogoutClick}
                                 >
@@ -257,13 +268,25 @@ const PriceList = () => {
                 )}
             </div>
 
+
+            <div className="vaccine-section">
+                <div className="vaccine-banner-wrapper">
+                    <h1>TRUNG TÂM TIÊM CHỦNG VẮC XIN</h1>
+                    <button className="register-btn" onClick={handleVaccineRegister}>
+                        <FaCalendarAlt />
+                        Đăng ký tiêm
+                    </button>
+                </div>
+            </div>
+
+
             {/* Price List Content */}
             <div className="price-list-container">
                 <h1 className="price-list-title">Bảng Giá Vắc Xin</h1>
-                
+               
                 {/* Category Filter */}
                 <div className="category-filter">
-                    <button 
+                    <button
                         className={`filter-btn ${selectedCategory === 'all' ? 'active' : ''}`}
                         onClick={() => setSelectedCategory('all')}
                     >
@@ -280,6 +303,7 @@ const PriceList = () => {
                     ))}
                 </div>
 
+
                 {/* Vaccine List */}
                 <div className="vaccine-categories">
                     {filteredCategories.map(category => (
@@ -290,7 +314,7 @@ const PriceList = () => {
                             </h2>
                             <div className="vaccines-grid">
                                 {category.vaccines
-                                    .filter(vaccine => 
+                                    .filter(vaccine =>
                                         vaccine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                         vaccine.description.toLowerCase().includes(searchTerm.toLowerCase())
                                     )
@@ -319,4 +343,8 @@ const PriceList = () => {
     );
 };
 
-export default PriceList; 
+
+export default PriceList;
+
+
+

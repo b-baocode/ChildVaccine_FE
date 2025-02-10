@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { 
+import {
     FaCalendarAlt,
-    FaBook, 
-    FaSyringe, 
-    FaDollarSign, 
-    FaClipboardList, 
+    FaBook,
+    FaSyringe,
+    FaDollarSign,
+    FaClipboardList,
     FaMapMarkedAlt,
     FaUser,
     FaCalendar,
@@ -22,12 +22,14 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import LogoutConfirmDialog from './LogoutConfirmDialog';
 
+
 const Home = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
     const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -36,29 +38,35 @@ const Home = () => {
             }
         };
 
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
 
+
     const handleLoginClick = () => {
         navigate('/login');
     };
+
 
     const handleLogoutClick = () => {
         setShowLogoutDialog(true);
         setShowDropdown(false);
     };
 
+
     const handleLogoutConfirm = () => {
         logout();
         setShowLogoutDialog(false);
     };
 
+
     const handleLogoutCancel = () => {
         setShowLogoutDialog(false);
     };
+
 
     const handleVaccineRegister = () => {
         if (!user) {
@@ -71,8 +79,9 @@ const Home = () => {
                     <button class="login-btn">Đăng nhập</button>
                 </div>
             `;
-            
+           
             document.body.appendChild(modal);
+
 
             const loginBtn = modal.querySelector('.login-btn');
             loginBtn.addEventListener('click', () => {
@@ -80,42 +89,93 @@ const Home = () => {
                 navigate('/login');
             });
 
+
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
                     document.body.removeChild(modal);
                 }
             });
         } else {
-            navigate('/register-vaccine');
+            navigate('/register-vaccination');
         }
     };
 
+
     return (
         <div className="home">
-            <TopBanner />
-            
             <div className="header">
                 <div className="logo">
-                    <img src="https://quyhyvong.com/wp-content/uploads/2021/12/Logo-Long-Chau.png" alt="Long Châu Logo" />
+                    <img src="https://vnvc.vn/img/logo-tet-vnvc.png" alt="VNVC Logo" />
                 </div>
-
-                <div className="search-box">
-                    <input
-                        type="text"
-                        placeholder="Tìm tên thuốc, bệnh lý, thực phẩm chức năng..."
-                    />
-                    <button className="search-btn">
-                        <FaSearch />
-                    </button>
-                </div>
-
                 <div className="header-actions">
-                    <button className="login-btn">
-                        <FaUser />
-                        Đăng nhập
-                    </button>
+                    <div className="hotline">
+                        Hotline: 028 7102 6595
+                        <div className="sub-text">Mở cửa 7h30 - 17h00 / T2 - CN xuyên trưa*</div>
+                    </div>
                 </div>
             </div>
+
+
+            <nav className="main-nav">
+                <ul>
+                    <li onClick={() => navigate('/')}>TRANG CHỦ</li>
+                    <li onClick={() => navigate('/about')}>GIỚI THIỆU</li>
+                    <li onClick={() => navigate('/handbook')}>CẨM NANG</li>
+                    <li onClick={() => navigate('/price-list')}>BẢNG GIÁ</li>
+                    <li onClick={() => navigate('/disease')}>BỆNH HỌC</li>
+                    <li onClick={() => navigate('/news')}>TIN TỨC</li>
+                    <li onClick={() => navigate('/child-profiles')}>HỒ SƠ TRẺ EM</li>
+                    <li onClick={() => navigate('/react-report')}>PHẢN ỨNG SAU TIÊM</li>
+                </ul>
+            </nav>
+
+
+            <div className="search-container">
+                <input
+                    type="text"
+                    placeholder="Tìm tên thuốc, bệnh lý, thực phẩm chức năng..."
+                    className="search-input"
+                />
+                <button className="search-button">
+                    <FaSearch />
+                </button>
+                {user ? (
+                    <div className="user-dropdown" ref={dropdownRef}>
+                        <button
+                            className="user-menu-button"
+                            onClick={() => setShowDropdown(!showDropdown)}
+                        >
+                            <FaUser className="user-icon" />
+                            <span>{user.fullName}</span>
+                            <FaCaretDown className={`dropdown-icon ${showDropdown ? 'rotate' : ''}`} />
+                        </button>
+                       
+                        {showDropdown && (
+                            <div className="dropdown-menu">
+                                <div className="dropdown-header">
+                                    <FaUser className="header-icon" />
+                                    <div className="user-info">
+                                        <span className="user-name">{user.fullName}</span>
+                                        <span className="user-email">{user.email}</span>
+                                    </div>
+                                </div>
+                                <div className="dropdown-divider"></div>
+                                <button
+                                    className="dropdown-item logout-item"
+                                    onClick={handleLogoutClick}
+                                >
+                                    Đăng xuất
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <button className="login-button" onClick={handleLoginClick}>
+                        Đăng nhập
+                    </button>
+                )}
+            </div>
+
 
             <div className="vaccine-section">
                 <div className="vaccine-banner-wrapper">
@@ -126,6 +186,7 @@ const Home = () => {
                     </button>
                 </div>
             </div>
+
 
             <div className="slider-section">
                 <Carousel
@@ -151,8 +212,9 @@ const Home = () => {
                 </Carousel>
             </div>
 
+
             {showLogoutDialog && (
-                <LogoutConfirmDialog 
+                <LogoutConfirmDialog
                     onConfirm={handleLogoutConfirm}
                     onCancel={handleLogoutCancel}
                 />
@@ -160,6 +222,7 @@ const Home = () => {
         </div>
     );
 };
+
 
 const TopBanner = () => (
     <div className="top-banner">
@@ -178,4 +241,8 @@ const TopBanner = () => (
     </div>
 );
 
-export default Home; 
+
+export default Home;
+
+
+

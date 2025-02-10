@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Handbook.css';
-import { 
+import {
     FaCalendarAlt,
     FaUser,
     FaCalendar,
@@ -13,6 +13,7 @@ import {
     FaClock,
     FaEye
 } from 'react-icons/fa';
+
 
 const articles = [
     {
@@ -57,12 +58,14 @@ const articles = [
     },
 ];
 
+
 const Handbook = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('Tất cả');
     const dropdownRef = useRef(null);
+
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -71,20 +74,24 @@ const Handbook = () => {
             }
         };
 
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
 
+
     const handleLoginClick = () => {
         navigate('/login');
     };
+
 
     const handleLogoutClick = () => {
         logout();
         setShowDropdown(false);
     };
+
 
     const handleVaccineRegister = () => {
         if (!user) {
@@ -97,14 +104,16 @@ const Handbook = () => {
                     <button class="login-btn">Đăng nhập</button>
                 </div>
             `;
-            
+           
             document.body.appendChild(modal);
+
 
             const loginBtn = modal.querySelector('.login-btn');
             loginBtn.addEventListener('click', () => {
                 document.body.removeChild(modal);
                 navigate('/login');
             });
+
 
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
@@ -116,30 +125,30 @@ const Handbook = () => {
         }
     };
 
+
     const categories = ['Tất cả', 'Tiêm chủng trẻ em', 'Vaccine', 'Sức khỏe', 'Bệnh truyền nhiễm'];
 
-    const filteredArticles = selectedCategory === 'Tất cả' 
-        ? articles 
+
+    const filteredArticles = selectedCategory === 'Tất cả'
+        ? articles
         : articles.filter(article => article.category === selectedCategory);
+
 
     return (
         <div className="handbook-page">
             {/* Header */}
             <div className="header">
                 <div className="logo">
-                    <img src="https://i.gyazo.com/f738ee4c4bf9e15d9fa2239bbb11fcc6.png" alt="VNVC Logo" />
+                    <img src="https://vnvc.vn/img/logo-tet-vnvc.png" alt="VNVC Logo" />
                 </div>
                 <div className="header-actions">
-                    <div className="action-item" onClick={handleVaccineRegister}>
-                        <FaCalendarAlt />
-                        <span>ĐĂNG KÝ TIÊM</span>
-                    </div>
                     <div className="hotline">
                         Hotline: 028 7102 6595
                         <div className="sub-text">Mở cửa 7h30 - 17h00 / T2 - CN xuyên trưa*</div>
                     </div>
                 </div>
             </div>
+
 
             {/* Navigation */}
             <nav className="main-nav">
@@ -150,8 +159,13 @@ const Handbook = () => {
                     <li onClick={() => navigate('/price-list')}>BẢNG GIÁ</li>
                     <li onClick={() => navigate('/disease')}>BỆNH HỌC</li>
                     <li onClick={() => navigate('/news')}>TIN TỨC</li>
+                    <li onClick={() => navigate('/child-profiles')}>HỒ SƠ TRẺ EM</li>
+                    <li onClick={() => navigate('/child-profiles')}>PHẢN ỨNG SAU TIÊM</li>
                 </ul>
             </nav>
+
+
+
 
             {/* Search Bar */}
             <div className="search-container">
@@ -165,7 +179,7 @@ const Handbook = () => {
                 </button>
                 {user ? (
                     <div className="user-dropdown" ref={dropdownRef}>
-                        <button 
+                        <button
                             className="user-menu-button"
                             onClick={() => setShowDropdown(!showDropdown)}
                         >
@@ -173,7 +187,7 @@ const Handbook = () => {
                             <span>{user.fullName}</span>
                             <FaCaretDown className={`dropdown-icon ${showDropdown ? 'rotate' : ''}`} />
                         </button>
-                        
+                       
                         {showDropdown && (
                             <div className="dropdown-menu">
                                 <div className="dropdown-header">
@@ -197,7 +211,7 @@ const Handbook = () => {
                                     Thông tin hồ sơ trẻ em
                                 </button>
                                 <div className="dropdown-divider"></div>
-                                <button 
+                                <button
                                     className="dropdown-item logout-item"
                                     onClick={handleLogoutClick}
                                 >
@@ -214,10 +228,22 @@ const Handbook = () => {
                 )}
             </div>
 
+
+            <div className="vaccine-section">
+                <div className="vaccine-banner-wrapper">
+                    <h1>TRUNG TÂM TIÊM CHỦNG VẮC XIN</h1>
+                    <button className="register-btn" onClick={handleVaccineRegister}>
+                        <FaCalendarAlt />
+                        Đăng ký tiêm
+                    </button>
+                </div>
+            </div>
+
+
             {/* Handbook Content */}
             <div className="handbook-container">
                 <h1 className="handbook-title">Cẩm Nang Tiêm Chủng</h1>
-                
+               
                 {/* Categories */}
                 <div className="categories">
                     {categories.map(category => (
@@ -230,6 +256,7 @@ const Handbook = () => {
                         </button>
                     ))}
                 </div>
+
 
                 {/* Articles Grid */}
                 <div className="articles-grid">
@@ -256,4 +283,8 @@ const Handbook = () => {
     );
 };
 
-export default Handbook; 
+
+export default Handbook;
+
+
+

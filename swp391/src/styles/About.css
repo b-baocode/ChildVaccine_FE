@@ -1,6 +1,7 @@
 /* Import Home styles */
 @import './Home.css';
 
+
 /* Wrapper for the entire page */
 .about-page {
     width: 100%;
@@ -9,6 +10,7 @@
     font-family: 'Roboto', sans-serif;
     background: #f8f9fa;
 }
+
 
 /* Hero Section */
 .about-hero {
@@ -23,6 +25,7 @@
     padding: 2rem;
 }
 
+
 .hero-content h1 {
     font-size: 3.5rem;
     font-weight: 800;
@@ -30,11 +33,13 @@
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
+
 .hero-content p {
     font-size: 1.2rem;
     max-width: 600px;
     margin: 0 auto;
 }
+
 
 /* Introduction Section */
 .about-section {
@@ -43,12 +48,14 @@
     background: white;
 }
 
+
 .about-section h2 {
     color: #31498B;
     font-size: 2.5rem;
     margin-bottom: 2rem;
     font-weight: 700;
 }
+
 
 .about-section p {
     max-width: 800px;
@@ -57,6 +64,7 @@
     color: #555;
     font-size: 1.1rem;
 }
+
 
 /* Introduction Images */
 .intro-images {
@@ -68,6 +76,7 @@
     padding: 0 1rem;
 }
 
+
 .intro-image-item {
     position: relative;
     border-radius: 16px;
@@ -76,10 +85,12 @@
     transition: all 0.3s ease;
 }
 
+
 .intro-image-item:hover {
     transform: translateY(-10px);
     box-shadow: 0 12px 30px rgba(0,0,0,0.15);
 }
+
 
 .intro-image-item img {
     width: 100%;
@@ -88,9 +99,11 @@
     transition: all 0.5s ease;
 }
 
+
 .intro-image-item:hover img {
     transform: scale(1.1);
 }
+
 
 .image-caption {
     position: absolute;
@@ -105,6 +118,7 @@
     text-align: center;
 }
 
+
 /* Statistics Section */
 .stats-section {
     display: grid;
@@ -114,9 +128,11 @@
     background: #f8f9fa;
 }
 
+
 .stat-item {
     text-align: center;
 }
+
 
 .stat-item h3 {
     font-size: 3rem;
@@ -125,16 +141,19 @@
     margin-bottom: 0.5rem;
 }
 
+
 .stat-item p {
     color: #666;
     font-size: 1.1rem;
 }
+
 
 /* Features Section */
 .features-section {
     padding: 4rem 2rem;
     background: white;
 }
+
 
 .features-section h2 {
     text-align: center;
@@ -144,6 +163,7 @@
     font-weight: 700;
 }
 
+
 .features-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -151,6 +171,7 @@
     max-width: 1200px;
     margin: 0 auto;
 }
+
 
 .feature-item {
     text-align: center;
@@ -160,16 +181,19 @@
     transition: all 0.3s ease;
 }
 
+
 .feature-item:hover {
     transform: translateY(-10px);
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
+
 
 .feature-icon {
     font-size: 2.5rem;
     color: #31498B;
     margin-bottom: 1.5rem;
 }
+
 
 .feature-item h3 {
     color: #31498B;
@@ -178,10 +202,12 @@
     font-weight: 600;
 }
 
+
 .feature-item p {
     color: #666;
     line-height: 1.6;
 }
+
 
 /* Mission Section */
 .mission-section {
@@ -190,10 +216,12 @@
     color: white;
 }
 
+
 .mission-content {
     max-width: 800px;
     margin: 0 auto;
 }
+
 
 .mission-content h2 {
     text-align: center;
@@ -202,11 +230,13 @@
     font-weight: 700;
 }
 
+
 .mission-items {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
+
 
 .mission-item {
     display: flex;
@@ -217,10 +247,12 @@
     border-radius: 12px;
 }
 
+
 .check-icon {
     font-size: 1.5rem;
     color: #4CAF50;
 }
+
 
 /* Partners Section */
 .partners-section {
@@ -230,6 +262,7 @@
     position: relative;
     overflow: hidden;
 }
+
 
 .partners-section::before {
     content: '';
@@ -241,6 +274,7 @@
     background: linear-gradient(90deg, #31498B, #1a2b5c);
 }
 
+
 .partners-section h2 {
     color: #31498B;
     font-size: 2.5rem;
@@ -249,6 +283,7 @@
     position: relative;
     display: inline-block;
 }
+
 
 .partners-section h2::after {
     content: '';
@@ -262,6 +297,7 @@
     border-radius: 2px;
 }
 
+
 .partner-logos {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -270,6 +306,7 @@
     margin: 0 auto;
     padding: 2rem;
 }
+
 
 .partner-logos img {
     width: 100%;
@@ -289,12 +326,14 @@
     justify-content: center;
 }
 
+
 .partner-logos img:hover {
     filter: grayscale(0);
     opacity: 1;
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
+
 
 /* Animation for partner logos */
 @keyframes fadeInUp {
@@ -308,10 +347,12 @@
     }
 }
 
+
 .partner-logos img {
     animation: fadeInUp 0.6s ease-out forwards;
     animation-delay: calc(var(--i) * 0.1s);
 }
+
 
 /* Responsive adjustments for partners section */
 @media (max-width: 1200px) {
@@ -320,12 +361,13 @@
         padding: 1.5rem;
         max-width: 900px;
     }
-    
+   
     .partner-logos img {
         height: 70px;
         padding: 1rem;
     }
 }
+
 
 @media (max-width: 992px) {
     .partner-logos {
@@ -333,11 +375,12 @@
         max-width: 500px;
         gap: 1.5rem;
     }
-    
+   
     .partner-logos img {
         height: 60px;
     }
 }
+
 
 @media (max-width: 480px) {
     .partner-logos {
@@ -345,11 +388,12 @@
         max-width: 250px;
         gap: 1rem;
     }
-    
+   
     .partner-logos img {
         height: 50px;
     }
 }
+
 
 /* Responsive Design */
 @media (max-width: 992px) {
@@ -357,17 +401,18 @@
     .stats-section {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+   
     .partner-logos {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
+
 @media (max-width: 768px) {
     .hero-content h1 {
         font-size: 2.5rem;
     }
-    
+   
     .about-section h2,
     .features-section h2,
     .mission-content h2,
@@ -376,17 +421,19 @@
     }
 }
 
+
 @media (max-width: 480px) {
     .features-grid,
     .stats-section,
     .partner-logos {
         grid-template-columns: 1fr;
     }
-    
+   
     .stat-item h3 {
         font-size: 2.5rem;
     }
 }
+
 
 /* Responsive adjustments */
 @media (max-width: 992px) {
@@ -395,16 +442,19 @@
     }
 }
 
+
 @media (max-width: 768px) {
     .intro-images {
         grid-template-columns: 1fr;
         max-width: 500px;
     }
 
+
     .intro-image-item img {
         height: 250px;
     }
 }
+
 
 /* Modal yêu cầu đăng nhập */
 .login-required-modal {
@@ -422,6 +472,7 @@
     backdrop-filter: blur(5px);
 }
 
+
 .login-required-modal .modal-content {
     background: white;
     padding: 2rem;
@@ -432,16 +483,19 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
+
 .login-required-modal h3 {
     color: #31498B;
     font-size: 1.5rem;
     margin-bottom: 1rem;
 }
 
+
 .login-required-modal p {
     color: #666;
     margin-bottom: 1.5rem;
 }
+
 
 .login-required-modal .login-btn {
     background: #31498B;
@@ -454,15 +508,18 @@
     transition: all 0.3s ease;
 }
 
+
 .login-required-modal .login-btn:hover {
     background: #243669;
     transform: translateY(-2px);
 }
 
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
+
 
 @keyframes slideIn {
     from {
@@ -473,4 +530,9 @@
         transform: translateY(0);
         opacity: 1;
     }
-} 
+}
+
+
+
+
+

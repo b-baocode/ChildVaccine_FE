@@ -22,7 +22,7 @@ const AddChildForm = () => {
     // Xử lý logic thêm hồ sơ trẻ ở đây
     console.log('Child info submitted:', childInfo);
     // Sau khi thêm thành công
-    navigate('/profile');
+    navigate('/register-vaccination');
   };
 
   const handleChange = (e) => {

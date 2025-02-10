@@ -13,6 +13,7 @@ import Disease from './components/Disease';
 import News from './components/News';
 import VaccineRegistration from './components/VaccineRegistration';
 import VaccinationReactionForm from './components/VaccinationReactionForm';
+import VaccinationRegistrationForm from './components/VaccinationRegistrationForm';
 
 import StaffLayout from './layouts/StaffLayout';
 import AppointmentInfo from './components/StaffComponent/AppointmentInfo';
@@ -29,6 +30,7 @@ import Revenue from './components/AdminComponent/Revenue';
 
 import Profile from './components/CusComponent/Profile';
 import AddChildForm from './components/CusComponent/AddChildForm';
+import PaymentReview from './components/PaymentReview';
 function App() {
   return (
     <AuthProvider>
@@ -43,7 +45,7 @@ function App() {
             <Route path="/price-list" element={<PriceList />} />
             <Route path="/disease" element={<Disease />} />
             <Route path="/news" element={<News />} />
-            <Route path="/appointment-register" element={<VaccineRegistration />} />
+            <Route path="/register-vaccination" element={<VaccineRegistration />} />
             <Route path="/react-report" element={<VaccinationReactionForm />} />
 
             <Route path="/staff" element={<StaffLayout />}>
@@ -61,6 +63,7 @@ function App() {
             </Route>
             <Route path="/profile" element={<Profile />} />
             <Route path="/add-child" element={<AddChildForm />} />
+            <Route path="/payment-review" element={<PaymentReview />} />
           </Routes>
         </div>
       </Router>

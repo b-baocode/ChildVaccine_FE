@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/News.css';
-import { 
+import {
     FaCalendarAlt,
     FaUser,
     FaCalendar,
@@ -15,6 +15,7 @@ import {
     FaNewspaper,
     FaTags
 } from 'react-icons/fa';
+
 
 const newsData = [
     {
@@ -87,6 +88,7 @@ const newsData = [
     }
 ];
 
+
 const News = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
@@ -95,6 +97,7 @@ const News = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const dropdownRef = useRef(null);
 
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -102,20 +105,24 @@ const News = () => {
             }
         };
 
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
 
+
     const handleLoginClick = () => {
         navigate('/login');
     };
+
 
     const handleLogoutClick = () => {
         logout();
         setShowDropdown(false);
     };
+
 
     const handleVaccineRegister = () => {
         if (!user) {
@@ -128,14 +135,16 @@ const News = () => {
                     <button class="login-btn">Đăng nhập</button>
                 </div>
             `;
-            
+           
             document.body.appendChild(modal);
+
 
             const loginBtn = modal.querySelector('.login-btn');
             loginBtn.addEventListener('click', () => {
                 document.body.removeChild(modal);
                 navigate('/login');
             });
+
 
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
@@ -147,28 +156,27 @@ const News = () => {
         }
     };
 
-    const filteredCategories = newsData.filter(category => 
+
+    const filteredCategories = newsData.filter(category =>
         selectedCategory === 'all' || category.id === parseInt(selectedCategory)
     );
+
 
     return (
         <div className="news-page">
             {/* Header */}
             <div className="header">
                 <div className="logo">
-                    <img src="https://i.gyazo.com/f738ee4c4bf9e15d9fa2239bbb11fcc6.png" alt="VNVC Logo" />
+                    <img src="https://vnvc.vn/img/logo-tet-vnvc.png" alt="VNVC Logo" />
                 </div>
                 <div className="header-actions">
-                    <div className="action-item" onClick={handleVaccineRegister}>
-                        <FaCalendarAlt />
-                        <span>ĐĂNG KÝ TIÊM</span>
-                    </div>
                     <div className="hotline">
                         Hotline: 028 7102 6595
                         <div className="sub-text">Mở cửa 7h30 - 17h00 / T2 - CN xuyên trưa*</div>
                     </div>
                 </div>
             </div>
+
 
             {/* Navigation */}
             <nav className="main-nav">
@@ -179,8 +187,11 @@ const News = () => {
                     <li onClick={() => navigate('/price-list')}>BẢNG GIÁ</li>
                     <li onClick={() => navigate('/disease')}>BỆNH HỌC</li>
                     <li onClick={() => navigate('/news')} className="active">TIN TỨC</li>
+                    <li onClick={() => navigate('/child-profiles')}>HỒ SƠ TRẺ EM</li>
+                    <li onClick={() => navigate('/child-profiles')}>PHẢN ỨNG SAU TIÊM</li>
                 </ul>
             </nav>
+
 
             {/* Search Bar */}
             <div className="search-container">
@@ -196,7 +207,7 @@ const News = () => {
                 </button>
                 {user ? (
                     <div className="user-dropdown" ref={dropdownRef}>
-                        <button 
+                        <button
                             className="user-menu-button"
                             onClick={() => setShowDropdown(!showDropdown)}
                         >
@@ -204,7 +215,7 @@ const News = () => {
                             <span>{user.fullName}</span>
                             <FaCaretDown className={`dropdown-icon ${showDropdown ? 'rotate' : ''}`} />
                         </button>
-                        
+                       
                         {showDropdown && (
                             <div className="dropdown-menu">
                                 <div className="dropdown-header">
@@ -228,7 +239,7 @@ const News = () => {
                                     Thông tin hồ sơ trẻ em
                                 </button>
                                 <div className="dropdown-divider"></div>
-                                <button 
+                                <button
                                     className="dropdown-item logout-item"
                                     onClick={handleLogoutClick}
                                 >
@@ -245,13 +256,25 @@ const News = () => {
                 )}
             </div>
 
+
+            <div className="vaccine-section">
+                <div className="vaccine-banner-wrapper">
+                    <h1>TRUNG TÂM TIÊM CHỦNG VẮC XIN</h1>
+                    <button className="register-btn" onClick={handleVaccineRegister}>
+                        <FaCalendarAlt />
+                        Đăng ký tiêm
+                    </button>
+                </div>
+            </div>
+
+
             {/* News Content */}
             <div className="news-container">
                 <h1 className="news-title">Tin Tức & Sự Kiện</h1>
-                
+               
                 {/* Category Filter */}
                 <div className="category-filter">
-                    <button 
+                    <button
                         className={`filter-btn ${selectedCategory === 'all' ? 'active' : ''}`}
                         onClick={() => setSelectedCategory('all')}
                     >
@@ -268,6 +291,7 @@ const News = () => {
                     ))}
                 </div>
 
+
                 {/* News List */}
                 <div className="news-categories">
                     {filteredCategories.map(category => (
@@ -278,7 +302,7 @@ const News = () => {
                             </h2>
                             <div className="news-grid">
                                 {category.articles
-                                    .filter(article => 
+                                    .filter(article =>
                                         article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                         article.summary.toLowerCase().includes(searchTerm.toLowerCase())
                                     )
@@ -312,4 +336,8 @@ const News = () => {
     );
 };
 
-export default News; 
+
+export default News;
+
+
+

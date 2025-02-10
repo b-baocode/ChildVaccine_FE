@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/About.css';
-import { 
-    FaCheckCircle, 
-    FaHospital, 
-    FaMedkit, 
-    FaUserMd, 
+import {
+    FaCheckCircle,
+    FaHospital,
+    FaMedkit,
+    FaUserMd,
     FaAward,
     FaCalendarAlt,
     FaUser,
@@ -16,11 +16,13 @@ import {
     FaCaretDown
 } from 'react-icons/fa';
 
+
 const About = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
+
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -29,20 +31,24 @@ const About = () => {
             }
         };
 
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
 
+
     const handleLoginClick = () => {
         navigate('/login');
     };
+
 
     const handleLogoutClick = () => {
         logout();
         setShowDropdown(false);
     };
+
 
     const handleVaccineRegister = () => {
         if (!user) {
@@ -55,14 +61,16 @@ const About = () => {
                     <button class="login-btn">Đăng nhập</button>
                 </div>
             `;
-            
+           
             document.body.appendChild(modal);
+
 
             const loginBtn = modal.querySelector('.login-btn');
             loginBtn.addEventListener('click', () => {
                 document.body.removeChild(modal);
                 navigate('/login');
             });
+
 
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
@@ -74,24 +82,22 @@ const About = () => {
         }
     };
 
+
     return (
         <div className="about-page">
             {/* Header */}
             <div className="header">
                 <div className="logo">
-                    <img src="https://i.gyazo.com/f738ee4c4bf9e15d9fa2239bbb11fcc6.png" alt="VNVC Logo" />
+                    <img src="https://vnvc.vn/img/logo-tet-vnvc.png" alt="VNVC Logo" />
                 </div>
                 <div className="header-actions">
-                    <div className="action-item" onClick={handleVaccineRegister}>
-                        <FaCalendarAlt />
-                        <span>ĐĂNG KÝ TIÊM</span>
-                    </div>
                     <div className="hotline">
                         Hotline: 028 7102 6595
                         <div className="sub-text">Mở cửa 7h30 - 17h00 / T2 - CN xuyên trưa*</div>
                     </div>
                 </div>
             </div>
+
 
             {/* Navigation */}
             <nav className="main-nav">
@@ -102,8 +108,12 @@ const About = () => {
                     <li onClick={() => navigate('/price-list')}>BẢNG GIÁ</li>
                     <li onClick={() => navigate('/disease')}>BỆNH HỌC</li>
                     <li onClick={() => navigate('/news')}>TIN TỨC</li>
+                    <li onClick={() => navigate('/child-profiles')}>HỒ SƠ TRẺ EM</li>
+                    <li onClick={() => navigate('/child-profiles')}>PHẢN ỨNG SAU TIÊM</li>
                 </ul>
             </nav>
+           
+
 
             {/* Search Bar */}
             <div className="search-container">
@@ -117,7 +127,7 @@ const About = () => {
                 </button>
                 {user ? (
                     <div className="user-dropdown" ref={dropdownRef}>
-                        <button 
+                        <button
                             className="user-menu-button"
                             onClick={() => setShowDropdown(!showDropdown)}
                         >
@@ -125,7 +135,7 @@ const About = () => {
                             <span>{user.fullName}</span>
                             <FaCaretDown className={`dropdown-icon ${showDropdown ? 'rotate' : ''}`} />
                         </button>
-                        
+                       
                         {showDropdown && (
                             <div className="dropdown-menu">
                                 <div className="dropdown-header">
@@ -149,7 +159,7 @@ const About = () => {
                                     Thông tin hồ sơ trẻ em
                                 </button>
                                 <div className="dropdown-divider"></div>
-                                <button 
+                                <button
                                     className="dropdown-item logout-item"
                                     onClick={handleLogoutClick}
                                 >
@@ -166,6 +176,18 @@ const About = () => {
                 )}
             </div>
 
+
+            <div className="vaccine-section">
+                <div className="vaccine-banner-wrapper">
+                    <h1>TRUNG TÂM TIÊM CHỦNG VẮC XIN</h1>
+                    <button className="register-btn" onClick={handleVaccineRegister}>
+                        <FaCalendarAlt />
+                        Đăng ký tiêm
+                    </button>
+                </div>
+            </div>
+
+
             {/* About Content */}
             <div className="about-container">
                 {/* Hero Section */}
@@ -176,12 +198,13 @@ const About = () => {
                     </div>
                 </div>
 
+
                 {/* Introduction Section */}
                 <div className="about-section">
                     <h2>Giới Thiệu VNVC</h2>
                     <p>
-                        VNVC là hệ thống trung tâm tiêm chủng lớn nhất Việt Nam với hơn 50 trung tâm trên toàn quốc. 
-                        Được thành lập từ năm 2017, VNVC đã và đang không ngừng phát triển, mang đến dịch vụ tiêm chủng 
+                        VNVC là hệ thống trung tâm tiêm chủng lớn nhất Việt Nam với hơn 50 trung tâm trên toàn quốc.
+                        Được thành lập từ năm 2017, VNVC đã và đang không ngừng phát triển, mang đến dịch vụ tiêm chủng
                         chất lượng cao cho hàng triệu người dân Việt Nam.
                     </p>
                     <div className="intro-images">
@@ -199,6 +222,7 @@ const About = () => {
                         </div>
                     </div>
                 </div>
+
 
                 {/* Statistics Section */}
                 <div className="stats-section">
@@ -219,6 +243,7 @@ const About = () => {
                         <p>Đối tác quốc tế</p>
                     </div>
                 </div>
+
 
                 {/* Features Section */}
                 <div className="features-section">
@@ -247,6 +272,7 @@ const About = () => {
                     </div>
                 </div>
 
+
                 {/* Mission Section */}
                 <div className="mission-section">
                     <div className="mission-content">
@@ -268,28 +294,29 @@ const About = () => {
                     </div>
                 </div>
 
+
                 {/* Partners Section */}
                 <div className="partners-section">
                     <h2>Đối Tác Của Chúng Tôi</h2>
                     <div className="partner-logos">
-                        <img 
-                            src="https://thuonghieu.wiki/data/news/19863/GSK_logo_2022.jpg" 
-                            alt="GSK" 
+                        <img
+                            src="https://thuonghieu.wiki/data/news/19863/GSK_logo_2022.jpg"
+                            alt="GSK"
                             style={{"--i": 1}}
                         />
-                        <img 
-                            src="https://thanhnien.mediacdn.vn/Uploaded/dieutrang-qc/2022_03_11/logo-moi-cua-sanofi-voi-hai-cham-tron-mau-tim-duoc-lay-cam-hung-tu-hanh-trinh-kham-pha-khoa-hoc-4803.png" 
-                            alt="Sanofi" 
+                        <img
+                            src="https://thanhnien.mediacdn.vn/Uploaded/dieutrang-qc/2022_03_11/logo-moi-cua-sanofi-voi-hai-cham-tron-mau-tim-duoc-lay-cam-hung-tu-hanh-trinh-kham-pha-khoa-hoc-4803.png"
+                            alt="Sanofi"
                             style={{"--i": 2}}
                         />
-                        <img 
-                            src="https://www.pfizer.com.vn/images/PfizerLogoColorRGB-45928554117026-1463330.png" 
-                            alt="Pfizer" 
+                        <img
+                            src="https://www.pfizer.com.vn/images/PfizerLogoColorRGB-45928554117026-1463330.png"
+                            alt="Pfizer"
                             style={{"--i": 3}}
                         />
-                        <img 
-                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/MSD_Sharp_%26_Dohme_GmbH_logo.svg/2560px-MSD_Sharp_%26_Dohme_GmbH_logo.svg.png" 
-                            alt="MSD" 
+                        <img
+                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/MSD_Sharp_%26_Dohme_GmbH_logo.svg/2560px-MSD_Sharp_%26_Dohme_GmbH_logo.svg.png"
+                            alt="MSD"
                             style={{"--i": 4}}
                         />
                     </div>
@@ -299,4 +326,8 @@ const About = () => {
     );
 };
 
-export default About; 
+
+export default About;
+
+
+

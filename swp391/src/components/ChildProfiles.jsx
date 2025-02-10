@@ -1,133 +1,332 @@
-import React, { useState } from 'react';
-import { Phone, LogOut, Calendar, UserCircle, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
 import '../styles/ChildProfiles.css';
 
+
 function ChildProfiles() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [childProfiles, setChildProfiles] = useState([
-    { id: 'CH001', name: 'Nguyễn Văn B', dob: '2015-05-01', gender: 'Nam', parentName: 'Nguyễn Văn A', vaccine: 'Covid-19', date: '2024-03-15' },
-    { id: 'CH002', name: 'Trần Thị C', dob: '2016-06-02', gender: 'Nữ', parentName: 'Trần Thị B', vaccine: 'Viêm gan B', date: '2024-03-16' },
-    { id: 'CH003', name: 'Lê Văn D', dob: '2017-07-03', gender: 'Nam', parentName: 'Lê Văn C', vaccine: 'Cúm mùa', date: '2024-03-17' },
-    { id: 'CH004', name: 'Phạm Thị E', dob: '2018-08-04', gender: 'Nữ', parentName: 'Phạm Thị D', vaccine: 'HPV', date: '2024-03-18' },
+    {
+      id: 'CH001',
+      name: 'Nguyễn Văn B',
+      dob: '2015-05-01',
+      gender: 'Nam',
+      parentName: 'Nguyễn Văn A',
+      vaccinations: [
+        {
+          date: '2024-03-15',
+          vaccine: 'Covid-19',
+          location: 'VNVC Quận 1',
+          doctor: 'BS. Nguyễn Văn X',
+          nextDose: '2024-09-15',
+          reactions: [
+            {
+              symptom: 'Sốt nhẹ',
+              severity: 'Nhẹ',
+              duration: '24 giờ',
+              note: 'Đã dùng thuốc hạ sốt'
+            },
+            {
+              symptom: 'Đau tại chỗ tiêm',
+              severity: 'Nhẹ',
+              duration: '48 giờ',
+              note: 'Tự khỏi sau 2 ngày'
+            }
+          ]
+        },
+        {
+          date: '2023-12-10',
+          vaccine: 'Viêm gan B',
+          location: 'VNVC Quận 3',
+          doctor: 'BS. Trần Thị Y',
+          nextDose: '2024-06-10'
+        }
+      ]
+    },
+    {
+      id: 'CH002',
+      name: 'Trần Thị C',
+      dob: '2016-06-02',
+      gender: 'Nữ',
+      parentName: 'Trần Thị B',
+      vaccinations: [
+        {
+          date: '2024-03-16',
+          vaccine: 'Viêm gan B',
+          location: 'VNVC Quận 2',
+          doctor: 'BS. Lê Văn M',
+          nextDose: '2024-09-16'
+        },
+        {
+          date: '2024-01-20',
+          vaccine: 'Sởi - Quai bị - Rubella',
+          location: 'VNVC Quận 2',
+          doctor: 'BS. Phạm Thị N',
+          nextDose: '2024-07-20'
+        },
+        {
+          date: '2023-11-05',
+          vaccine: 'Thủy đậu',
+          location: 'VNVC Quận 2',
+          doctor: 'BS. Lê Văn M',
+          nextDose: '2024-05-05'
+        }
+      ]
+    },
+    {
+      id: 'CH003',
+      name: 'Lê Văn D',
+      dob: '2017-07-03',
+      gender: 'Nam',
+      parentName: 'Lê Văn C',
+      vaccinations: [
+        {
+          date: '2024-03-17',
+          vaccine: 'Cúm mùa',
+          location: 'VNVC Quận 5',
+          doctor: 'BS. Hoàng Văn P',
+          nextDose: '2024-09-17'
+        },
+        {
+          date: '2024-02-01',
+          vaccine: 'Viêm não Nhật Bản',
+          location: 'VNVC Quận 5',
+          doctor: 'BS. Nguyễn Thị Q',
+          nextDose: '2024-08-01'
+        }
+      ]
+    },
+    {
+      id: 'CH004',
+      name: 'Phạm Thị E',
+      dob: '2018-08-04',
+      gender: 'Nữ',
+      parentName: 'Phạm Thị D',
+      vaccinations: [
+        {
+          date: '2024-03-18',
+          vaccine: 'HPV',
+          location: 'VNVC Quận 7',
+          doctor: 'BS. Trần Văn R',
+          nextDose: '2024-09-18'
+        },
+        {
+          date: '2024-01-15',
+          vaccine: 'Viêm gan A',
+          location: 'VNVC Quận 7',
+          doctor: 'BS. Lê Thị S',
+          nextDose: '2024-07-15'
+        },
+        {
+          date: '2023-12-20',
+          vaccine: 'Phế cầu',
+          location: 'VNVC Quận 7',
+          doctor: 'BS. Trần Văn R',
+          nextDose: '2024-06-20'
+        }
+      ]
+    }
   ]);
 
-  const [showForm, setShowForm] = useState(false);
-  const [newProfile, setNewProfile] = useState({
-    id: '',
-    name: '',
-    dob: '',
-    gender: '',
-    parentName: '',
-    vaccine: '',
-    date: ''
-  });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewProfile({ ...newProfile, [name]: value });
+  const [showReactions, setShowReactions] = useState(false);
+  const [selectedVaccination, setSelectedVaccination] = useState(null);
+
+
+  useEffect(() => {
+    if (!user) {
+      setShowLoginDialog(true);
+    }
+  }, [user]);
+
+
+  const handleLoginClick = () => {
+    navigate('/login');
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setChildProfiles([...childProfiles, newProfile]);
-    setShowForm(false);
-    setNewProfile({
-      id: '',
-      name: '',
-      dob: '',
-      gender: '',
-      parentName: '',
-      vaccine: '',
-      date: ''
-    });
+
+  const handleCloseDialog = () => {
+    setShowLoginDialog(false);
+    navigate('/');
   };
 
-  return (
-    <div className="home">
-      {/* Top Banner */}
-      <div className="top-banner">
-        <div className="banner-content">
-          <span>Trung tâm tiêm chủng Long Châu</span>
-          <div className="banner-actions">
-            <a href="tel:18006928" className="banner-action">
-              <Phone size={16} />
-              <span>1800 6928</span>
-            </a>
-            <a href="#" className="banner-action">
-              <LogOut size={16} />
-              <span>Đăng xuất</span>
-            </a>
+
+  if (showLoginDialog) {
+    return (
+      <div className="login-dialog-overlay">
+        <div className="login-dialog">
+          <h2>Yêu cầu đăng nhập</h2>
+          <p>Vui lòng đăng nhập để xem hồ sơ trẻ em</p>
+          <div className="dialog-buttons">
+            <button className="login-btn" onClick={handleLoginClick}>
+              Đăng nhập
+            </button>
+            <button className="cancel-btn" onClick={handleCloseDialog}>
+              Quay lại
+            </button>
           </div>
         </div>
       </div>
+    );
+  }
 
-      {/* Main Content */}
-      <div className="main-content">
-        {/* Sidebar */}
-        <div className="sidebar">
-          <nav className="menu">
-            <a href="#" className="menu-item">
-              <Calendar size={20} />
-              <span>Thông tin lịch hẹn</span>
-            </a>
-            <a href="#" className="menu-item">
-              <AlertCircle size={20} />
-              <span>Thông tin phản ứng sau tiêm</span>
-            </a>
-            <a href="#" className="menu-item">
-              <UserCircle size={20} />
-              <span>Hồ sơ khách hàng</span>
-            </a>
-          </nav>
-        </div>
 
-        {/* Main Grid */}
-        <div className="main-grid">
-          <h1>Danh sách hồ sơ trẻ em</h1>
-          <button onClick={() => setShowForm(true)}>Tạo thêm hồ sơ</button>
-          {showForm && (
-            <form onSubmit={handleSubmit} className="child-profile-form">
-              <input type="text" name="id" placeholder="ID" value={newProfile.id} onChange={handleInputChange} required />
-              <input type="text" name="name" placeholder="Tên" value={newProfile.name} onChange={handleInputChange} required />
-              <input type="date" name="dob" placeholder="Ngày sinh" value={newProfile.dob} onChange={handleInputChange} required />
-              <input type="text" name="gender" placeholder="Giới tính" value={newProfile.gender} onChange={handleInputChange} required />
-              <input type="text" name="parentName" placeholder="Tên phụ huynh" value={newProfile.parentName} onChange={handleInputChange} required />
-              <input type="text" name="vaccine" placeholder="Vaccine" value={newProfile.vaccine} onChange={handleInputChange} required />
-              <input type="date" name="date" placeholder="Ngày tiêm" value={newProfile.date} onChange={handleInputChange} required />
-              <button type="submit">Lưu</button>
-            </form>
-          )}
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Tên</th>
-                  <th>Ngày sinh</th>
-                  <th>Giới tính</th>
-                  <th>Tên phụ huynh</th>
-                  <th>Vaccine</th>
-                  <th>Ngày tiêm</th>
-                </tr>
-              </thead>
-              <tbody>
-                {childProfiles.map((profile) => (
-                  <tr key={profile.id}>
+  return (
+    <div className="child-profiles-page">
+      <div className="page-header">
+        <button className="back-btn" onClick={() => navigate('/')}>
+          <FaArrowLeft /> Quay lại trang chủ
+        </button>
+        <h1>Hồ Sơ Trẻ Em</h1>
+        <button className="add-profile-btn" onClick={() => navigate('/add-child')}>
+          + Thêm Hồ Sơ Mới
+        </button>
+      </div>
+
+
+      <div className="profiles-container">
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tên</th>
+                <th>Ngày sinh</th>
+                <th>Giới tính</th>
+                <th>Tên phụ huynh</th>
+                <th>Danh sách buổi tiêm</th>
+              </tr>
+            </thead>
+            <tbody>
+              {childProfiles.map((profile) => (
+                <React.Fragment key={profile.id}>
+                  <tr className="profile-row">
                     <td>{profile.id}</td>
                     <td>{profile.name}</td>
                     <td>{profile.dob}</td>
                     <td>{profile.gender}</td>
                     <td>{profile.parentName}</td>
-                    <td>{profile.vaccine}</td>
-                    <td>{profile.date}</td>
+                    <td>
+                      <button
+                        className="view-vaccinations-btn"
+                        onClick={() => {
+                          const row = document.querySelector(`#vaccinations-${profile.id}`);
+                          row.classList.toggle('show');
+                        }}
+                      >
+                        Xem chi tiết
+                      </button>
+                    </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                  <tr id={`vaccinations-${profile.id}`} className="vaccinations-row">
+                    <td colSpan="6">
+                      <div className="vaccinations-details">
+                        <h4>Lịch sử tiêm chủng</h4>
+                        {profile.vaccinations && profile.vaccinations.length > 0 ? (
+                          <table className="vaccinations-table">
+                            <thead>
+                              <tr>
+                                <th>Ngày tiêm</th>
+                                <th>Vaccine</th>
+                                <th>Địa điểm tiêm</th>
+                                <th>Bác sĩ tiêm</th>
+                                <th>Ngày tiêm mũi tiếp theo</th>
+                                <th>Phản ứng sau tiêm</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {profile.vaccinations.map((vaccination, index) => (
+                                <tr key={index}>
+                                  <td>{vaccination.date}</td>
+                                  <td>{vaccination.vaccine}</td>
+                                  <td>{vaccination.location}</td>
+                                  <td>{vaccination.doctor}</td>
+                                  <td>{vaccination.nextDose}</td>
+                                  <td>
+                                    <button
+                                      className="view-reactions-btn"
+                                      onClick={() => {
+                                        setSelectedVaccination(vaccination);
+                                        setShowReactions(true);
+                                      }}
+                                    >
+                                      Xem chi tiết
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        ) : (
+                          <p className="no-vaccinations">Chưa có lịch sử tiêm chủng</p>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
+
+
+      {showReactions && selectedVaccination && (
+        <div className="reactions-modal-overlay">
+          <div className="reactions-modal">
+            <div className="reactions-modal-header">
+              <h3>Phản ứng sau tiêm - {selectedVaccination.vaccine}</h3>
+              <button
+                className="close-modal-btn"
+                onClick={() => {
+                  setShowReactions(false);
+                  setSelectedVaccination(null);
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <div className="reactions-modal-content">
+              {selectedVaccination.reactions && selectedVaccination.reactions.length > 0 ? (
+                <table className="reactions-table">
+                  <thead>
+                    <tr>
+                      <th>Triệu chứng</th>
+                      <th>Mức độ</th>
+                      <th>Thời gian</th>
+                      <th>Ghi chú</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedVaccination.reactions.map((reaction, index) => (
+                      <tr key={index}>
+                        <td>{reaction.symptom}</td>
+                        <td>
+                          <span className={`severity-badge ${reaction.severity.toLowerCase()}`}>
+                            {reaction.severity}
+                          </span>
+                        </td>
+                        <td>{reaction.duration}</td>
+                        <td>{reaction.note}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="no-reactions">Không ghi nhận phản ứng sau tiêm</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
+
 export default ChildProfiles;
+

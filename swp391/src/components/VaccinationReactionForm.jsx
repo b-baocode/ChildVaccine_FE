@@ -2,124 +2,109 @@ import React, { useState } from 'react';
 import '../styles/VaccinationReactionForm.css';
 
 const VaccinationReactionForm = () => {
-  const [formData, setFormData] = useState({
-    childId: '',
-    vaccinationId: '',
-    symptoms: '',
-    severity: ''
-  });
+  const [selectedChild, setSelectedChild] = useState('');
+  const [selectedVaccination, setSelectedVaccination] = useState('');
+  const [description, setDescription] = useState('');
+  const [severity, setSeverity] = useState('');
+
+  // Dữ liệu mẫu - trong thực tế sẽ lấy từ API/database
+  const children = [
+    { id: 1, name: "Nguyễn Văn A" },
+    { id: 2, name: "Trần Thị B" },
+    { id: 3, name: "Lê Văn C" },
+  ];
+
+  const vaccinations = [
+    { id: 1, name: "Vaccine 5 trong 1", date: "2024-03-15" },
+    { id: 2, name: "Vaccine Sởi", date: "2024-03-10" },
+    { id: 3, name: "Vaccine BCG", date: "2024-03-05" },
+  ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Xử lý gửi dữ liệu ở đây
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+    // Xử lý gửi form
+    console.log({
+      selectedChild,
+      selectedVaccination,
+      description,
+      severity
+    });
   };
 
   return (
     <div className="form-container">
-      <h1 className="title">THÔNG TIN PHẢN ỨNG SAU TIÊM</h1>
-      
+      <h1>Báo Cáo Phản Ứng Sau Tiêm</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="childId" className="label">Chọn hồ sơ trẻ:</label>
-          <select
-            id="childId"
-            name="childId"
-            value={formData.childId}
-            onChange={handleChange}
+          <label>Chọn Hồ Sơ Trẻ:</label>
+          <select 
+            value={selectedChild}
+            onChange={(e) => setSelectedChild(e.target.value)}
             required
-            className="select-input"
           >
-            <option value="">-- Chọn hồ sơ trẻ --</option>
-            <option value="1">Nguyễn Văn A</option>
-            <option value="2">Trần Thị B</option>
-            <option value="3">Lê Văn C</option>
+            <option value="">-- Chọn trẻ --</option>
+            {children.map(child => (
+              <option key={child.id} value={child.id}>
+                {`${child.id} - ${child.name}`}
+              </option>
+            ))}
           </select>
         </div>
 
         <div className="form-group">
-          <label htmlFor="vaccinationId" className="label">Chọn buổi tiêm:</label>
+          <label>Chọn Buổi Tiêm:</label>
           <select
-            id="vaccinationId"
-            name="vaccinationId"
-            value={formData.vaccinationId}
-            onChange={handleChange}
+            value={selectedVaccination}
+            onChange={(e) => setSelectedVaccination(e.target.value)}
             required
-            className="select-input"
           >
             <option value="">-- Chọn buổi tiêm --</option>
-            <option value="1">Vaccine A - 01/01/2024</option>
-            <option value="2">Vaccine B - 15/01/2024</option>
-            <option value="3">Vaccine C - 30/01/2024</option>
+            {vaccinations.map(vacc => (
+              <option key={vacc.id} value={vacc.id}>
+                {`${vacc.id} - ${vacc.name} - ${vacc.date}`}
+              </option>
+            ))}
           </select>
         </div>
 
         <div className="form-group">
-          <label htmlFor="symptoms" className="label">Triệu chứng bất thường:</label>
+          <label>Mô Tả Phản Ứng:</label>
           <textarea
-            id="symptoms"
-            name="symptoms"
-            value={formData.symptoms}
-            onChange={handleChange}
-            placeholder="Mô tả các triệu chứng bất thường..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             required
-            className="textarea-input"
+            placeholder="Nhập mô tả chi tiết về phản ứng sau tiêm..."
           />
         </div>
 
         <div className="form-group">
-          <label className="label">Mức độ nghiêm trọng:</label>
-          <div className="severity-container">
-            <div className="severity-option">
-              <input
-                type="radio"
-                id="mild"
-                name="severity"
-                value="mild"
-                checked={formData.severity === 'mild'}
-                onChange={handleChange}
-                required
-              />
-              <label htmlFor="mild">Nhẹ</label>
-            </div>
-
-            <div className="severity-option">
-              <input
-                type="radio"
-                id="moderate"
-                name="severity"
-                value="moderate"
-                checked={formData.severity === 'moderate'}
-                onChange={handleChange}
-              />
-              <label htmlFor="moderate">Trung bình</label>
-            </div>
-
-            <div className="severity-option">
-              <input
-                type="radio"
-                id="severe"
-                name="severity"
-                value="severe"
-                checked={formData.severity === 'severe'}
-                onChange={handleChange}
-              />
-              <label htmlFor="severe">Nặng</label>
-            </div>
+          <label>Mức Độ:</label>
+          <div className="severity-buttons">
+            <button
+              type="button"
+              className={`severity-btn light ${severity === 'light' ? 'active' : ''}`}
+              onClick={() => setSeverity('light')}
+            >
+              Nhẹ
+            </button>
+            <button
+              type="button"
+              className={`severity-btn medium ${severity === 'medium' ? 'active' : ''}`}
+              onClick={() => setSeverity('medium')}
+            >
+              Vừa
+            </button>
+            <button
+              type="button"
+              className={`severity-btn severe ${severity === 'severe' ? 'active' : ''}`}
+              onClick={() => setSeverity('severe')}
+            >
+              Nặng
+            </button>
           </div>
         </div>
 
-        <button type="submit" className="submit-button">
-          Gửi báo cáo
-        </button>
+        <button type="submit" className="submit-btn">Gửi Báo Cáo</button>
       </form>
     </div>
   );
