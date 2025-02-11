@@ -19,7 +19,7 @@ import StaffLayout from './layouts/StaffLayout';
 import AppointmentInfo from './components/StaffComponent/AppointmentInfo';
 import PostVaccinationInfo from './components/StaffComponent/PostVaccinationInfo';
 import CustomerProfiles from './components/StaffComponent/CustomerProfiles';
-import ChildProfiles from './components/StaffComponent/ChildProfiles';
+import ChildProfilesList from './components/StaffComponent/StaffChildProfiles';
 
 import AdminLayout from './layouts/AdminLayout';
 import Dashbroad from './components/AdminComponent/Dashbroad';
@@ -30,6 +30,7 @@ import Revenue from './components/AdminComponent/Revenue';
 
 import Profile from './components/CusComponent/Profile';
 import AddChildForm from './components/CusComponent/AddChildForm';
+import ChildProfiles from './components/ChildProfiles';
 import PaymentReview from './components/PaymentReview';
 function App() {
   return (
@@ -52,7 +53,7 @@ function App() {
               <Route path="appointment-info" element={<AppointmentInfo />} />
               <Route path="post-vaccination-info" element={<PostVaccinationInfo />} />
               <Route path="customer-profiles" element={<CustomerProfiles />} />
-              <Route path="child-profiles" element={<ChildProfiles />} />
+              <Route path="child-profiles" element={<ChildProfilesList />} />
             </Route>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashbroad />} />
@@ -64,6 +65,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/add-child" element={<AddChildForm />} />
             <Route path="/payment-review" element={<PaymentReview />} />
+            <Route path="/child-profiles" element={<ChildProfiles />} />
           </Routes>
         </div>
       </Router>

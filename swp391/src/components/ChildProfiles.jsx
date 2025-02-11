@@ -4,7 +4,6 @@ import { FaArrowLeft } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import '../styles/ChildProfiles.css';
 
-
 function ChildProfiles() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -15,7 +14,8 @@ function ChildProfiles() {
       name: 'Nguyễn Văn B',
       dob: '2015-05-01',
       gender: 'Nam',
-      parentName: 'Nguyễn Văn A',
+      height: '120 cm',
+      weight: '25 kg',
       vaccinations: [
         {
           date: '2024-03-15',
@@ -52,7 +52,8 @@ function ChildProfiles() {
       name: 'Trần Thị C',
       dob: '2016-06-02',
       gender: 'Nữ',
-      parentName: 'Trần Thị B',
+      height: '115 cm',
+      weight: '22 kg',
       vaccinations: [
         {
           date: '2024-03-16',
@@ -82,7 +83,8 @@ function ChildProfiles() {
       name: 'Lê Văn D',
       dob: '2017-07-03',
       gender: 'Nam',
-      parentName: 'Lê Văn C',
+      height: '110 cm',
+      weight: '20 kg',
       vaccinations: [
         {
           date: '2024-03-17',
@@ -105,7 +107,8 @@ function ChildProfiles() {
       name: 'Phạm Thị E',
       dob: '2018-08-04',
       gender: 'Nữ',
-      parentName: 'Phạm Thị D',
+      height: '105 cm',
+      weight: '18 kg',
       vaccinations: [
         {
           date: '2024-03-18',
@@ -132,10 +135,8 @@ function ChildProfiles() {
     }
   ]);
 
-
   const [showReactions, setShowReactions] = useState(false);
   const [selectedVaccination, setSelectedVaccination] = useState(null);
-
 
   useEffect(() => {
     if (!user) {
@@ -143,17 +144,14 @@ function ChildProfiles() {
     }
   }, [user]);
 
-
   const handleLoginClick = () => {
     navigate('/login');
   };
-
 
   const handleCloseDialog = () => {
     setShowLoginDialog(false);
     navigate('/');
   };
-
 
   if (showLoginDialog) {
     return (
@@ -174,7 +172,6 @@ function ChildProfiles() {
     );
   }
 
-
   return (
     <div className="child-profiles-page">
       <div className="page-header">
@@ -187,7 +184,6 @@ function ChildProfiles() {
         </button>
       </div>
 
-
       <div className="profiles-container">
         <div className="table-container">
           <table>
@@ -197,7 +193,8 @@ function ChildProfiles() {
                 <th>Tên</th>
                 <th>Ngày sinh</th>
                 <th>Giới tính</th>
-                <th>Tên phụ huynh</th>
+                <th>Chiều cao</th>
+                <th>Cân nặng</th>
                 <th>Danh sách buổi tiêm</th>
               </tr>
             </thead>
@@ -209,7 +206,8 @@ function ChildProfiles() {
                     <td>{profile.name}</td>
                     <td>{profile.dob}</td>
                     <td>{profile.gender}</td>
-                    <td>{profile.parentName}</td>
+                    <td>{profile.height}</td>
+                    <td>{profile.weight}</td>
                     <td>
                       <button
                         className="view-vaccinations-btn"
@@ -223,7 +221,7 @@ function ChildProfiles() {
                     </td>
                   </tr>
                   <tr id={`vaccinations-${profile.id}`} className="vaccinations-row">
-                    <td colSpan="6">
+                    <td colSpan="7">
                       <div className="vaccinations-details">
                         <h4>Lịch sử tiêm chủng</h4>
                         {profile.vaccinations && profile.vaccinations.length > 0 ? (
@@ -273,7 +271,6 @@ function ChildProfiles() {
           </table>
         </div>
       </div>
-
 
       {showReactions && selectedVaccination && (
         <div className="reactions-modal-overlay">
@@ -327,6 +324,4 @@ function ChildProfiles() {
   );
 }
 
-
 export default ChildProfiles;
-

@@ -1,38 +1,34 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Phone, LogOut } from 'lucide-react';
 import StaffSidebar from '../components/shared/StaffSidebar';
 import '../styles/StaffStyles/StaffLayout.css';
 
 const StaffLayout = () => {
   return (
-    <div className="staff-page">
+    <div className="staff-layout">
       <StaffSidebar />
-      <div className="main-content">
-        <div className="header">
-          <div className="banner-content">
-            <div className="left-content">
-              <img src="/logo.png" alt="Logo" className="logo" />
-              <span>Trung tâm tiêm chủng Long Châu</span>
-            </div>
-            <div className="right-content">
-              <a href="tel:18006928" className="banner-action">
-                <Phone size={16} />
-                <span>1800 6928</span>
-              </a>
-              <a href="#" className="banner-action">
-                <LogOut size={16} />
-                <span>Đăng xuất</span>
-              </a>
+      <div className="staff-content">
+        <div className="staff-header">
+          <div className="page-title">
+            <h1>Quản lý Tiêm chủng</h1>
+          </div>
+          <div className="header-actions">
+            <div className="search-box">
+              <input 
+                type="search" 
+                placeholder="Tìm kiếm hồ sơ..." 
+                className="search-input"
+              />
             </div>
           </div>
         </div>
-        <div className="content">
+        
+        <main className="staff-main">
           <Outlet />
-        </div>
+        </main>
       </div>
     </div>
   );
-}
+};
 
 export default StaffLayout;

@@ -1,28 +1,41 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FaArrowLeft, FaSave } from 'react-icons/fa';
 import '../../styles/CusStyles/AddChildForm.css';
 
 const AddChildForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [previousPage, setPreviousPage] = useState('/');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  useEffect(() => {
+    if (location.state && location.state.from) {
+      setPreviousPage(location.state.from);
+    }
+  }, [location]);
+
   const [childInfo, setChildInfo] = useState({
     name: '',
     birthday: '',
     gender: 'male',
     bloodType: '',
+    height: '',
+    weight: '',
     allergies: '',
-    medicalConditions: '',
-    parentName: '',
-    parentPhone: '',
-    address: ''
+    medicalConditions: ''
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Xử lý logic thêm hồ sơ trẻ ở đây
     console.log('Child info submitted:', childInfo);
-    // Sau khi thêm thành công
-    navigate('/register-vaccination');
+    // Hiển thị thông báo thành công
+    setShowSuccessMessage(true);
+    // Sau khi thêm thành công, quay lại trang trước đó sau 2 giây
+    setTimeout(() => {
+      navigate(previousPage);
+    }, 2000);
   };
 
   const handleChange = (e) => {
@@ -36,11 +49,17 @@ const AddChildForm = () => {
   return (
     <div className="add-child-container">
       <div className="form-header">
-        <button className="back-btn" onClick={() => navigate('/profile')}>
+        <button className="back-btn" onClick={() => navigate(previousPage)}>
           <FaArrowLeft /> Quay lại
         </button>
         <h2>Thêm Hồ Sơ Trẻ</h2>
       </div>
+
+      {showSuccessMessage && (
+        <div className="success-message">
+          Hồ sơ trẻ đã được lưu thành công!
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="add-child-form">
         <div className="form-section">
@@ -94,6 +113,29 @@ const AddChildForm = () => {
               <option value="AB">AB</option>
             </select>
           </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label>Chiều cao (cm)</label>
+              <input
+                type="number"
+                name="height"
+                value={childInfo.height}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Cân nặng (kg)</label>
+              <input
+                type="number"
+                name="weight"
+                value={childInfo.weight}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
         </div>
 
         <div className="form-section">
@@ -115,41 +157,6 @@ const AddChildForm = () => {
               value={childInfo.medicalConditions}
               onChange={handleChange}
               placeholder="Các bệnh đã mắc..."
-            />
-          </div>
-        </div>
-
-        <div className="form-section">
-          <h3>Thông tin liên hệ</h3>
-          <div className="form-group">
-            <label>Tên phụ huynh</label>
-            <input
-              type="text"
-              name="parentName"
-              value={childInfo.parentName}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Số điện thoại</label>
-            <input
-              type="tel"
-              name="parentPhone"
-              value={childInfo.parentPhone}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Địa chỉ</label>
-            <textarea
-              name="address"
-              value={childInfo.address}
-              onChange={handleChange}
-              required
             />
           </div>
         </div>

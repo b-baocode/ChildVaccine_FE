@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
 import '../styles/VaccineRegistration.css';
 
-
 const VaccineRegistration = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -16,7 +15,6 @@ const VaccineRegistration = () => {
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
@@ -25,12 +23,10 @@ const VaccineRegistration = () => {
         }));
     };
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
         setShowConfirmModal(true);
     };
-
 
     const handleVaccineTypeSelect = (type) => {
         setSelectedVaccineType(type);
@@ -40,13 +36,15 @@ const VaccineRegistration = () => {
         }));
     };
 
-
     const handleConfirmRegistration = () => {
         console.log('Đăng ký thành công:', formData);
         setShowConfirmModal(false);
         setShowSuccessModal(true);
+        // Navigate back to the homepage after 2 seconds
+        setTimeout(() => {
+            navigate('/');
+        }, 2000);
     };
-
 
     const handleSuccessClose = () => {
         setShowSuccessModal(false);
@@ -59,12 +57,10 @@ const VaccineRegistration = () => {
         setSelectedVaccineType('');
     };
 
-
     const ConfirmationModal = () => (
         <div className="confirmation-modal">
             <div className="modal-content">
                 <h2>Xác nhận thông tin đăng ký</h2>
-               
                 <div className="confirm-section">
                     <h3>Thông tin người giám hộ</h3>
                     <div className="info-grid">
@@ -86,8 +82,6 @@ const VaccineRegistration = () => {
                         </div>
                     </div>
                 </div>
-
-
                 <div className="confirm-section">
                     <h3>Thông tin đăng ký tiêm</h3>
                     <div className="info-grid">
@@ -127,8 +121,6 @@ const VaccineRegistration = () => {
                         </div>
                     </div>
                 </div>
-
-
                 <div className="modal-actions">
                     <button
                         className="cancel-btn"
@@ -147,7 +139,6 @@ const VaccineRegistration = () => {
         </div>
     );
 
-
     const SuccessModal = () => (
         <div className="success-modal">
             <div className="modal-content success">
@@ -164,14 +155,11 @@ const VaccineRegistration = () => {
         </div>
     );
 
-
     return (
         <div className="registration-form">
             <button className="back-btn" onClick={() => navigate('/')}>
                 <FaArrowLeft /> Quay lại trang chủ
             </button>
-
-
             <h2>Thông Tin Người Giám Hộ</h2>
             <div className="guardian-info">
                 <div className="info-row">
@@ -195,8 +183,6 @@ const VaccineRegistration = () => {
                     </div>
                 </div>
             </div>
-
-
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>Chọn Hồ Sơ Trẻ:</label>
@@ -213,14 +199,17 @@ const VaccineRegistration = () => {
                             <option value="CH002">CH002 - Nguyễn Thị C</option>
                             <option value="CH003">CH003 - Trần Văn B</option>
                         </select>
-                        <button type="button" className="add-profile-btn">+ Thêm Hồ Sơ Trẻ</button>
+                        <button
+                            type="button"
+                            className="add-profile-btn"
+                            onClick={() => navigate('/add-child', { state: { from: '/vaccine-registration' } })}
+                        >
+                            + Thêm Hồ Sơ Trẻ
+                        </button>
                     </div>
                 </div>
-
-
                 <div className="service-info">
                     <h3>THÔNG TIN DỊCH VỤ</h3>
-                   
                     <div className="vaccine-type">
                         <label>Loại vắc xin muốn đăng ký:</label>
                         <div className="vaccine-buttons">
@@ -240,8 +229,6 @@ const VaccineRegistration = () => {
                             </button>
                         </div>
                     </div>
-
-
                     <div className="appointment-time">
                         <div className="time-field">
                             <label>Chọn ngày hẹn tiêm</label>
@@ -281,22 +268,14 @@ const VaccineRegistration = () => {
                         </div>
                     </div>
                 </div>
-
-
                 <button type="submit" className="submit-btn">
                     XÁC NHẬN ĐĂNG KÝ
                 </button>
             </form>
-
-
             {showConfirmModal && <ConfirmationModal />}
             {showSuccessModal && <SuccessModal />}
         </div>
     );
 };
 
-
 export default VaccineRegistration;
-
-
-
