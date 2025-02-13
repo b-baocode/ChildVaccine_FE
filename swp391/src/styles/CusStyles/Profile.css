@@ -1,517 +1,325 @@
 .profile-container {
-    display: flex;
-    min-height: 100vh;
-    background: #f8f9fa;
-    gap: 24px;
-    padding: 24px;
+  display: flex;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 20px;
+  position: relative;
+}
+
+/* Sidebar Styles */
+.profile-sidebar {
+  flex: 0 0 350px;
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+}
+
+.user-avatar {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.user-avatar img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 3px solid #e0e0e0;
+  padding: 5px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #555;
+}
+
+.info-item.name h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+  width: 100%;
+  text-align: center;
+}
+
+.info-icon {
+  color: #4a90e2;
+  font-size: 1.2rem;
+}
+
+/* Edit Form Styles */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.edit-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.edit-item input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.edit-btn, .save-btn, .cancel-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.edit-btn {
+  background: #4a90e2;
+  color: white;
+  width: 100%;
+}
+
+.save-btn {
+  background: #4caf50;
+  color: white;
+  flex: 1;
+}
+
+.cancel-btn {
+  background: #f44336;
+  color: white;
+  flex: 1;
+}
+
+/* Content Section Styles */
+.profile-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.content-header {
+  margin-bottom: 2rem;
+}
+
+.tab-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #f5f5f5;
+  color: #666;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+  background: #4a90e2;
+  color: white;
+}
+
+/* Children List Styles */
+.add-child-section {
+  margin-bottom: 2rem;
+}
+
+.add-child-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.children-list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.child-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.child-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.child-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.child-id {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.child-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  color: #555;
+}
+
+.health-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.health-status.healthy {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.health-status.monitoring {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+/* Vaccine History Styles */
+.vaccine-history {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.history-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.history-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.status.hoàn.thành {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* Thêm style cho profile-header */
+.profile-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 2rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  border-radius: 15px 15px 0 0;
+}
+
+/* Cập nhật style cho back-home-btn */
+.back-home-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #fff;
+  color: #4a90e2;
+  border: 2px solid #4a90e2;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.back-home-btn:hover {
+  background: #4a90e2;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .profile-container {
+    flex-direction: column;
   }
   
-  /* Left Sidebar */
   .profile-sidebar {
-    width: 300px;
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex: none;
+    width: 100%;
   }
-  
-  .user-avatar {
-    text-align: center;
-    margin-bottom: 24px;
-    position: relative;
-  }
-  
-  .user-avatar img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    border: 3px solid #e0e0e0;
-  }
-  
-  .user-level {
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #4CAF50;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 12px;
-  }
-  
-  .user-info {
-    border-top: 1px solid #e0e0e0;
-    padding-top: 20px;
-  }
-  
-  .user-info h2 {
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 16px;
-  }
-  
-  .info-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-    color: #666;
-  }
-  
-  .info-icon {
-    width: 20px;
-    height: 20px;
-    color: #1a73e8;
-  }
-  
-  .info-item i {
-    width: 20px;
-    color: #1a73e8;
-  }
-  
-  /* Right Content */
-  .profile-content {
-    flex: 1;
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .content-header {
-    margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .info-row {
+    flex-direction: column;
+    gap: 0.5rem;
   }
   
   .tab-buttons {
-    display: flex;
-    gap: 16px;
+    flex-direction: column;
   }
   
-  .tab-btn {
-    padding: 8px 24px;
-    border: none;
-    background: none;
-    font-size: 16px;
-    color: #666;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
+  .profile-header {
+    position: relative;
+    margin-bottom: 1rem;
   }
   
-  .tab-btn.active {
-    color: #1a73e8;
-    border-bottom-color: #1a73e8;
+  .back-home-btn {
+    width: 100%;
+    justify-content: center;
   }
-  
-  /* Children Cards */
-  .child-card {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-  
-  .child-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  
-  .child-header h3 {
-    margin: 0;
-    color: #333;
-  }
-  
-  .child-id {
-    color: #666;
-    font-size: 14px;
-  }
-  
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    color: #666;
-  }
-  
-  .health-status {
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 14px;
-  }
-  
-  .health-status.healthy {
-    background: #e8f5e9;.profile-container {
-      display: flex;
-      min-height: 100vh;
-      background: #f8f9fa;
-      gap: 24px;
-      padding: 24px;
-    }
-    
-    /* Left Section - Sidebar */
-    .profile-sidebar {
-      width: 320px;
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    
-    .user-avatar {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    
-    .user-avatar img {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      border: 3px solid #e0e0e0;
-      object-fit: cover;
-    }
-    
-    .user-info {
-      padding-top: 20px;
-    }
-    
-    .info-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-      color: #666;
-      font-size: 14px;
-    }
-    
-    .info-item.name h2 {
-      margin: 0;
-      color: #333;
-      font-size: 20px;
-      font-weight: 600;
-    }
-    
-    .info-icon {
-      width: 16px;
-      height: 16px;
-      color: #1a73e8;
-      flex-shrink: 0;
-    }
-    
-    /* Edit Form */
-    .edit-form {
-      margin-top: 16px;
-    }
-    
-    .edit-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    
-    .edit-item input {
-      flex: 1;
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-    
-    .edit-buttons {
-      display: flex;
-      gap: 8px;
-      margin-top: 16px;
-    }
-    
-    .edit-btn, .save-btn, .cancel-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.2s;
-    }
-    
-    .edit-btn {
-      background: #1a73e8;
-      color: white;
-      width: 100%;
-      justify-content: center;
-      margin-top: 16px;
-    }
-    
-    .save-btn {
-      background: #4CAF50;
-      color: white;
-      flex: 1;
-    }
-    
-    .cancel-btn {
-      background: #f44336;
-      color: white;
-      flex: 1;
-    }
-    
-    .edit-btn:hover { background: #1557b0; }
-    .save-btn:hover { background: #388E3C; }
-    .cancel-btn:hover { background: #d32f2f; }
-    
-    /* Right Section - Content */
-    .profile-content {
-      flex: 1;
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    
-    .content-header {
-      margin-bottom: 24px;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .tab-buttons {
-      display: flex;
-      gap: 16px;
-    }
-    
-    .tab-btn {
-      padding: 12px 24px;
-      border: none;
-      background: none;
-      font-size: 16px;
-      color: #666;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all 0.3s;
-    }
-    
-    .tab-btn.active {
-      color: #1a73e8;
-      border-bottom-color: #1a73e8;
-    }
-    
-    /* Children Cards */
-    .children-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    
-    .child-card {
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 20px;
-      transition: transform 0.2s;
-    }
-    
-    .child-card:hover {
-      transform: translateY(-2px);
-    }
-    
-    .child-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    
-    .child-header h3 {
-      margin: 0;
-      color: #333;
-      font-size: 18px;
-    }
-    
-    .child-id {
-      color: #666;
-      font-size: 14px;
-    }
-    
-    .child-info {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      color: #666;
-      font-size: 14px;
-    }
-    
-    .health-status {
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 14px;
-    }
-    
-    .health-status.healthy {
-      background: #e8f5e9;
-      color: #2e7d32;
-    }
-    
-    .health-status.monitoring {
-      background: #fff3e0;
-      color: #ef6c00;
-    }
-    
-    /* Vaccine History */
-    .vaccine-history {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    
-    .history-card {
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 20px;
-      transition: transform 0.2s;
-    }
-    
-    .history-card:hover {
-      transform: translateY(-2px);
-    }
-    
-    .history-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    
-    .history-header h3 {
-      margin: 0;
-      color: #333;
-      font-size: 18px;
-    }
-    
-    .status {
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 14px;
-    }
-    
-    .status.hoanthanh {
-      background: #e8f5e9;
-      color: #2e7d32;
-    }
-    
-    .history-info {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    
-    /* Responsive Design */
-    @media (max-width: 1024px) {
-      .profile-container {
-        flex-direction: column;
-      }
-    
-      .profile-sidebar {
-        width: 100%;
-      }
-    
-      .user-avatar img {
-        width: 150px;
-        height: 150px;
-      }
-    }
-    
-    @media (max-width: 768px) {
-      .profile-container {
-        padding: 16px;
-      }
-    
-      .info-row {
-        flex-direction: column;
-        gap: 8px;
-      }
-    
-      .tab-buttons {
-        flex-direction: column;
-      }
-    
-      .tab-btn {
-        width: 100%;
-        text-align: center;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .user-avatar img {
-        width: 120px;
-        height: 120px;
-      }
-    
-      .edit-buttons {
-        flex-direction: column;
-      }
-    
-      .save-btn, .cancel-btn {
-        width: 100%;
-      }
-    }
-    color: #2e7d32;
-  }
-  
-  .health-status.monitoring {
-    background: #fff3e0;
-    color: #ef6c00;
-  }
-  
-  /* Vaccine History */
-  .history-card {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-  
-  .history-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  
-  .history-header h3 {
-    margin: 0;
-    color: #333;
-  }
-  
-  .status {
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 14px;
-  }
-  
-  .status.hoanthanh {
-    background: #e8f5e9;
-    color: #2e7d32;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 1024px) {
-    .profile-container {
-      flex-direction: column;
-    }
-  
-    .profile-sidebar {
-      width: 100%;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .info-row {
-      flex-direction: column;
-      gap: 8px;
-    }
-  }
+}

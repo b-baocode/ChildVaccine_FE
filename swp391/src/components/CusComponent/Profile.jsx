@@ -8,7 +8,8 @@ import {
   FaEdit,
   FaSave,
   FaTimes,
-  FaPlus
+  FaPlus,
+  FaHome
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/CusStyles/Profile.css';
@@ -97,12 +98,22 @@ const Profile = () => {
     navigate('/add-child');
   };
 
+  const handleBackHome = () => {
+    navigate('/');
+  };
+
   return (
     <div className="profile-container">
+      <div className="profile-header">
+        <button onClick={handleBackHome} className="back-home-btn">
+          <FaHome /> Quay lại trang chủ
+        </button>
+      </div>
+
       {/* Left Section - User Info */}
       <div className="profile-sidebar">
         <div className="user-avatar">
-          <img src="/default-avatar.png" alt="User Avatar" />
+          <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="User Avatar" />
         </div>
         
         <div className="user-info">

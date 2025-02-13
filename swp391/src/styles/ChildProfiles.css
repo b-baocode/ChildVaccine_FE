@@ -162,8 +162,8 @@ th {
 
 .vaccinations-table {
   width: 100%;
+  border-collapse: collapse;
   margin-top: 1rem;
-  border: 1px solid #dee2e6;
   background: white;
 }
 
@@ -171,46 +171,63 @@ th {
 .vaccinations-table th,
 .vaccinations-table td {
   padding: 1rem;
-  border: 1px solid #dee2e6;
   text-align: left;
+  border: 1px solid #dee2e6;
 }
 
 
 .vaccinations-table th {
-  background: #e9ecef;
-  font-weight: 600;
+  background: #f8f9fa;
   color: #495057;
+  font-weight: 600;
 }
 
 
-.view-vaccinations-btn {
-  padding: 0.6rem 1.2rem;
-  background: #e3f2fd;
-  color: #1e4db7;
-  border: none;
-  border-radius: 6px;
+.vaccinations-table td {
+  color: #333;
+}
+
+
+/* ID và Mã cuộc hẹn columns */
+.vaccinations-table td:nth-child(1),
+.vaccinations-table td:nth-child(2) {
+  font-family: monospace;
+  color: #1e88e5;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
 }
 
 
-.view-vaccinations-btn:hover {
-  background: #1e4db7;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(30, 77, 183, 0.2);
+/* Ngày tiêm column */
+.vaccinations-table td:nth-child(3) {
+  color: #666;
+}
+
+
+/* Triệu chứng column */
+.vaccinations-table td:nth-child(4) {
+  color: #f57c00;
+}
+
+
+/* Ghi chú column */
+.vaccinations-table td:nth-child(5) {
+  font-style: italic;
+  color: #666;
+}
+
+
+.vaccinations-table tr:hover {
+  background-color: #f5f5f5;
 }
 
 
 .no-vaccinations {
+  text-align: center;
+  padding: 2rem;
   color: #666;
   font-style: italic;
-  text-align: center;
-  padding: 1.5rem;
-  background: white;
+  background: #f8f9fa;
   border-radius: 8px;
-  margin-top: 1rem;
 }
 
 
@@ -774,6 +791,428 @@ td {
   .reactions-modal {
     width: 95%;
     margin: 1rem;
+  }
+}
+
+
+/* Thêm style cho nút xem bệnh án */
+.view-medical-btn {
+  padding: 0.6rem 1.2rem;
+  background: #fff3e0;
+  color: #f57c00;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 120px;
+  text-align: center;
+}
+
+.view-medical-btn:hover {
+  background: #f57c00;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 124, 0, 0.2);
+}
+
+/* Modal bệnh án */
+.medical-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.medical-modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 1000px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideIn 0.4s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.medical-modal-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #dee2e6;
+  background: #fff3e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.medical-modal-header h3 {
+  color: #f57c00;
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.medical-modal-content {
+  padding: 2rem;
+}
+
+.medical-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.medical-table th,
+.medical-table td {
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  text-align: left;
+}
+
+.medical-table th {
+  background: #fff3e0;
+  color: #f57c00;
+  font-weight: 600;
+}
+
+.no-records {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .medical-modal {
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .medical-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* Thêm styles cho thông tin cơ bản */
+.medical-basic-info {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid #dee2e6;
+}
+
+.medical-basic-info h4,
+.medical-history-section h4 {
+  color: #f57c00;
+  margin: 0 0 1.5rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-bottom: 2px solid #fff3e0;
+  padding-bottom: 0.5rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.info-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.info-item label {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.info-item span {
+  color: #333;
+  font-size: 1rem;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.medical-history-section {
+  margin-top: 2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .medical-basic-info {
+    padding: 1rem;
+  }
+}
+
+/* Header của phần thông tin cơ bản */
+.basic-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.basic-info-header h4 {
+  margin: 0;
+}
+
+/* Nút chỉnh sửa */
+.edit-medical-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: #e3f2fd;
+  color: #1e88e5;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-medical-btn:hover {
+  background: #1e88e5;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 136, 229, 0.2);
+}
+
+/* Nút lưu và hủy */
+.edit-actions {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.save-medical-btn,
+.cancel-medical-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.save-medical-btn {
+  background: #4caf50;
+  color: white;
+}
+
+.save-medical-btn:hover {
+  background: #43a047;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+.cancel-medical-btn {
+  background: #f44336;
+  color: white;
+}
+
+.cancel-medical-btn:hover {
+  background: #e53935;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
+}
+
+/* Input fields */
+.edit-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: #1e88e5;
+  box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.1);
+}
+
+textarea.edit-input {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .basic-info-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .edit-actions {
+    width: 100%;
+  }
+
+  .save-medical-btn,
+  .cancel-medical-btn {
+    flex: 1;
+  }
+}
+
+/* Action buttons container */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.view-medical-btn,
+.delete-profile-btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 120px;
+  justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .view-medical-btn,
+  .delete-profile-btn {
+    width: 100%;
+  }
+}
+
+/* Delete confirmation modal */
+.delete-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.delete-confirm-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  animation: slideIn 0.4s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.delete-confirm-modal h3 {
+  color: #f44336;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+.delete-confirm-modal p {
+  color: #666;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.confirm-delete-btn,
+.cancel-delete-btn {
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.confirm-delete-btn {
+  background: #f44336;
+  color: white;
+}
+
+.confirm-delete-btn:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
+}
+
+.cancel-delete-btn {
+  background: #e0e0e0;
+  color: #666;
+}
+
+.cancel-delete-btn:hover {
+  background: #bdbdbd;
+  transform: translateY(-2px);
+}
+
+/* Style cho nút xóa trong bảng */
+.delete-profile-btn {
+  background: #ffebee;
+  color: #f44336;
+}
+
+.delete-profile-btn:hover {
+  background: #f44336;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .confirm-actions {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .confirm-delete-btn,
+  .cancel-delete-btn {
+    width: 100%;
   }
 }
 

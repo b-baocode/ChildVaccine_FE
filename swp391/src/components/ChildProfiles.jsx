@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft } from 'react-icons/fa';
+import { FaArrowLeft, FaEdit, FaSave, FaTimes, FaTrash } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import '../styles/ChildProfiles.css';
 
@@ -18,32 +18,18 @@ function ChildProfiles() {
       weight: '25 kg',
       vaccinations: [
         {
-          date: '2024-03-15',
-          vaccine: 'Covid-19',
-          location: 'VNVC Quận 1',
-          doctor: 'BS. Nguyễn Văn X',
-          nextDose: '2024-09-15',
-          reactions: [
-            {
-              symptom: 'Sốt nhẹ',
-              severity: 'Nhẹ',
-              duration: '24 giờ',
-              note: 'Đã dùng thuốc hạ sốt'
-            },
-            {
-              symptom: 'Đau tại chỗ tiêm',
-              severity: 'Nhẹ',
-              duration: '48 giờ',
-              note: 'Tự khỏi sau 2 ngày'
-            }
-          ]
+          id: 1,
+          appointment_id: 'APP001',
+          appointment_date: '2024-03-15',
+          symptoms: 'Sốt nhẹ, đau tại chỗ tiêm',
+          notes: 'Theo dõi 30 phút sau tiêm, không có biến chứng'
         },
         {
-          date: '2023-12-10',
-          vaccine: 'Viêm gan B',
-          location: 'VNVC Quận 3',
-          doctor: 'BS. Trần Thị Y',
-          nextDose: '2024-06-10'
+          id: 2,
+          appointment_id: 'APP002',
+          appointment_date: '2024-02-10',
+          symptoms: 'Không có triệu chứng bất thường',
+          notes: 'Tiêm chủng thành công'
         }
       ]
     },
@@ -138,6 +124,35 @@ function ChildProfiles() {
   const [showReactions, setShowReactions] = useState(false);
   const [selectedVaccination, setSelectedVaccination] = useState(null);
 
+  // Thêm state để quản lý modal bệnh án
+  const [showMedicalRecord, setShowMedicalRecord] = useState(false);
+  const [selectedMedicalRecord, setSelectedMedicalRecord] = useState(null);
+
+  // Thêm state để quản lý chế độ chỉnh sửa
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedInfo, setEditedInfo] = useState({
+    height: '',
+    weight: '',
+    healthNote: ''
+  });
+
+  // Thêm state để quản lý modal xác nhận xóa
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [profileToDelete, setProfileToDelete] = useState(null);
+
+  // Cập nhật mock data để thêm thông tin mới
+  const medicalRecords = {
+    'CH001': {
+      basicInfo: {
+        height: 120.5,
+        weight: 25.3,
+        bloodType: 'A+',
+        allergies: 'Dị ứng đậu phộng, hải sản',
+        healthNote: 'Trẻ có tiền sử hen suyễn nhẹ'
+      }
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       setShowLoginDialog(true);
@@ -151,6 +166,50 @@ function ChildProfiles() {
   const handleCloseDialog = () => {
     setShowLoginDialog(false);
     navigate('/');
+  };
+
+  // Thêm hàm xử lý chỉnh sửa
+  const handleEdit = () => {
+    setIsEditing(true);
+    setEditedInfo({
+      height: selectedMedicalRecord.basicInfo.height,
+      weight: selectedMedicalRecord.basicInfo.weight,
+      healthNote: selectedMedicalRecord.basicInfo.healthNote
+    });
+  };
+
+  const handleSave = () => {
+    // Cập nhật dữ liệu (trong thực tế sẽ gọi API)
+    selectedMedicalRecord.basicInfo = {
+      ...selectedMedicalRecord.basicInfo,
+      height: editedInfo.height,
+      weight: editedInfo.weight,
+      healthNote: editedInfo.healthNote
+    };
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+  };
+
+  // Thêm hàm xử lý xóa
+  const handleDelete = (profileId) => {
+    setProfileToDelete(profileId);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = () => {
+    // Trong thực tế sẽ gọi API để xóa
+    const newProfiles = childProfiles.filter(profile => profile.id !== profileToDelete);
+    setChildProfiles(newProfiles);
+    setShowDeleteConfirm(false);
+    setProfileToDelete(null);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setProfileToDelete(null);
   };
 
   if (showLoginDialog) {
@@ -193,9 +252,8 @@ function ChildProfiles() {
                 <th>Tên</th>
                 <th>Ngày sinh</th>
                 <th>Giới tính</th>
-                <th>Chiều cao</th>
-                <th>Cân nặng</th>
                 <th>Danh sách buổi tiêm</th>
+                <th>Hồ sơ bệnh án</th>
               </tr>
             </thead>
             <tbody>
@@ -206,8 +264,6 @@ function ChildProfiles() {
                     <td>{profile.name}</td>
                     <td>{profile.dob}</td>
                     <td>{profile.gender}</td>
-                    <td>{profile.height}</td>
-                    <td>{profile.weight}</td>
                     <td>
                       <button
                         className="view-vaccinations-btn"
@@ -219,42 +275,49 @@ function ChildProfiles() {
                         Xem chi tiết
                       </button>
                     </td>
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          className="view-medical-btn"
+                          onClick={() => {
+                            setSelectedMedicalRecord(medicalRecords[profile.id]);
+                            setShowMedicalRecord(true);
+                          }}
+                        >
+                          Xem chi tiết
+                        </button>
+                        <button
+                          className="delete-profile-btn"
+                          onClick={() => handleDelete(profile.id)}
+                        >
+                          <FaTrash /> Xóa
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                   <tr id={`vaccinations-${profile.id}`} className="vaccinations-row">
-                    <td colSpan="7">
+                    <td colSpan="5">
                       <div className="vaccinations-details">
                         <h4>Lịch sử tiêm chủng</h4>
                         {profile.vaccinations && profile.vaccinations.length > 0 ? (
                           <table className="vaccinations-table">
                             <thead>
                               <tr>
+                                <th>ID</th>
+                                <th>Mã cuộc hẹn</th>
                                 <th>Ngày tiêm</th>
-                                <th>Vaccine</th>
-                                <th>Địa điểm tiêm</th>
-                                <th>Bác sĩ tiêm</th>
-                                <th>Ngày tiêm mũi tiếp theo</th>
-                                <th>Phản ứng sau tiêm</th>
+                                <th>Triệu chứng sau tiêm</th>
+                                <th>Ghi chú</th>
                               </tr>
                             </thead>
                             <tbody>
-                              {profile.vaccinations.map((vaccination, index) => (
-                                <tr key={index}>
-                                  <td>{vaccination.date}</td>
-                                  <td>{vaccination.vaccine}</td>
-                                  <td>{vaccination.location}</td>
-                                  <td>{vaccination.doctor}</td>
-                                  <td>{vaccination.nextDose}</td>
-                                  <td>
-                                    <button
-                                      className="view-reactions-btn"
-                                      onClick={() => {
-                                        setSelectedVaccination(vaccination);
-                                        setShowReactions(true);
-                                      }}
-                                    >
-                                      Xem chi tiết
-                                    </button>
-                                  </td>
+                              {profile.vaccinations.map((vaccination) => (
+                                <tr key={vaccination.id}>
+                                  <td>{vaccination.id}</td>
+                                  <td>{vaccination.appointment_id}</td>
+                                  <td>{vaccination.appointment_date}</td>
+                                  <td>{vaccination.symptoms || 'Không có'}</td>
+                                  <td>{vaccination.notes || 'Không có'}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -316,6 +379,117 @@ function ChildProfiles() {
               ) : (
                 <p className="no-reactions">Không ghi nhận phản ứng sau tiêm</p>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showMedicalRecord && selectedMedicalRecord && (
+        <div className="medical-modal-overlay">
+          <div className="medical-modal">
+            <div className="medical-modal-header">
+              <h3>Hồ sơ bệnh án</h3>
+              <button
+                className="close-modal-btn"
+                onClick={() => {
+                  setShowMedicalRecord(false);
+                  setSelectedMedicalRecord(null);
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <div className="medical-modal-content">
+              <div className="medical-basic-info">
+                <div className="basic-info-header">
+                  <h4>Thông tin cơ bản</h4>
+                  {!isEditing ? (
+                    <button className="edit-medical-btn" onClick={handleEdit}>
+                      <FaEdit /> Sửa hồ sơ
+                    </button>
+                  ) : (
+                    <div className="edit-actions">
+                      <button className="save-medical-btn" onClick={handleSave}>
+                        <FaSave /> Lưu
+                      </button>
+                      <button className="cancel-medical-btn" onClick={handleCancel}>
+                        <FaTimes /> Hủy
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="info-grid">
+                  <div className="info-item">
+                    <label>Chiều cao:</label>
+                    {isEditing ? (
+                      <input
+                        type="number"
+                        step="0.1"
+                        value={editedInfo.height}
+                        onChange={(e) => setEditedInfo({...editedInfo, height: e.target.value})}
+                        className="edit-input"
+                      />
+                    ) : (
+                      <span>{selectedMedicalRecord.basicInfo.height} cm</span>
+                    )}
+                  </div>
+                  <div className="info-item">
+                    <label>Cân nặng:</label>
+                    {isEditing ? (
+                      <input
+                        type="number"
+                        step="0.1"
+                        value={editedInfo.weight}
+                        onChange={(e) => setEditedInfo({...editedInfo, weight: e.target.value})}
+                        className="edit-input"
+                      />
+                    ) : (
+                      <span>{selectedMedicalRecord.basicInfo.weight} kg</span>
+                    )}
+                  </div>
+                  <div className="info-item">
+                    <label>Nhóm máu:</label>
+                    <span>{selectedMedicalRecord.basicInfo.bloodType}</span>
+                  </div>
+                  <div className="info-item">
+                    <label>Dị ứng:</label>
+                    <span>{selectedMedicalRecord.basicInfo.allergies || 'Không có'}</span>
+                  </div>
+                  <div className="info-item full-width">
+                    <label>Ghi chú sức khỏe:</label>
+                    {isEditing ? (
+                      <textarea
+                        value={editedInfo.healthNote}
+                        onChange={(e) => setEditedInfo({...editedInfo, healthNote: e.target.value})}
+                        className="edit-input"
+                        rows="3"
+                      />
+                    ) : (
+                      <span>{selectedMedicalRecord.basicInfo.healthNote || 'Không có'}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDeleteConfirm && (
+        <div className="delete-confirm-overlay">
+          <div className="delete-confirm-modal">
+            <h3>Xác nhận xóa hồ sơ</h3>
+            <p>
+              Bạn có chắc chắn muốn xóa hồ sơ này không?<br />
+              Hành động này không thể hoàn tác.
+            </p>
+            <div className="confirm-actions">
+              <button className="confirm-delete-btn" onClick={handleConfirmDelete}>
+                <FaTrash /> Xóa hồ sơ
+              </button>
+              <button className="cancel-delete-btn" onClick={handleCancelDelete}>
+                <FaTimes /> Hủy
+              </button>
             </div>
           </div>
         </div>

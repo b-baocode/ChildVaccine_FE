@@ -1,19 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaSave } from 'react-icons/fa';
 import '../../styles/CusStyles/AddChildForm.css';
 
 const AddChildForm = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [previousPage, setPreviousPage] = useState('/');
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-
-  useEffect(() => {
-    if (location.state && location.state.from) {
-      setPreviousPage(location.state.from);
-    }
-  }, [location]);
 
   const [childInfo, setChildInfo] = useState({
     name: '',
@@ -34,7 +26,7 @@ const AddChildForm = () => {
     setShowSuccessMessage(true);
     // Sau khi thêm thành công, quay lại trang trước đó sau 2 giây
     setTimeout(() => {
-      navigate(previousPage);
+      navigate(-1);
     }, 2000);
   };
 
@@ -46,10 +38,15 @@ const AddChildForm = () => {
     }));
   };
 
+  // Cập nhật hàm xử lý nút quay lại
+  const handleBack = () => {
+    navigate(-1); // Quay lại trang trước đó trong history stack
+  };
+
   return (
     <div className="add-child-container">
       <div className="form-header">
-        <button className="back-btn" onClick={() => navigate(previousPage)}>
+        <button className="back-btn" onClick={handleBack}>
           <FaArrowLeft /> Quay lại
         </button>
         <h2>Thêm Hồ Sơ Trẻ</h2>

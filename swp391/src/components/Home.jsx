@@ -161,9 +161,17 @@ const Home = () => {
                                 </div>
                                 <div className="dropdown-divider"></div>
                                 <button
+                                    className="dropdown-item"
+                                    onClick={() => navigate('/profile')}
+                                >
+                                    <FaUser className="item-icon" />
+                                    Thông tin người dùng
+                                </button>
+                                <button
                                     className="dropdown-item logout-item"
                                     onClick={handleLogoutClick}
                                 >
+                                    <FaSignOutAlt className="item-icon" />
                                     Đăng xuất
                                 </button>
                             </div>

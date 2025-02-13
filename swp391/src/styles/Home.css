@@ -64,13 +64,13 @@
   text-align: right;
   font-size: 1.1rem;
   font-weight: 600;
-  color: white;
+  color: red;
 }
 
 
 .sub-text {
   font-size: 0.85rem;
-  color: rgba(255,255,255,0.8);
+  color: red;
   font-weight: normal;
   margin-top: 4px;
 }
