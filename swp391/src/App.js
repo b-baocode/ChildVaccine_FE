@@ -13,7 +13,7 @@ import Disease from './components/Disease';
 import News from './components/News';
 import VaccineRegistration from './components/VaccineRegistration';
 import VaccinationReactionForm from './components/VaccinationReactionForm';
-import VaccinationRegistrationForm from './components/VaccinationRegistrationForm';
+import CusFeedback from './components/CusComponent/Feedback';
 
 import StaffLayout from './layouts/StaffLayout';
 import AppointmentInfo from './components/StaffComponent/AppointmentInfo';
@@ -47,14 +47,15 @@ function App() {
             <Route path="/disease" element={<Disease />} />
             <Route path="/news" element={<News />} />
             <Route path="/register-vaccination" element={<VaccineRegistration />} />
+            <Route path="/feedback" element={<CusFeedback />} />
             <Route path="/react-report" element={<VaccinationReactionForm />} />
 
             <Route path="/staff" element={<StaffLayout />}>
               <Route path="appointment-info" element={<AppointmentInfo />} />
               <Route path="post-vaccination-info" element={<PostVaccinationInfo />} />
-              <Route path="customer-profiles" element={<CustomerProfiles />} />
               <Route path="child-profiles" element={<ChildProfilesList />} />
             </Route>
+
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashbroad />} />
               <Route path="staff" element={<StaffManagement />} />

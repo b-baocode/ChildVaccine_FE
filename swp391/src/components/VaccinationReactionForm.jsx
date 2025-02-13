@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 import '../styles/VaccinationReactionForm.css';
 
 const VaccinationReactionForm = () => {
+  const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState('');
   const [selectedVaccination, setSelectedVaccination] = useState('');
   const [description, setDescription] = useState('');
@@ -30,9 +33,11 @@ const VaccinationReactionForm = () => {
       severity
     });
   };
-
   return (
     <div className="form-container">
+      <button className="back-btn" onClick={() => navigate('/')}>
+        <FaArrowLeft /> Quay lại trang chủ
+      </button>
       <h1>Báo Cáo Phản Ứng Sau Tiêm</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
