@@ -95,33 +95,43 @@ const Handbook = () => {
 
     const handleVaccineRegister = () => {
         if (!user) {
-            const modal = document.createElement('div');
-            modal.className = 'login-required-modal';
-            modal.innerHTML = `
+            const modalOverlay = document.createElement('div');
+            modalOverlay.className = 'login-required-modal';
+            modalOverlay.innerHTML = `
                 <div class="modal-content">
+                    <div class="modal-icon">
+                        <i class="fas fa-user-lock"></i>
+                    </div>
                     <h3>Yêu cầu đăng nhập</h3>
-                    <p>Vui lòng đăng nhập để đăng ký tiêm chủng</p>
-                    <button class="login-btn">Đăng nhập</button>
+                    <p>Vui lòng đăng nhập để sử dụng dịch vụ đăng ký tiêm chủng</p>
+                    <div class="modal-buttons">
+                        <button class="login-btn">Đăng nhập ngay</button>
+                        <button class="cancel-btn">Đóng</button>
+                    </div>
                 </div>
             `;
-           
-            document.body.appendChild(modal);
+            
+            document.body.appendChild(modalOverlay);
 
-
-            const loginBtn = modal.querySelector('.login-btn');
+            const loginBtn = modalOverlay.querySelector('.login-btn');
+            const cancelBtn = modalOverlay.querySelector('.cancel-btn');
+            
             loginBtn.addEventListener('click', () => {
-                document.body.removeChild(modal);
+                document.body.removeChild(modalOverlay);
                 navigate('/login');
             });
 
+            cancelBtn.addEventListener('click', () => {
+                document.body.removeChild(modalOverlay);
+            });
 
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    document.body.removeChild(modal);
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    document.body.removeChild(modalOverlay);
                 }
             });
         } else {
-            navigate('/register-vaccine');
+            navigate('/register-vaccination');
         }
     };
 
