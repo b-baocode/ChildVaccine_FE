@@ -18,16 +18,7 @@ const Register = () => {
                     <p>Vui lòng điền đầy đủ thông tin để tạo tài khoản</p>
                 </div>
 
-                <form className="register-form">
-                    <div className="form-group">
-                        <input
-                            type="text"
-                            name="fullName"
-                            placeholder="Họ và tên"
-                            required
-                        />
-                    </div>
-
+                <form className="register-form">                 
                     <div className="form-group">
                         <input
                             type="email"
@@ -35,18 +26,7 @@ const Register = () => {
                             placeholder="Địa chỉ email"
                             required
                         />
-                    </div>
-
-                    <div className="form-group">
-                        <input
-                            type="tel"
-                            name="phone"
-                            placeholder="Số điện thoại"
-                            pattern="[0-9]{10}"
-                            title="Vui lòng nhập số điện thoại hợp lệ (10 số)"
-                            required
-                        />
-                    </div>
+                    </div>            
 
                     <div className="form-group">
                         <input
@@ -65,6 +45,69 @@ const Register = () => {
                             required
                         />
                     </div>
+
+                    <div className="form-group">
+                        <input
+                            type="text"
+                            name="fullName"
+                            placeholder="Họ và tên"
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <input
+                            type="tel"
+                            name="phone"
+                            placeholder="Số điện thoại"
+                            pattern="[0-9]{10}"
+                            title="Vui lòng nhập số điện thoại hợp lệ (10 số)"
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <input
+                            name="address"
+                            placeholder="Địa chỉ"
+                            required
+                            rows="3"
+                        ></input>
+                    </div>
+
+                    <div className="form-group gender-group">
+                        <span className="gender-label">Giới tính:</span>
+                        <div className="gender-options">
+                            <label>
+                                <input 
+                                    type="radio" 
+                                    name="gender" 
+                                    value="male" 
+                                    required 
+                                />
+                                Nam
+                            </label>
+                            <label>
+                                <input 
+                                    type="radio" 
+                                    name="gender" 
+                                    value="female" 
+                                    required 
+                                />
+                                Nữ
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className="form-group">
+                        <input
+                            type="date"
+                            name="birthDate"
+                            placeholder="Ngày sinh"
+                            required
+                        />
+                    </div>
+                                    
 
                     <div className="form-group terms">
                         <label className="checkbox-label">

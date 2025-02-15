@@ -66,7 +66,35 @@
 }
 
 .form-group input[type="date"] {
-    padding-right: 1rem;
+    width: 88%;
+    padding: 0.9rem 1.2rem;
+    border: 2px solid #e1e1e1;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    color: #495057;
+}
+
+/* Thêm style cho placeholder của input date */
+.form-group input[type="date"]::-webkit-datetime-edit-text,
+.form-group input[type="date"]::-webkit-datetime-edit-month-field,
+.form-group input[type="date"]::-webkit-datetime-edit-day-field,
+.form-group input[type="date"]::-webkit-datetime-edit-year-field {
+    color: transparent;
+}
+
+.form-group input[type="date"]::before {
+    content: "Ngày sinh";
+    color: #6c757d;
+    position: absolute;
+    left: 1.2rem;
+    margin-left: 33px;
+}
+
+.form-group input[type="date"]:focus::before,
+.form-group input[type="date"]:valid::before {
+    display: none;
 }
 
 .form-group input:focus {
@@ -76,16 +104,21 @@
     background: white;
 }
 
+.gender-group {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
 .gender-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #555;
-    font-weight: 500;
+    color: #666;
+    font-size: 1rem;
+    min-width: 80px;
 }
 
 .gender-options {
     display: flex;
-    gap: 1.5rem;
+    gap: 2rem;
 }
 
 .gender-options label {
@@ -254,6 +287,18 @@
     }
 }
 
+@media (max-width: 768px) {
+    .gender-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .gender-options {
+        margin-top: 0.5rem;
+    }
+}
+
 .input-icon {
     position: absolute;
     left: 1.2rem;
@@ -267,4 +312,23 @@
 .form-group input:focus + .input-icon {
     color: #1a2b5c;
     transform: translateY(-50%) scale(1.1);
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 0.9rem 1.2rem;
+    border: 2px solid #e1e1e1;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-group textarea:focus {
+    border-color: #31498B;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(49, 73, 139, 0.1);
+    background: white;
 } 

@@ -76,17 +76,16 @@
 }
 
 .form-group label {
-  display: block;
+  display: inline-flex;
   color: #495057;
   font-weight: 500;
-  margin-bottom: 0.5rem;
   font-size: 0.95rem;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
-  width: 100%;
+  width: 90%;
   padding: 0.8rem 1rem;
   border: 1px solid #dee2e6;
   border-radius: 6px;
@@ -94,6 +93,7 @@
   transition: all 0.3s ease;
   color: #495057;
   background: #fff;
+  margin: 0 auto;
 }
 
 .form-group input:focus,
