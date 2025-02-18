@@ -2421,6 +2421,46 @@ html {
     box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.item-card {
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.item-card.selected {
+    border-color: #2196F3;
+    background-color: #e3f2fd;
+}
+
+.item-card:hover {
+    transform: translateY(-2px);
+}
+
+.item-details {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.price {
+    color: #2196F3;
+    font-weight: bold;
+}
+
+.shots {
+    background: #eee;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
 
 @keyframes scaleIn {
     from {
