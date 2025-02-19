@@ -8,6 +8,9 @@ const StaffAppointment = () => {
   const [symptoms, setSymptoms] = useState('');
   const [notes, setNotes] = useState('');
   const [status, setStatus] = useState('PENDING');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingStatusChange, setPendingStatusChange] = useState(null);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   useEffect(() => {
     // Mock data for appointments
@@ -203,11 +206,33 @@ const StaffAppointment = () => {
     setAppointments(mockAppointments);
   }, []);
 
+  // Thêm useEffect để handle ESC key
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape' && showUpdateModal) {
+        handleCloseModal();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscKey);
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, [showUpdateModal]);
+
+  // Thêm hàm để handle click outside modal
+  const handleOverlayClick = (event) => {
+    if (event.target.className === 'update-modal-overlay') {
+      handleCloseModal();
+    }
+  };
+
   const handleUpdateClick = (appointment) => {
     setSelectedAppointmentId(appointment.id);
     setSymptoms(appointment.symptoms || '');
     setNotes(appointment.notes || '');
     setStatus(appointment.status);
+    setShowUpdateModal(true);
   };
 
   const handleSaveClick = (appointmentId) => {
@@ -219,6 +244,33 @@ const StaffAppointment = () => {
     );
     setAppointments(updatedAppointments);
     setSelectedAppointmentId(null);
+  };
+
+  const handleStatusChange = async (appointmentId, newStatus) => {
+    setPendingStatusChange({
+      appointmentId,
+      newStatus
+    });
+    setShowConfirmModal(true);
+  };
+
+  const confirmStatusChange = () => {
+    const { appointmentId, newStatus } = pendingStatusChange;
+    const updatedAppointments = appointments.map((appointment) =>
+      appointment.id === appointmentId
+        ? { ...appointment, status: newStatus }
+        : appointment
+    );
+    setAppointments(updatedAppointments);
+    setShowConfirmModal(false);
+  };
+
+  const handleCloseModal = () => {
+    setShowUpdateModal(false);
+    setSelectedAppointmentId(null);
+    setSymptoms('');
+    setNotes('');
+    setStatus('PENDING');
   };
 
   return (
@@ -249,53 +301,103 @@ const StaffAppointment = () => {
                 <td>{appointment.vaccine_id}</td>
                 <td>{appointment.appointment_date}</td>
                 <td>{appointment.appointment_time}</td>
-                <td>{appointment.status}</td>
+                <td>
+                  <select
+                    value={appointment.status}
+                    onChange={(e) => handleStatusChange(appointment.id, e.target.value)}
+                    className="status-select"
+                  >
+                    <option value="CONFIRMED">CONFIRMED</option>
+                    <option value="CANCELLED">CANCELLED</option>
+                    <option value="COMPLETED">COMPLETED</option>
+                  </select>
+                </td>
                 <td>{appointment.payment_status}</td>
                 <td>{appointment.notes}</td>
                 <td>
                   <button onClick={() => handleUpdateClick(appointment)}>Update</button>
                 </td>
               </tr>
-              {selectedAppointmentId === appointment.id && (
-                <tr>
-                  <td colSpan="10">
-                    <div className="update-section">
-                      <div className="form-group">
-                        <label>Status</label>
-                        <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                          <option value="PENDING">Pending</option>
-                          <option value="CONFIRMED">Confirmed</option>
-                          <option value="COMPLETED">Completed</option>
-                          <option value="CANCELLED">Cancelled</option>
-                        </select>
-                      </div>
-                      <div className="form-group">
-                        <label>Symptoms</label>
-                        <textarea
-                          value={symptoms}
-                          onChange={(e) => setSymptoms(e.target.value)}
-                          placeholder="Enter symptoms"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label>Notes</label>
-                        <textarea
-                          value={notes}
-                          onChange={(e) => setNotes(e.target.value)}
-                          placeholder="Enter notes"
-                        />
-                      </div>
-                      <button type="button" onClick={() => handleSaveClick(appointment.id)}>
-                        Save
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )}
             </React.Fragment>
           ))}
         </tbody>
       </table>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Xác nhận thay đổi</h2>
+            <p>Bạn có chắc chắn muốn thay đổi trạng thái thành {pendingStatusChange?.newStatus}?</p>
+            <div className="modal-buttons">
+              <button 
+                className="confirm-button"
+                onClick={confirmStatusChange}
+              >
+                Xác nhận
+              </button>
+              <button 
+                className="cancel-button"
+                onClick={() => setShowConfirmModal(false)}
+              >
+                Hủy
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Update Modal */}
+      {showUpdateModal && (
+        <div className="update-modal-overlay" onClick={handleOverlayClick}>
+          <div className="update-modal">
+            <div className="update-modal-header">
+              <h2 className="update-modal-title">Cập nhật thông tin</h2>
+              <button className="close-button" onClick={handleCloseModal}>&times;</button>
+            </div>
+            
+            {/* Thêm phần hiển thị IDs */}
+            <div className="modal-info">
+              <div className="info-item">
+                <span className="info-label">ID lịch tiêm:</span>
+                <span className="info-value">{selectedAppointmentId}</span>
+              </div>
+              <div className="info-item">
+                <span className="info-label">Staff ID:</span>
+                <span className="info-value">ST001</span>
+              </div>
+            </div>
+
+            <div className="update-form">
+              <div className="form-group">
+                <label>Triệu chứng</label>
+                <textarea
+                  value={symptoms}
+                  onChange={(e) => setSymptoms(e.target.value)}
+                  placeholder="Nhập triệu chứng"
+                />
+              </div>
+              <div className="form-group">
+                <label>Ghi chú</label>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Nhập ghi chú"
+                />
+              </div>
+            </div>
+            
+            <div className="modal-footer">
+              <button className="save-button" onClick={() => handleSaveClick(selectedAppointmentId)}>
+                Lưu
+              </button>
+              <button className="cancel-button" onClick={handleCloseModal}>
+                Hủy bỏ
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
