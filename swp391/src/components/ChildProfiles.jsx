@@ -140,6 +140,10 @@ function ChildProfiles() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [profileToDelete, setProfileToDelete] = useState(null);
 
+  // Thêm state mới
+  const [showVaccinationModal, setShowVaccinationModal] = useState(false);
+  const [selectedChildVaccinations, setSelectedChildVaccinations] = useState(null);
+
   // Cập nhật mock data để thêm thông tin mới
   const medicalRecords = {
     'CH001': {
@@ -268,8 +272,8 @@ function ChildProfiles() {
                       <button
                         className="view-vaccinations-btn"
                         onClick={() => {
-                          const row = document.querySelector(`#vaccinations-${profile.id}`);
-                          row.classList.toggle('show');
+                          setSelectedChildVaccinations(profile);
+                          setShowVaccinationModal(true);
                         }}
                       >
                         Xem chi tiết
@@ -292,39 +296,6 @@ function ChildProfiles() {
                         >
                           <FaTrash /> Xóa
                         </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr id={`vaccinations-${profile.id}`} className="vaccinations-row">
-                    <td colSpan="5">
-                      <div className="vaccinations-details">
-                        <h4>Lịch sử tiêm chủng</h4>
-                        {profile.vaccinations && profile.vaccinations.length > 0 ? (
-                          <table className="vaccinations-table">
-                            <thead>
-                              <tr>
-                                <th>ID</th>
-                                <th>Mã cuộc hẹn</th>
-                                <th>Ngày tiêm</th>
-                                <th>Triệu chứng sau tiêm</th>
-                                <th>Ghi chú</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {profile.vaccinations.map((vaccination) => (
-                                <tr key={vaccination.id}>
-                                  <td>{vaccination.id}</td>
-                                  <td>{vaccination.appointment_id}</td>
-                                  <td>{vaccination.appointment_date}</td>
-                                  <td>{vaccination.symptoms || 'Không có'}</td>
-                                  <td>{vaccination.notes || 'Không có'}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        ) : (
-                          <p className="no-vaccinations">Chưa có lịch sử tiêm chủng</p>
-                        )}
                       </div>
                     </td>
                   </tr>
@@ -490,6 +461,53 @@ function ChildProfiles() {
               <button className="cancel-delete-btn" onClick={handleCancelDelete}>
                 <FaTimes /> Hủy
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showVaccinationModal && selectedChildVaccinations && (
+        <div className="medical-modal-overlay">
+          <div className="medical-modal">
+            <div className="medical-modal-header">
+              <h3>Lịch sử tiêm chủng - {selectedChildVaccinations.name}</h3>
+              <button
+                className="close-modal-btn"
+                onClick={() => {
+                  setShowVaccinationModal(false);
+                  setSelectedChildVaccinations(null);
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <div className="medical-modal-content">
+              {selectedChildVaccinations.vaccinations && selectedChildVaccinations.vaccinations.length > 0 ? (
+                <table className="vaccinations-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Mã cuộc hẹn</th>
+                      <th>Ngày tiêm</th>
+                      <th>Triệu chứng sau tiêm</th>
+                      <th>Ghi chú</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedChildVaccinations.vaccinations.map((vaccination) => (
+                      <tr key={vaccination.id}>
+                        <td>{vaccination.id}</td>
+                        <td>{vaccination.appointment_id}</td>
+                        <td>{vaccination.appointment_date}</td>
+                        <td>{vaccination.symptoms || 'Không có'}</td>
+                        <td>{vaccination.notes || 'Không có'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="no-vaccinations">Chưa có lịch sử tiêm chủng</p>
+              )}
             </div>
           </div>
         </div>

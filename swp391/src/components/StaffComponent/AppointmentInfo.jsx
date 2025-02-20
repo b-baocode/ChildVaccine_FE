@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../../styles/StaffStyles/Appointments.css';
+import { useNavigate } from 'react-router-dom';
 
 const StaffAppointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -11,6 +12,8 @@ const StaffAppointment = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingStatusChange, setPendingStatusChange] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Mock data for appointments
@@ -235,15 +238,29 @@ const StaffAppointment = () => {
     setShowUpdateModal(true);
   };
 
-  const handleSaveClick = (appointmentId) => {
-    // Update the appointment with the new status, symptoms, and notes
-    const updatedAppointments = appointments.map((appointment) =>
-      appointment.id === appointmentId
-        ? { ...appointment, status, symptoms, notes }
-        : appointment
-    );
-    setAppointments(updatedAppointments);
-    setSelectedAppointmentId(null);
+  const handleSaveClick = async (appointmentId) => {
+    try {
+      // Update the appointment with the new status, symptoms, and notes
+      const updatedAppointments = appointments.map((appointment) =>
+        appointment.id === appointmentId
+          ? { ...appointment, status, symptoms, notes }
+          : appointment
+      );
+      setAppointments(updatedAppointments);
+      setSelectedAppointmentId(null);
+      setShowUpdateModal(false); // Đóng modal update
+
+      // Hiển thị thông báo
+      setShowNotification(true);
+
+      // Đợi 2 giây rồi đóng thông báo
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   const handleStatusChange = async (appointmentId, newStatus) => {
@@ -371,18 +388,22 @@ const StaffAppointment = () => {
             <div className="update-form">
               <div className="form-group">
                 <label>Triệu chứng</label>
-                <textarea
+                <input
+                  type="text"
                   value={symptoms}
                   onChange={(e) => setSymptoms(e.target.value)}
                   placeholder="Nhập triệu chứng"
+                  className="form-input"
                 />
               </div>
               <div className="form-group">
                 <label>Ghi chú</label>
-                <textarea
+                <input
+                  type="text" 
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Nhập ghi chú"
+                  className="form-input"
                 />
               </div>
             </div>
@@ -395,6 +416,17 @@ const StaffAppointment = () => {
                 Hủy bỏ
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal thông báo */}
+      {showNotification && (
+        <div className="notification-modal-overlay">
+          <div className="notification-modal">
+            <div className="notification-icon">✓</div>
+            <h3>Cập nhật thành công!</h3>
+            <p>Thông tin đã được lưu</p>
           </div>
         </div>
       )}

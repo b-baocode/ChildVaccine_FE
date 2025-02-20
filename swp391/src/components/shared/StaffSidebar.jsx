@@ -36,7 +36,7 @@ const StaffSidebar = () => {
         <img src="https://vnvc.vn/img/logo-tet-vnvc.png" alt="Logo" className="sidebar-logo" />
         <h2>Trung tâm Tiêm chủng</h2>
       </div>
-      
+
       <nav className="sidebar-nav">
         {menuItems.map((item) => (
           <Link
@@ -52,7 +52,7 @@ const StaffSidebar = () => {
 
       <div className="sidebar-footer">
         <div className="staff-info">
-          <img src="/staff-avatar.png" alt="Staff" className="staff-avatar" />
+          <img src="https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" alt="Staff" className="staff-avatar" />
           <div className="staff-details">
             <p className="staff-name">Nhân viên y tế</p>
             <p className="staff-role">Y tá tiêm chủng</p>
