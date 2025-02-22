@@ -11,6 +11,28 @@ const customerService = {
         throw error;
       }
     },
+
+    getCustomerProfile: async (userId) => {
+      try {
+          const token = localStorage.getItem('token');
+          const response = await fetch(`${API_BASE_URL}/customers/${userId}/profile`, {
+              method: 'GET',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+              }
+          });
+
+          if (!response.ok) {
+              throw new Error('Failed to fetch customer profile');
+          }
+
+          return await response.json();
+      } catch (error) {
+          console.error('Error fetching customer profile:', error);
+          throw error;
+      }
+  },
   
     // Lấy danh sách hồ sơ trẻ của customer
     getCustomerChildren: async (customerId) => {

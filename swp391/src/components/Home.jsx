@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Carousel } from 'react-responsive-carousel';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import {
     FaCalendarAlt,
@@ -18,8 +20,6 @@ import {
     FaShoppingCart,
     FaSearch
 } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import LogoutConfirmDialog from './LogoutConfirmDialog';
 
 
@@ -27,23 +27,29 @@ const Home = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
-    const dropdownRef = useRef(null);
     const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+    const dropdownRef = useRef(null);
 
+    const TopBanner = () => (
+        <div className="top-banner">
+            <div className="banner-content">
+                <span>Trung tâm tiêm chủng Long Châu</span>
+                <a href="#" className="banner-link">Xem chi tiết</a>
+            </div>
+            <div className="banner-actions">
+                <a href="#" className="banner-action">
+                    <FaMobileAlt /> Tải ứng dụng
+                </a>
+                <a href="tel:18006928" className="banner-action">
+                    <FaPhone /> Tư vấn ngay: 1800 6928
+                </a>
+            </div>
+        </div>
+    );
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setShowDropdown(false);
-            }
-        };
-
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
+        console.log('Current user in Home:', user); // Debug log
+    }, [user]);
 
 
     const handleLoginClick = () => {
@@ -51,15 +57,36 @@ const Home = () => {
     };
 
 
-    const handleLogoutClick = () => {
-        setShowLogoutDialog(true);
-        setShowDropdown(false);
+    const handleLogoutClick = async () => {
+        try {
+            setShowLogoutDialog(true);
+            setShowDropdown(false);
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
     };
 
 
-    const handleLogoutConfirm = () => {
-        logout();
-        setShowLogoutDialog(false);
+    const handleLogoutConfirm = async () => {
+        try {
+            await logout();
+            setShowLogoutDialog(false);
+            // Optional: Show logout success message
+            const modal = document.createElement('div');
+            modal.className = 'success-modal';
+            modal.innerHTML = `
+                <div class="success-content">
+                    <h3>Đăng xuất thành công</h3>
+                    <p>Hẹn gặp lại!</p>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            setTimeout(() => {
+                document.body.removeChild(modal);
+            }, 1500);
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
     };
 
 
@@ -93,17 +120,11 @@ const Home = () => {
             
             loginBtn.addEventListener('click', () => {
                 document.body.removeChild(modalOverlay);
-                navigate('/login');
+                navigate('/login', { state: { from: '/register-vaccination' } });
             });
 
             cancelBtn.addEventListener('click', () => {
                 document.body.removeChild(modalOverlay);
-            });
-
-            modalOverlay.addEventListener('click', (e) => {
-                if (e.target === modalOverlay) {
-                    document.body.removeChild(modalOverlay);
-                }
             });
         } else {
             navigate('/register-vaccination');
@@ -113,18 +134,31 @@ const Home = () => {
 
     return (
         <div className="home">
+            <TopBanner />       
+
             <div className="header">
-                <div className="logo">
+                <div className="logo" onClick={() => navigate('/')}>
                     <img src="https://vnvc.vn/img/logo-tet-vnvc.png" alt="VNVC Logo" />
                 </div>
                 <div className="header-actions">
-                    <div className="hotline">
+                <div className="hotline">
                         Hotline: 028 7102 6595
                         <div className="sub-text">Mở cửa 7h30 - 17h00 / T2 - CN xuyên trưa*</div>
                     </div>
+                    {/* Add auth buttons in header */}
+                    {!user ? (
+                        <div className="auth-buttons">
+                            <button className="login-btn" onClick={() => navigate('/login')}>Đăng nhập</button>
+                            <button className="register-btn" onClick={() => navigate('/register')}>Đăng ký</button>
+                        </div>
+                    ) : (
+                        <div className="user-welcome">
+                            <span>Xin chào, {user.fullName}</span>
+                            {/* Add any customer-specific quick actions here */}
+                        </div>
+                    )}
                 </div>
             </div>
-
 
             <nav className="main-nav">
                 <ul>
@@ -134,11 +168,15 @@ const Home = () => {
                     <li onClick={() => navigate('/price-list')}>BẢNG GIÁ</li>
                     <li onClick={() => navigate('/disease')}>BỆNH HỌC</li>
                     <li onClick={() => navigate('/news')}>TIN TỨC</li>
-                    <li onClick={() => navigate('/child-profiles')}>HỒ SƠ TRẺ EM</li>
-                    <li onClick={() => navigate('/react-report')}>PHẢN ỨNG SAU TIÊM</li>
+                    {/* Only show these items if user is logged in and is a CUSTOMER */}
+                    {user && user.role === 'CUSTOMER' && (
+                        <>
+                            <li onClick={() => navigate('/child-profiles')}>HỒ SƠ TRẺ EM</li>
+                            <li onClick={() => navigate('/react-report')}>PHẢN ỨNG SAU TIÊM</li>
+                        </>
+                    )}
                 </ul>
             </nav>
-
 
             <div className="search-container">
                 <input
@@ -159,7 +197,7 @@ const Home = () => {
                             <span>{user.fullName}</span>
                             <FaCaretDown className={`dropdown-icon ${showDropdown ? 'rotate' : ''}`} />
                         </button>
-                       
+                        
                         {showDropdown && (
                             <div className="dropdown-menu">
                                 <div className="dropdown-header">
@@ -167,20 +205,32 @@ const Home = () => {
                                     <div className="user-info">
                                         <span className="user-name">{user.fullName}</span>
                                         <span className="user-email">{user.email}</span>
+                                        <span className="user-role">
+                                            {user.role === 'ADMIN' ? 'Quản trị viên' :
+                                             user.role === 'STAFF' ? 'Nhân viên' : 'Khách hàng'}
+                                        </span>
                                     </div>
                                 </div>
                                 <div className="dropdown-divider"></div>
-                                <button
-                                    className="dropdown-item"
-                                    onClick={() => navigate('/profile')}
-                                >
+                                {/* Role-specific menu items */}
+                                {user.role === 'ADMIN' && (
+                                    <button className="dropdown-item" onClick={() => navigate('/admin')}>
+                                        <FaUser className="item-icon" />
+                                        Quản lý hệ thống
+                                    </button>
+                                )}
+                                {user.role === 'STAFF' && (
+                                    <button className="dropdown-item" onClick={() => navigate('/staff')}>
+                                        <FaUser className="item-icon" />
+                                        Trang nhân viên
+                                    </button>
+                                )}
+                                {/* Common menu items */}
+                                <button className="dropdown-item" onClick={() => navigate('/profile')}>
                                     <FaUser className="item-icon" />
                                     Thông tin người dùng
                                 </button>
-                                <button
-                                    className="dropdown-item logout-item"
-                                    onClick={handleLogoutClick}
-                                >
+                                <button className="dropdown-item logout-item" onClick={handleLogoutClick}>
                                     <FaSignOutAlt className="item-icon" />
                                     Đăng xuất
                                 </button>
@@ -194,7 +244,6 @@ const Home = () => {
                 )}
             </div>
 
-
             <div className="vaccine-section">
                 <div className="vaccine-banner-wrapper">
                     <h1>TRUNG TÂM TIÊM CHỦNG VẮC XIN</h1>
@@ -204,7 +253,6 @@ const Home = () => {
                     </button>
                 </div>
             </div>
-
 
             <div className="slider-section">
                 <Carousel
@@ -230,7 +278,6 @@ const Home = () => {
                 </Carousel>
             </div>
 
-
             {showLogoutDialog && (
                 <LogoutConfirmDialog
                     onConfirm={handleLogoutConfirm}
@@ -242,22 +289,7 @@ const Home = () => {
 };
 
 
-const TopBanner = () => (
-    <div className="top-banner">
-        <div className="banner-content">
-            <span>Trung tâm tiêm chủng Long Châu</span>
-            <a href="#" className="banner-link">Xem chi tiết</a>
-        </div>
-        <div className="banner-actions">
-            <a href="#" className="banner-action">
-                <FaMobileAlt /> Tải ứng dụng
-            </a>
-            <a href="tel:18006928" className="banner-action">
-                <FaPhone /> Tư vấn ngay: 1800 6928
-            </a>
-        </div>
-    </div>
-);
+
 
 
 export default Home;

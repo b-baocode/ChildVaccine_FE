@@ -5,71 +5,11 @@ import '../styles/VaccineRegistration.css';
 import vaccineService from '../service/vaccineService';
 import appointmentService from '../service/appointmentService';
 import customerService from '../service/customerService';
+import { useAuth } from '../context/AuthContext';
+import sessionService from '../service/sessionService';
 
 const VaccineRegistration = () => {
     const navigate = useNavigate();
-
-    const fakeVaccines = [
-        {
-            id: 'V001',
-            name: 'Hexaxim',
-            description: 'Vắc xin 6 trong 1',
-            manufacturer: 'Sanofi/Pháp',
-            price: 100.00,
-            shot: 4
-          },
-          {
-            id: 'V002',
-            name: 'Rotarix',
-            description: 'Vắc xin phòng tiêu chảy do rota virus',
-            manufacturer: 'GSK/Bỉ',
-            price: 80.00,
-            shot: 2
-          },
-          {
-            id: 'V003',
-            name: 'Varilrix',
-            description: 'Vắc xin phòng bệnh thủy đậu',
-            manufacturer: 'GSK/Bỉ',
-            price: 90.00,
-            shot: 2
-          },
-          {
-            id: 'V004',
-            name: 'Rotateq',
-            description: 'Vắc xin phòng tiêu chảy do rota virus',
-            manufacturer: 'Mỹ',
-            price: 85.00,
-            shot: 3
-          }
-        // Thêm các vaccine khác tương tự
-    ];
-      
-    const fakePackages = [
-        {
-            id: 'PKG001',
-            name: 'Gói 1: Hexaxim – Rotarix – Varilrix',
-            description: 'Gói vắc xin phòng bệnh tổng hợp',
-            price: 500.00,
-            vaccines: ['V001', 'V002', 'V003']
-          },
-          {
-            id: 'PKG002',
-            name: 'Gói 2: Hexaxim – Rotateq – Varilrix',
-            description: 'Gói vắc xin phòng bệnh tổng hợp',
-            price: 550.00,
-            vaccines: ['V001', 'V004', 'V003']
-          },
-          {
-            id: 'PKG003',
-            name: 'Gói 3: Infanrix Hexa – Rotateq – Varilrix',
-            description: 'Gói vắc xin phòng bệnh tổng hợp',
-            price: 600.00,
-            vaccines: ['V005', 'V004', 'V003']
-          }
-          
-        // Thêm các gói khác tương tự
-    ];
 
     const [formData, setFormData] = useState({
         childProfile: '',
@@ -86,24 +26,43 @@ const VaccineRegistration = () => {
     const [childProfiles, setChildProfiles] = useState([]);
     const [loading, setLoading] = useState(false); // Trạng thái loading
     const [error, setError] = useState(null); // Lưu thông tin lỗi
-    
+    const { user } = useAuth();
+    const [guardianInfo, setGuardianInfo] = useState({
+        cusId: '',
+        fullName: '',
+        phone: '',
+        address: ''
+    });
 
     // State cho UI/UX
     const [selectedType, setSelectedType] = useState(''); // 'single' or 'package'
     const [showConfirmModal, setShowConfirmModal] = useState(false); // Hiển thị modal xác nhận
     const [showSuccessModal, setShowSuccessModal] = useState(false); // Hiển thị modal thành công
+    const [selectedItemName, setSelectedItemName] = useState('');
 
     // Fetch data khi component mount
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
+                const sessionData = await sessionService.checkSession();
+            
+                // Set guardian info from session
+                if (sessionData) {
+                    setGuardianInfo({
+                        cusId: sessionData.cusId,
+                        fullName: sessionData.user.fullName,
+                        phone: sessionData.user.phone,
+                        address: sessionData.address
+                    });
+                }
+                
                 // Fetch customer info
                 const customer = await customerService.getCurrentCustomer();
                 setCustomerInfo(customer);
 
                 // Fetch child profiles
-                const children = await customerService.getCustomerChildren(customer.id);
+                const children = await customerService.getCustomerChildren(customer.cusId);
                 setChildProfiles(children);
 
                 // Fetch vaccines and packages
@@ -120,8 +79,12 @@ const VaccineRegistration = () => {
             }
         };
 
-        fetchData();
-    }, []);
+        if (user) {
+            fetchData();
+        } else {
+            navigate('/login');
+        }
+    }, [user, navigate]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -168,13 +131,18 @@ const VaccineRegistration = () => {
         setFormData(prev => ({
             ...prev,
             vaccineType: type,
-            selectedItem: null
+            selectedItem: null // Reset selected item when switching types
         }));
     };
 
     // Xử lý chọn vaccine/gói cụ thể
-    const handleSelectItem = (itemId) => {
-        setFormData(prev => ({...prev, selectedItem: itemId}));
+    const handleSelectItem = (item) => {
+        const itemId = selectedType === 'single' ? item.vaccineId : item.packageId;
+        setFormData(prev => ({
+            ...prev,
+            selectedItem: prev.selectedItem === itemId ? null : itemId
+        }));
+        setSelectedItemName(item.name);
     };
 
     const ConfirmationModal = () => (
@@ -184,42 +152,40 @@ const VaccineRegistration = () => {
                 <div className="confirm-section">
                     <h3>Thông tin người giám hộ</h3>
                     <div className="info-grid">
-                        <div className="info-item">
+                        <div key="guardian-id" className="info-item">
                             <span className="label">ID:</span>
-                            <span className="value">GH001</span>
+                            <span className="value">{guardianInfo.cusId}</span>
                         </div>
-                        <div className="info-item">
+                        <div key="guardian-name" className="info-item">
                             <span className="label">Họ và tên:</span>
-                            <span className="value">Nguyễn Văn A</span>
+                            <span className="value">{guardianInfo.fullName}</span>
                         </div>
-                        <div className="info-item">
+                        <div key="guardian-phone" className="info-item">
                             <span className="label">Số điện thoại:</span>
-                            <span className="value">0123456789</span>
+                            <span className="value">{guardianInfo.phone}</span>
                         </div>
-                        <div className="info-item">
+                        <div key="guardian-address" className="info-item">
                             <span className="label">Địa chỉ:</span>
-                            <span className="value">123 Đường ABC, Quận 1, TP.HCM</span>
+                            <span className="value">{guardianInfo.address}</span>
                         </div>
                     </div>
                 </div>
                 <div className="confirm-section">
                     <h3>Thông tin đăng ký tiêm</h3>
                     <div className="info-grid">
-                        <div className="info-item">
+                        <div key="child-profile" className="info-item">
                             <span className="label">Hồ sơ trẻ:</span>
                             <span className="value">{formData.childProfile}</span>
                         </div>
-                        <div className="info-item">
-                            <span className="label">Loại vắc xin:</span>
-                            <span className="value">
-                                {selectedType === 'package' ? 'Vắc xin gói' : 'Vắc xin lẻ'}
-                            </span>
+                        <div key="selected-item" className="info-item">
+                            <span className="label">Vắc xin đã chọn:</span>
+                            <span className="value">{selectedItemName}</span>
                         </div>
-                        <div className="info-item">
+                        <div key="appointment-date" className="info-item">
                             <span className="label">Ngày hẹn:</span>
                             <span className="value">{formData.appointmentDate}</span>
                         </div>
-                        <div className="info-item">
+                        <div key="time-slot" className="info-item">
                             <span className="label">Khung giờ:</span>
                             <span className="value">
                                 {formData.timeSlot === '0730' && '07:30 - 08:00'}
@@ -284,7 +250,7 @@ const VaccineRegistration = () => {
                 <div className="info-row">
                     <div className="info-field">
                         <label>ID:</label>
-                        <div className="info-value">{customerInfo.id}</div>
+                        <div className="info-value">{customerInfo.cusId}</div>
                     </div>
                     <div className="info-field">
                         <label>Họ và tên:</label>
@@ -315,10 +281,10 @@ const VaccineRegistration = () => {
                 required
                 className="profile-select"
             >
-                <option value="">-- Chọn hồ sơ trẻ --</option>
+                <option key="default" value="">-- Chọn hồ sơ trẻ --</option>
                 {childProfiles.map(child => (
-                    <option key={child.id} value={child.id}>
-                        {child.id} - {child.fullName}
+                    <option key={child.childId} value={child.childId}>
+                        {child.childId} - {child.fullName}
                     </option>
                 ))}
             </select>
@@ -333,9 +299,9 @@ const VaccineRegistration = () => {
             <div className="item-grid">
                 {items.map(item => (
                     <div 
-                        key={item.id}
-                        className={`item-card ${formData.selectedItem === item.id ? 'selected' : ''}`}
-                        onClick={() => handleSelectItem(item.id)}
+                    key={selectedType === 'single' ? item.vaccineId : item.packageId}
+                    className={`item-card ${formData.selectedItem === (selectedType === 'single' ? item.vaccineId : item.packageId) ? 'selected' : ''}`}
+                    onClick={() => handleSelectItem(item)}
                     >
                         <h4>{item.name}</h4>
                         <p>{item.description}</p>

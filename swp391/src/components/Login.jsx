@@ -3,14 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Login.css';
 import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
-
-// Tài khoản mẫu với thêm thông tin
-const sampleAccount = {
-    email: "admin@gmail.com",
-    password: "admin123",
-    fullName: "Admin VNVC",
-    role: "admin"
-};
+import authService from '../service/AuthenService';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -29,41 +22,51 @@ const Login = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (formData.email === sampleAccount.email && 
-            formData.password === sampleAccount.password) {
-            // Đăng nhập thành công
-            const userData = {
-                email: sampleAccount.email,
-                fullName: sampleAccount.fullName,
-                role: sampleAccount.role
-            };
-            login(userData);
-            
-            // Hiển thị thông báo thành công
-            const modal = document.createElement('div');
-            modal.className = 'success-modal';
-            modal.innerHTML = `
-                <div class="success-content">
-                    <h3>Đăng nhập thành công</h3>
-                    <p>Xin chào, ${userData.fullName}</p>
-                </div>
-            `;
-            document.body.appendChild(modal);
+        setError('');
+        
+        try {
+        const response = await authService.login(formData);
+        console.log('Login response:', response);
 
-            // Thêm hiệu ứng fade out trước khi xóa modal
-            setTimeout(() => {
-                modal.style.opacity = '0';
-                modal.style.transition = 'opacity 0.3s ease';
-                setTimeout(() => {
-                    document.body.removeChild(modal);
-                    navigate('/');
-                }, 300);
-            }, 1700);
-        } else {
-            setError('Email hoặc mật khẩu không chính xác!');
+        if (!response || !response.body || !response.body.user) {
+            throw new Error('Invalid response structure');
         }
+
+        const { user } = response.body;
+        await login(response);
+        
+        // Show success modal and navigate
+        const modal = document.createElement('div');
+        modal.className = 'success-modal';
+        modal.innerHTML = `
+            <div class="success-content">
+                <h3>Đăng nhập thành công</h3>
+                <p>Xin chào, ${user.fullName}</p>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        setTimeout(() => {
+            modal.style.opacity = '0';
+            modal.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => {
+                document.body.removeChild(modal);
+                // Navigate based on user role and stored redirectUrl
+                if (user.role === 'ADMIN') {
+                    navigate('/admin');
+                } else if (user.role === 'STAFF') {
+                    navigate('/staff');
+                } else {
+                    navigate('/', { replace: true });
+                }
+            }, 300);
+        }, 1700);
+    } catch (err) {
+        console.error('Login error:', err);
+        setError('Email hoặc mật khẩu không chính xác!');
+    }
     };
 
     const toggleForm = () => {

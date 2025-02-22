@@ -1303,5 +1303,33 @@
     }
 }
 
+.auth-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-left: 1rem;
+}
 
+.auth-buttons button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.auth-buttons .login-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.auth-buttons .register-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.user-role {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
 
