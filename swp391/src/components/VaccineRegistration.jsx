@@ -15,8 +15,9 @@ const VaccineRegistration = () => {
         childProfile: '',
         appointmentDate: '',
         timeSlot: '',
-        vaccineType: '', // 'single' hoặc 'package'
-        selectedItem: null // ID của vaccine/gói được chọn
+        vaccineType: '',
+        selectedItem: null,
+        appointmentId: '' // Add this
     });
 
     // State cho dữ liệu chính
@@ -101,16 +102,60 @@ const VaccineRegistration = () => {
 
     const handleConfirmRegistration = async () => {
         try {
-            const response = await appointmentService.registerVaccination(formData);
-            console.log('Registration successful:', response);
-            setShowConfirmModal(false);
-            setShowSuccessModal(true);
-            setTimeout(() => {
-                navigate('/');
-            }, 2000);
+            // Format time slot from "0730" to "07:30:00"
+            const formatTimeSlot = (timeSlot) => {
+                const hour = timeSlot.substring(0, 2);
+                const minute = timeSlot.substring(2);
+                return `${hour}:${minute}:00`;
+            };
+    
+            // Validate required fields
+            if (!formData.childProfile || !formData.appointmentDate || !formData.timeSlot || !formData.selectedItem) {
+                throw new Error('Vui lòng điền đầy đủ thông tin');
+            }
+    
+            // Prepare registration data
+            const registrationData = {
+                customerId: guardianInfo.cusId,
+                childId: formData.childProfile,
+                vaccineId: selectedType === 'single' ? formData.selectedItem : null,
+                packageId: selectedType === 'package' ? formData.selectedItem : null,
+                appointmentDate: formData.appointmentDate,
+                appointmentTime: formatTimeSlot(formData.timeSlot)
+            };
+    
+            console.log('Sending registration data:', registrationData); // Debug log
+    
+            // Send registration data to backend
+            const result = await appointmentService.registerVaccination(registrationData);
+        
+            if (result.ok) {
+                setShowConfirmModal(false);
+                setShowSuccessModal(true);
+                // Optionally store appointment ID for display
+                setFormData(prev => ({
+                    ...prev,
+                    appointmentId: result.appointment.appId // Add this to state if needed
+                }));
+                setTimeout(() => {
+                    setFormData({
+                        childProfile: '',
+                        appointmentDate: '',
+                        timeSlot: '',
+                        vaccineType: '',
+                        selectedItem: null,
+                        appointmentId: '' // Reset if added
+                    });
+                    setShowSuccessModal(false);
+                    navigate('/');
+                }, 2000);
+            } else {
+                throw new Error(result.error || 'Registration failed');
+            }
         } catch (err) {
             console.error('Registration failed:', err);
-            // Xử lý lỗi ở đây
+            setError(err.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+            setShowConfirmModal(false);
         }
     };
 
@@ -231,6 +276,9 @@ const VaccineRegistration = () => {
                 <div className="success-icon">✓</div>
                 <h2>Đăng ký thành công!</h2>
                 <p>Thông tin đăng ký của bạn đã được ghi nhận.</p>
+                {formData.appointmentId && (
+                    <p>Mã cuộc hẹn: <strong>{formData.appointmentId}</strong></p>
+                )}
                 <button
                     className="success-btn"
                     onClick={handleSuccessClose}
@@ -240,7 +288,6 @@ const VaccineRegistration = () => {
             </div>
         </div>
     );
-
     // Cập nhật phần render thông tin guardian
     const renderGuardianInfo = () => {
         if (!customerInfo) return null;
