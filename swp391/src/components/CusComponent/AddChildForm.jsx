@@ -1,34 +1,47 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaSave } from 'react-icons/fa';
+import childService from '../../service/childService';
+import sessionService from '../../service/sessionService';
 import '../../styles/CusStyles/AddChildForm.css';
 
 const AddChildForm = () => {
   const navigate = useNavigate();
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+    const [error, setError] = useState('');
+    const [childInfo, setChildInfo] = useState({
+        fullName: '',
+        dateOfBirth: '',
+        gender: 'MALE',
+        height: '',
+        weight: '',
+        bloodType: '',
+        allergies: '',
+        healthNote: ''  // Changed from medicalConditions to match backend
+    });
 
-  const [childInfo, setChildInfo] = useState({
-    name: '',
-    birthday: '',
-    gender: 'male',
-    bloodType: '',
-    height: '',
-    weight: '',
-    allergies: '',
-    medicalConditions: ''
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Xử lý logic thêm hồ sơ trẻ ở đây
-    console.log('Child info submitted:', childInfo);
-    // Hiển thị thông báo thành công
-    setShowSuccessMessage(true);
-    // Sau khi thêm thành công, quay lại trang trước đó sau 2 giây
-    setTimeout(() => {
-      navigate(-1);
-    }, 2000);
-  };
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+          // Format the data before sending
+          const formattedData = {
+              ...childInfo,
+              height: parseFloat(childInfo.height) || 0,
+              weight: parseFloat(childInfo.weight) || 0
+          };
+  
+          // The customerId will be added in the service layer
+          await childService.addChildProfile(formattedData);
+          
+          setShowSuccessMessage(true);
+          setTimeout(() => {
+              navigate(-1);
+          }, 2000);
+      } catch (err) {
+          setError(err.message || 'Có lỗi xảy ra khi thêm hồ sơ trẻ');
+          console.error('Error adding child:', err);
+      }
+    };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,8 +78,8 @@ const AddChildForm = () => {
             <label>Họ và tên</label>
             <input
               type="text"
-              name="name"
-              value={childInfo.name}
+              name="fullName"  // Changed from name
+              value={childInfo.fullName}
               onChange={handleChange}
               required
             />
@@ -77,8 +90,8 @@ const AddChildForm = () => {
               <label>Ngày sinh</label>
               <input
                 type="date"
-                name="birthday"
-                value={childInfo.birthday}
+                name="dateOfBirth"  // Changed from birthday
+                value={childInfo.dateOfBirth}
                 onChange={handleChange}
                 required
               />
@@ -90,8 +103,8 @@ const AddChildForm = () => {
                 value={childInfo.gender}
                 onChange={handleChange}
               >
-                <option value="male">Nam</option>
-                <option value="female">Nữ</option>
+                <option value="MALE">Nam</option>  // Updated values to match backend
+                <option value="FEMALE">Nữ</option>
               </select>
             </div>
           </div>
@@ -138,23 +151,23 @@ const AddChildForm = () => {
         <div className="form-section">
           <h3>Thông tin y tế</h3>
           <div className="form-group">
-            <label>Dị ứng (nếu có)</label>
-            <textarea
-              name="allergies"
-              value={childInfo.allergies}
-              onChange={handleChange}
-              placeholder="Liệt kê các dị ứng..."
-            />
+              <label>Dị ứng (nếu có)</label>
+              <textarea
+                  name="allergies"
+                  value={childInfo.allergies}
+                  onChange={handleChange}
+                  placeholder="Các dị ứng nếu có..."
+              />
           </div>
 
           <div className="form-group">
-            <label>Tiền sử bệnh</label>
-            <textarea
-              name="medicalConditions"
-              value={childInfo.medicalConditions}
-              onChange={handleChange}
-              placeholder="Các bệnh đã mắc..."
-            />
+              <label>Ghi chú sức khỏe</label>
+              <textarea
+                  name="healthNote"
+                  value={childInfo.healthNote}
+                  onChange={handleChange}
+                  placeholder="Thông tin sức khỏe khác..."
+              />
           </div>
         </div>
 

@@ -7,11 +7,13 @@
   flex-direction: column;
 }
 
+
 .container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 2rem;
 }
+
 
 /* Top Banner */
 .top-banner {
@@ -20,16 +22,19 @@
   padding: 0.5rem 2rem;
 }
 
+
 .banner-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+
 .banner-actions {
   display: flex;
   gap: 10px;
 }
+
 
 .banner-action {
   color: white;
@@ -39,11 +44,13 @@
   gap: 5px;
 }
 
+
 /* Main Content */
 .main-content {
   display: flex;
   flex: 1;
 }
+
 
 /* Sidebar */
 .sidebar {
@@ -53,11 +60,13 @@
   padding: 20px;
 }
 
+
 .menu {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+
 
 .menu-item {
   display: flex;
@@ -70,9 +79,11 @@
   transition: background-color 0.3s;
 }
 
+
 .menu-item:hover {
   background-color: #495057;
 }
+
 
 /* Main Grid */
 .main-grid {
@@ -80,23 +91,28 @@
   padding: 20px;
 }
 
+
 .table-container {
   overflow-x: auto;
 }
+
 
 table {
   width: 100%;
   border-collapse: collapse;
 }
 
+
 th, td {
   padding: 10px;
   border: 1px solid #dee2e6;
 }
 
+
 th {
   background-color: #e9ecef;
 }
+
 
 /* Form Styles */
 .child-profile-form {
@@ -106,11 +122,13 @@ th {
   margin-bottom: 20px;
 }
 
+
 .child-profile-form input {
   padding: 10px;
   border: 1px solid #dee2e6;
   border-radius: 5px;
 }
+
 
 .child-profile-form button {
   padding: 10px;
@@ -121,9 +139,12 @@ th {
   cursor: pointer;
 }
 
+
 .child-profile-form button:hover {
   background-color: #163a8c;
 }
+
+
 
 
 .profile-row {
@@ -131,9 +152,13 @@ th {
 }
 
 
+
+
 .profile-row:hover {
   background: #f8f9fa;
 }
+
+
 
 
 .vaccinations-row {
@@ -142,14 +167,20 @@ th {
 }
 
 
+
+
 .vaccinations-row.show {
   display: table-row;
 }
 
 
+
+
 .vaccinations-details {
   padding: 1.5rem;
 }
+
+
 
 
 .vaccinations-details h4 {
@@ -160,12 +191,16 @@ th {
 }
 
 
+
+
 .vaccinations-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
   background: white;
 }
+
+
 
 
 .vaccinations-table th,
@@ -176,6 +211,8 @@ th {
 }
 
 
+
+
 .vaccinations-table th {
   background: #f8f9fa;
   color: #495057;
@@ -183,9 +220,13 @@ th {
 }
 
 
+
+
 .vaccinations-table td {
   color: #333;
 }
+
+
 
 
 /* ID và Mã cuộc hẹn columns */
@@ -197,16 +238,22 @@ th {
 }
 
 
+
+
 /* Ngày tiêm column */
 .vaccinations-table td:nth-child(3) {
   color: #666;
 }
 
 
+
+
 /* Triệu chứng column */
 .vaccinations-table td:nth-child(4) {
   color: #f57c00;
 }
+
+
 
 
 /* Ghi chú column */
@@ -216,9 +263,13 @@ th {
 }
 
 
+
+
 .vaccinations-table tr:hover {
   background-color: #f5f5f5;
 }
+
+
 
 
 .no-vaccinations {
@@ -229,6 +280,8 @@ th {
   background: #f8f9fa;
   border-radius: 8px;
 }
+
+
 
 
 /* Responsive */
@@ -249,6 +302,8 @@ th {
 }
 
 
+
+
 .login-dialog-overlay {
   position: fixed;
   top: 0;
@@ -264,6 +319,8 @@ th {
 }
 
 
+
+
 .login-dialog {
   background: white;
   padding: 2.5rem;
@@ -277,12 +334,16 @@ th {
 }
 
 
+
+
 .login-dialog h2 {
   color: #1e4db7;
   margin-bottom: 1.2rem;
   font-size: 1.8rem;
   font-weight: 600;
 }
+
+
 
 
 .login-dialog p {
@@ -293,11 +354,15 @@ th {
 }
 
 
+
+
 .dialog-buttons {
   display: flex;
   gap: 1.2rem;
   justify-content: center;
 }
+
+
 
 
 .dialog-buttons button {
@@ -316,11 +381,15 @@ th {
 }
 
 
+
+
 .login-btn {
   background: #1e4db7;
   color: white;
   box-shadow: 0 4px 12px rgba(30, 77, 183, 0.2);
 }
+
+
 
 
 .login-btn:hover {
@@ -330,6 +399,8 @@ th {
 }
 
 
+
+
 .cancel-btn {
   background: #f8f9fa;
   color: #495057;
@@ -337,11 +408,15 @@ th {
 }
 
 
+
+
 .cancel-btn:hover {
   background: #e9ecef;
   color: #212529;
   transform: translateY(-2px);
 }
+
+
 
 
 @keyframes fadeIn {
@@ -352,6 +427,8 @@ th {
     opacity: 1;
   }
 }
+
+
 
 
 @keyframes slideIn {
@@ -366,6 +443,8 @@ th {
 }
 
 
+
+
 /* Responsive */
 @media (max-width: 576px) {
   .login-dialog {
@@ -374,9 +453,13 @@ th {
   }
 
 
+
+
   .dialog-buttons {
     flex-direction: column;
   }
+
+
 
 
   .dialog-buttons button {
@@ -384,15 +467,21 @@ th {
   }
 
 
+
+
   .login-dialog h2 {
     font-size: 1.5rem;
   }
+
+
 
 
   .login-dialog p {
     font-size: 1rem;
   }
 }
+
+
 
 
 .view-reactions-btn {
@@ -408,12 +497,16 @@ th {
 }
 
 
+
+
 .view-reactions-btn:hover {
   background: #1e4db7;
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 2px 8px rgba(30, 77, 183, 0.2);
 }
+
+
 
 
 .reactions-modal-overlay {
@@ -431,6 +524,8 @@ th {
 }
 
 
+
+
 .reactions-modal {
   background: white;
   border-radius: 12px;
@@ -442,6 +537,8 @@ th {
 }
 
 
+
+
 .reactions-modal-header {
   padding: 1.5rem;
   border-bottom: 1px solid #dee2e6;
@@ -451,11 +548,15 @@ th {
 }
 
 
+
+
 .reactions-modal-header h3 {
   color: #1e4db7;
   margin: 0;
   font-size: 1.3rem;
 }
+
+
 
 
 .close-modal-btn {
@@ -469,14 +570,20 @@ th {
 }
 
 
+
+
 .close-modal-btn:hover {
   color: #333;
 }
 
 
+
+
 .reactions-modal-content {
   padding: 1.5rem;
 }
+
+
 
 
 .severity-badge {
@@ -487,10 +594,14 @@ th {
 }
 
 
+
+
 .severity-badge.nhẹ {
   background: #e8f5e9;
   color: #43a047;
 }
+
+
 
 
 .severity-badge.trung_bình {
@@ -499,10 +610,14 @@ th {
 }
 
 
+
+
 .severity-badge.nặng {
   background: #ffebee;
   color: #e53935;
 }
+
+
 
 
 .reactions-table {
@@ -510,6 +625,8 @@ th {
   border-collapse: collapse;
   margin-top: 1rem;
 }
+
+
 
 
 .reactions-table th,
@@ -520,11 +637,15 @@ th {
 }
 
 
+
+
 .reactions-table th {
   background: #f8f9fa;
   font-weight: 600;
   color: #495057;
 }
+
+
 
 
 .no-reactions {
@@ -535,12 +656,16 @@ th {
 }
 
 
+
+
 /* Page Layout */
 .child-profiles-page {
   min-height: 100vh;
   background: #f8f9fa;
   padding: 2rem;
 }
+
+
 
 
 /* Header Section */
@@ -556,12 +681,16 @@ th {
 }
 
 
+
+
 .page-header h1 {
   color: #1e4db7;
   font-size: 2rem;
   font-weight: 600;
   margin: 0;
 }
+
+
 
 
 .back-btn {
@@ -579,12 +708,16 @@ th {
 }
 
 
+
+
 .back-btn:hover {
   background: #1e4db7;
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(30, 77, 183, 0.2);
 }
+
+
 
 
 .add-profile-btn {
@@ -602,11 +735,15 @@ th {
 }
 
 
+
+
 .add-profile-btn:hover {
   background: #163a8c;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(30, 77, 183, 0.2);
 }
+
+
 
 
 /* Main Table */
@@ -618,9 +755,13 @@ th {
 }
 
 
+
+
 .table-container {
   padding: 1rem;
 }
+
+
 
 
 table {
@@ -628,6 +769,8 @@ table {
   border-collapse: separate;
   border-spacing: 0;
 }
+
+
 
 
 th {
@@ -640,6 +783,8 @@ th {
 }
 
 
+
+
 td {
   padding: 1rem;
   border-bottom: 1px solid #dee2e6;
@@ -647,9 +792,13 @@ td {
 }
 
 
+
+
 .profile-row:hover {
   background: #f8f9fa;
 }
+
+
 
 
 /* Vaccination Details */
@@ -659,10 +808,14 @@ td {
 }
 
 
+
+
 .vaccinations-row.show {
   display: table-row;
   animation: fadeIn 0.3s ease;
 }
+
+
 
 
 .vaccinations-details {
@@ -672,6 +825,8 @@ td {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
+
+
 
 
 .vaccinations-details h4 {
@@ -685,12 +840,16 @@ td {
 }
 
 
+
+
 .vaccinations-table {
   width: 100%;
   border: 1px solid #dee2e6;
   border-radius: 8px;
   overflow: hidden;
 }
+
+
 
 
 .vaccinations-table th {
@@ -700,10 +859,14 @@ td {
 }
 
 
+
+
 .vaccinations-table td {
   padding: 1.2rem 1rem;
   background: white;
 }
+
+
 
 
 /* Buttons */
@@ -722,6 +885,8 @@ td {
 }
 
 
+
+
 .view-vaccinations-btn:hover,
 .view-reactions-btn:hover {
   background: #1e4db7;
@@ -729,6 +894,8 @@ td {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(30, 77, 183, 0.2);
 }
+
+
 
 
 /* Reactions Modal */
@@ -744,6 +911,8 @@ td {
 }
 
 
+
+
 .reactions-modal-header {
   padding: 1.5rem 2rem;
   border-bottom: 1px solid #dee2e6;
@@ -751,9 +920,13 @@ td {
 }
 
 
+
+
 .reactions-modal-content {
   padding: 2rem;
 }
+
+
 
 
 .severity-badge {
@@ -765,11 +938,15 @@ td {
 }
 
 
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .child-profiles-page {
     padding: 1rem;
   }
+
+
 
 
   .page-header {
@@ -780,6 +957,8 @@ td {
   }
 
 
+
+
   .back-btn,
   .add-profile-btn {
     width: 100%;
@@ -787,9 +966,13 @@ td {
   }
 
 
+
+
   .vaccinations-details {
     padding: 1rem;
   }
+
+
 
 
   .reactions-modal {
@@ -797,6 +980,8 @@ td {
     margin: 1rem;
   }
 }
+
+
 
 
 /* Thêm style cho nút xem bệnh án */
@@ -813,12 +998,14 @@ td {
   text-align: center;
 }
 
+
 .view-medical-btn:hover {
   background: #f57c00;
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(245, 124, 0, 0.2);
 }
+
 
 /* Modal bệnh án */
 .medical-modal-overlay {
@@ -835,6 +1022,7 @@ td {
   animation: fadeIn 0.3s ease;
 }
 
+
 .medical-modal {
   background: white;
   border-radius: 16px;
@@ -846,6 +1034,7 @@ td {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
+
 .medical-modal-header {
   padding: 1.5rem 2rem;
   border-bottom: 1px solid #dee2e6;
@@ -855,21 +1044,25 @@ td {
   align-items: center;
 }
 
+
 .medical-modal-header h3 {
   color: #f57c00;
   margin: 0;
   font-size: 1.3rem;
 }
 
+
 .medical-modal-content {
   padding: 2rem;
 }
+
 
 .medical-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
 }
+
 
 .medical-table th,
 .medical-table td {
@@ -878,11 +1071,13 @@ td {
   text-align: left;
 }
 
+
 .medical-table th {
   background: #fff3e0;
   color: #f57c00;
   font-weight: 600;
 }
+
 
 .no-records {
   text-align: center;
@@ -891,6 +1086,7 @@ td {
   padding: 2rem;
 }
 
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .medical-modal {
@@ -898,11 +1094,13 @@ td {
     margin: 1rem;
   }
 
+
   .medical-table {
     display: block;
     overflow-x: auto;
   }
 }
+
 
 /* Thêm styles cho thông tin cơ bản */
 .medical-basic-info {
@@ -912,6 +1110,7 @@ td {
   margin-bottom: 2rem;
   border: 1px solid #dee2e6;
 }
+
 
 .medical-basic-info h4,
 .medical-history-section h4 {
@@ -923,11 +1122,13 @@ td {
   padding-bottom: 0.5rem;
 }
 
+
 .info-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
 }
+
 
 .info-item {
   display: flex;
@@ -935,15 +1136,18 @@ td {
   gap: 0.5rem;
 }
 
+
 .info-item.full-width {
   grid-column: 1 / -1;
 }
+
 
 .info-item label {
   color: #666;
   font-size: 0.9rem;
   font-weight: 500;
 }
+
 
 .info-item span {
   color: #333;
@@ -953,20 +1157,23 @@ td {
   border-radius: 6px;
 }
 
+
 .medical-history-section {
   margin-top: 2rem;
 }
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .info-grid {
     grid-template-columns: 1fr;
   }
-  
+ 
   .medical-basic-info {
     padding: 1rem;
   }
 }
+
 
 /* Header của phần thông tin cơ bản */
 .basic-info-header {
@@ -976,9 +1183,11 @@ td {
   margin-bottom: 1.5rem;
 }
 
+
 .basic-info-header h4 {
   margin: 0;
 }
+
 
 /* Nút chỉnh sửa */
 .edit-medical-btn {
@@ -995,6 +1204,7 @@ td {
   transition: all 0.3s ease;
 }
 
+
 .edit-medical-btn:hover {
   background: #1e88e5;
   color: white;
@@ -1002,11 +1212,13 @@ td {
   box-shadow: 0 4px 12px rgba(30, 136, 229, 0.2);
 }
 
+
 /* Nút lưu và hủy */
 .edit-actions {
   display: flex;
   gap: 0.8rem;
 }
+
 
 .save-medical-btn,
 .cancel-medical-btn {
@@ -1021,10 +1233,12 @@ td {
   transition: all 0.3s ease;
 }
 
+
 .save-medical-btn {
   background: #4caf50;
   color: white;
 }
+
 
 .save-medical-btn:hover {
   background: #43a047;
@@ -1032,16 +1246,19 @@ td {
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
 
+
 .cancel-medical-btn {
   background: #f44336;
   color: white;
 }
+
 
 .cancel-medical-btn:hover {
   background: #e53935;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
 }
+
 
 /* Input fields */
 .edit-input {
@@ -1053,16 +1270,19 @@ td {
   transition: border-color 0.3s ease;
 }
 
+
 .edit-input:focus {
   outline: none;
   border-color: #1e88e5;
   box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.1);
 }
 
+
 textarea.edit-input {
   resize: vertical;
   min-height: 80px;
 }
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -1072,9 +1292,11 @@ textarea.edit-input {
     text-align: center;
   }
 
+
   .edit-actions {
     width: 100%;
   }
+
 
   .save-medical-btn,
   .cancel-medical-btn {
@@ -1082,12 +1304,14 @@ textarea.edit-input {
   }
 }
 
+
 /* Action buttons container */
 .action-buttons {
   display: flex;
   gap: 0.5rem;
   justify-content: center;
 }
+
 
 .view-medical-btn,
 .delete-profile-btn {
@@ -1104,6 +1328,7 @@ textarea.edit-input {
   justify-content: center;
 }
 
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .action-buttons {
@@ -1111,11 +1336,13 @@ textarea.edit-input {
     gap: 0.5rem;
   }
 
+
   .view-medical-btn,
   .delete-profile-btn {
     width: 100%;
   }
 }
+
 
 /* Delete confirmation modal */
 .delete-confirm-overlay {
@@ -1132,6 +1359,7 @@ textarea.edit-input {
   animation: fadeIn 0.3s ease;
 }
 
+
 .delete-confirm-modal {
   background: white;
   border-radius: 12px;
@@ -1143,11 +1371,13 @@ textarea.edit-input {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
+
 .delete-confirm-modal h3 {
   color: #f44336;
   margin: 0 0 1rem 0;
   font-size: 1.5rem;
 }
+
 
 .delete-confirm-modal p {
   color: #666;
@@ -1156,11 +1386,13 @@ textarea.edit-input {
   line-height: 1.5;
 }
 
+
 .confirm-actions {
   display: flex;
   gap: 1rem;
   justify-content: center;
 }
+
 
 .confirm-delete-btn,
 .cancel-delete-btn {
@@ -1173,10 +1405,12 @@ textarea.edit-input {
   min-width: 120px;
 }
 
+
 .confirm-delete-btn {
   background: #f44336;
   color: white;
 }
+
 
 .confirm-delete-btn:hover {
   background: #d32f2f;
@@ -1184,21 +1418,25 @@ textarea.edit-input {
   box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
 }
 
+
 .cancel-delete-btn {
   background: #e0e0e0;
   color: #666;
 }
+
 
 .cancel-delete-btn:hover {
   background: #bdbdbd;
   transform: translateY(-2px);
 }
 
+
 /* Style cho nút xóa trong bảng */
 .delete-profile-btn {
   background: #ffebee;
   color: #f44336;
 }
+
 
 .delete-profile-btn:hover {
   background: #f44336;
@@ -1207,6 +1445,7 @@ textarea.edit-input {
   box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
 }
 
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .confirm-actions {
@@ -1214,9 +1453,14 @@ textarea.edit-input {
     gap: 0.8rem;
   }
 
+
   .confirm-delete-btn,
   .cancel-delete-btn {
     width: 100%;
   }
 }
+
+
+
+
 

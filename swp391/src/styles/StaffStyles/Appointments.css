@@ -5,6 +5,7 @@
   background-color: #f8f9fa;
 }
 
+
 .appointment-page h1 {
   margin-bottom: 30px;
   color: #2c3e50;
@@ -12,6 +13,7 @@
   font-weight: 600;
   text-align: center;
 }
+
 
 .appointment-table {
   width: 100%;
@@ -23,12 +25,14 @@
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
+
 .appointment-table th,
 .appointment-table td {
   padding: 15px;
   text-align: left;
   border-bottom: 1px solid #eee;
 }
+
 
 .appointment-table th {
   background-color: #3498db;
@@ -39,26 +43,32 @@
   letter-spacing: 0.5px;
 }
 
+
 .appointment-table th:first-child {
   border-top-left-radius: 10px;
 }
+
 
 .appointment-table th:last-child {
   border-top-right-radius: 10px;
 }
 
+
 .appointment-table tr:last-child td:first-child {
   border-bottom-left-radius: 10px;
 }
+
 
 .appointment-table tr:last-child td:last-child {
   border-bottom-right-radius: 10px;
 }
 
+
 .appointment-table tr:hover {
   background-color: #f8f9fa;
   transition: background-color 0.3s ease;
 }
+
 
 /* Style cho status select */
 .status-select {
@@ -73,15 +83,18 @@
   transition: all 0.3s ease;
 }
 
+
 .status-select:hover {
   border-color: #3498db;
 }
+
 
 .status-select:focus {
   outline: none;
   border-color: #3498db;
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
+
 
 /* Style cho nút Update */
 button {
@@ -98,11 +111,13 @@ button {
   letter-spacing: 0.5px;
 }
 
+
 button:hover {
   background-color: #2980b9;
   transform: translateY(-1px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
 
 /* Style cho update section */
 .update-section {
@@ -114,9 +129,11 @@ button:hover {
   margin: 20px 0;
 }
 
+
 .form-group {
   margin-bottom: 20px;
 }
+
 
 .form-group label {
   display: block;
@@ -126,16 +143,18 @@ button:hover {
   font-size: 0.95rem;
 }
 
+
 .form-group textarea {
   width: 100%;
   padding: 12px;
   border: 2px solid #e0e0e0;
   border-radius: 6px;
   resize: vertical;
-  min-height: 100px;
+  min-height: 80px;
   font-family: inherit;
   transition: all 0.3s ease;
 }
+
 
 .form-group textarea:focus {
   outline: none;
@@ -143,111 +162,9 @@ button:hover {
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
-/* Style cho modal */
+
+/* Style cho modal xác nhận */
 .modal-overlay {
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
-}
-
-.modal-content {
-  background-color: white;
-  padding: 30px;
-  border-radius: 15px;
-  width: 450px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-.modal-content h2 {
-  margin-top: 0;
-  color: #2c3e50;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.modal-content p {
-  margin: 20px 0;
-  color: #34495e;
-  font-size: 1.1rem;
-  line-height: 1.5;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-  margin-top: 30px;
-}
-
-.confirm-button, .cancel-button {
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.confirm-button {
-  background-color: #2ecc71;
-}
-
-.confirm-button:hover {
-  background-color: #27ae60;
-  transform: translateY(-1px);
-}
-
-.cancel-button {
-  background-color: #e74c3c;
-}
-
-.cancel-button:hover {
-  background-color: #c0392b;
-  transform: translateY(-1px);
-}
-
-/* Style cho các trạng thái khác nhau */
-.status-PENDING {
-  color: #f39c12;
-  font-weight: 500;
-}
-
-.status-CONFIRMED {
-  color: #2ecc71;
-  font-weight: 500;
-}
-
-.status-COMPLETED {
-  color: #3498db;
-  font-weight: 500;
-}
-
-.status-CANCELLED {
-  color: #e74c3c;
-  font-weight: 500;
-}
-
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-  .appointment-page {
-    padding: 20px;
-  }
-  
-  .appointment-table {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .appointment-table {
-    font-size: 0.8rem;
-  }
-  
-  .appointment-table th,
-  .appointment-table td {
-    padding: 10px;
-  }
-}
-
-/* Style cho modal update form */
-.update-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -261,15 +178,77 @@ button:hover {
   backdrop-filter: blur(5px);
 }
 
-.update-modal {
+
+.modal-content {
   background: white;
   border-radius: 12px;
-  padding: 15px;
-  width: 30%;
-  max-width: 320px;
-  min-width: 280px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: modalFadeIn 0.3s ease;
 }
+
+
+.modal-content h2 {
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+
+.modal-content p {
+  color: #666;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+
+.confirm-button,
+.cancel-button {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+}
+
+
+.confirm-button {
+  background: #2ecc71;
+  color: white;
+}
+
+
+.confirm-button:hover {
+  background: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+}
+
+
+.cancel-button {
+  background: #e74c3c;
+  color: white;
+}
+
+
+.cancel-button:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2);
+}
+
 
 @keyframes modalFadeIn {
   from {
@@ -282,21 +261,120 @@ button:hover {
   }
 }
 
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+
+  .modal-buttons {
+    flex-direction: column;
+  }
+
+
+  .confirm-button,
+  .cancel-button {
+    width: 100%;
+  }
+}
+
+
+/* Style cho các trạng thái khác nhau */
+.status-PENDING {
+  color: #f39c12;
+  font-weight: 500;
+}
+
+
+.status-CONFIRMED {
+  color: #2ecc71;
+  font-weight: 500;
+}
+
+
+.status-COMPLETED {
+  color: #3498db;
+  font-weight: 500;
+}
+
+
+.status-CANCELLED {
+  color: #e74c3c;
+  font-weight: 500;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .appointment-page {
+    padding: 20px;
+  }
+ 
+  .appointment-table {
+    font-size: 0.9rem;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .appointment-table {
+    font-size: 0.8rem;
+  }
+ 
+  .appointment-table th,
+  .appointment-table td {
+    padding: 10px;
+  }
+}
+
+
+/* Style cho modal update form */
+.update-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+
+.update-modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 1000px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideIn 0.4s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+
 .update-modal-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #dee2e6;
+  background: #fff3e0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #f0f0f0;
 }
 
+
 .update-modal-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #2c3e50;
+  color: #f57c00;
   margin: 0;
+  font-size: 1.3rem;
 }
+
 
 .close-button {
   background: none;
@@ -308,112 +386,172 @@ button:hover {
   transition: all 0.3s ease;
 }
 
+
 .close-button:hover {
   color: #e74c3c;
   transform: scale(1.1);
 }
 
+
 .update-form {
+  padding: 1rem 2rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 1.5rem;
+  width: 50%;
+  margin: 0 auto;
 }
+
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  width: 100%;
+  margin-bottom: 0;
 }
+
 
 .form-group label {
+  display: block;
+  color: #666;
+  font-size: 0.9rem;
   font-weight: 500;
-  color: #2c3e50;
-  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
 }
 
-.form-group select,
-.form-group textarea {
-  padding: 8px;
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 0.95rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  height: 40px;
   transition: all 0.3s ease;
 }
 
-.form-group select {
-  cursor: pointer;
-  background-color: white;
+
+.form-group.symptoms,
+.form-group.notes {
+  grid-column: span 1;
 }
 
+
+.form-group select,
 .form-group textarea {
-  min-height: 45px;
-  max-height: 90px;
-  resize: vertical;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
+
 
 .form-group select:focus,
 .form-group textarea:focus {
-  border-color: #3498db;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  border-color: #f57c00;
+  box-shadow: 0 0 0 3px rgba(245, 124, 0, 0.1);
 }
 
-.modal-footer {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid #eee;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
+
+.form-group textarea {
+  min-height: 80px;
+  max-height: 150px;
+  resize: vertical;
 }
+
+
+.modal-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
 
 .save-button,
 .cancel-button {
-  min-width: 70px;
-  padding: 6px 14px;
+  padding: 0.8rem 1.5rem;
+  border: none;
   border-radius: 6px;
   font-weight: 500;
-  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
 }
+
 
 .save-button {
-  background-color: #2ecc71;
+  background: #4CAF50;
   color: white;
 }
+
 
 .save-button:hover {
-  background-color: #27ae60;
+  background: #43a047;
   transform: translateY(-2px);
-  box-shadow: 0 3px 8px rgba(46, 204, 113, 0.3);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
 
+
 .cancel-button {
-  background-color: #e74c3c;
+  background: #f44336;
   color: white;
 }
 
+
 .cancel-button:hover {
-  background-color: #c0392b;
+  background: #e53935;
   transform: translateY(-2px);
-  box-shadow: 0 3px 8px rgba(231, 76, 60, 0.3);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
 }
+
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .update-modal {
-    width: 75%;
-    min-width: 250px;
+    width: 95%;
+    margin: 1rem;
   }
 
-  .modal-buttons {
+
+  .update-form {
+    width: 100%;
+    padding: 1rem;
+  }
+
+
+  .form-group.symptoms,
+  .form-group.notes {
+    grid-column: 1;
+  }
+
+
+  .modal-footer {
+    padding: 1rem;
     flex-direction: column;
   }
+
 
   .save-button,
   .cancel-button {
     width: 100%;
   }
 }
+
 
 /* Style cho phần thông tin IDs */
 .modal-info {
@@ -425,17 +563,20 @@ button:hover {
   gap: 12px;
 }
 
+
 .info-item {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+
 .info-item .info-label {
   color: #666;
   font-size: 0.9rem;
   font-weight: 500;
 }
+
 
 .info-item .info-value {
   color: #2c3e50;
@@ -447,6 +588,7 @@ button:hover {
   border: 1px solid #e0e0e0;
 }
 
+
 /* Điều chỉnh responsive */
 @media (max-width: 768px) {
   .modal-info {
@@ -454,4 +596,63 @@ button:hover {
     gap: 10px;
   }
 }
+
+
+/* Style cho modal thông báo */
+.notification-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+
+.notification-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  animation: slideIn 0.4s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+
+.notification-modal h3 {
+  color: #4CAF50;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+
+.notification-modal p {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+
+.notification-icon {
+  color: #4CAF50;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+
+.form-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+
+
+
 

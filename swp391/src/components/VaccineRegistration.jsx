@@ -46,26 +46,29 @@ const VaccineRegistration = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
+                // Get session data
                 const sessionData = await sessionService.checkSession();
-            
-                // Set guardian info from session
-                if (sessionData) {
-                    setGuardianInfo({
-                        cusId: sessionData.cusId,
-                        fullName: sessionData.user.fullName,
-                        phone: sessionData.user.phone,
-                        address: sessionData.address
-                    });
-                }
+                console.log('🔑 Session Data:', sessionData);
                 
-                // Fetch customer info
-                const customer = await customerService.getCurrentCustomer();
-                setCustomerInfo(customer);
-
-                // Fetch child profiles
-                const children = await customerService.getCustomerChildren(customer.cusId);
+                if (!sessionData) {
+                    throw new Error('No session data found');
+                }
+    
+                // Set customer info from session
+                const userInfo = {
+                    cusId: sessionData.cusId,
+                    fullName: sessionData.user.fullName,
+                    phone: sessionData.user.phone,
+                    address: sessionData.address
+                };
+                
+                setCustomerInfo(userInfo);
+                setGuardianInfo(userInfo);
+    
+                // Fetch children using session cusId
+                const children = await customerService.getCustomerChildren(sessionData.cusId);
                 setChildProfiles(children);
-
+    
                 // Fetch vaccines and packages
                 const [vaccinesData, packagesData] = await Promise.all([
                     vaccineService.getVaccines(),
@@ -73,20 +76,21 @@ const VaccineRegistration = () => {
                 ]);
                 setVaccines(vaccinesData);
                 setPackages(packagesData);
+    
             } catch (err) {
+                console.error('❌ Error:', err);
                 setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
-
+    
         if (user) {
             fetchData();
         } else {
             navigate('/login');
         }
     }, [user, navigate]);
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({

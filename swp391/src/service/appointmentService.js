@@ -1,31 +1,5 @@
 const API_BASE_URL = 'http://localhost:8080/vaccinatecenter';
 
-// const appointmentService = {
-//     registerVaccination: async (registrationData) => {
-//         try {
-//             const token = localStorage.getItem('token');
-//             const response = await fetch(`${API_BASE_URL}/appointment/register-vaccination`, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Authorization': `Bearer ${token}`,
-//                     'Content-Type': 'application/json'
-//                 },
-//                 body: JSON.stringify(registrationData)
-//             });
-
-//             const data = await response.json();
-
-//             if (!response.ok) {
-//                 throw new Error(data.message || 'Registration failed');
-//             }
-
-//             return { ok: true, data };
-//         } catch (error) {
-//             console.error('Error in registerVaccination:', error);
-//             return { ok: false, error: error.message };
-//         }
-//     }
-// };
 const appointmentService = {
     registerVaccination: async (registrationData) => {
         try {
@@ -106,6 +80,61 @@ const appointmentService = {
             });
             throw error; // Ném lỗi để component xử lý
         }
+    },
+    updateAppointmentStatus: async (appId, status) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_BASE_URL}/appointment/update-status/${appId}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status }),
+            });
+
+            const data = await response.json();
+            console.log('📡 Update Status Response:', {
+                status: response.status,
+                statusText: response.statusText,
+                headers: Object.fromEntries(response.headers.entries()),
+                data: data,
+            });
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to update status');
+            }
+
+            // Nếu status là COMPLETED, lưu thông tin để trigger feedback
+            if (status === 'COMPLETED') {
+                localStorage.setItem('pendingFeedback', JSON.stringify({
+                    appointmentId: appId,
+                    appointmentInfo: data.appointment
+                }));
+            }
+
+            console.log('✅ Status Updated Successfully:', data);
+            return data.appointment;
+        } catch (error) {
+            console.error('❌ Error Updating Status:', {
+                message: error.message,
+                stack: error.stack,
+            });
+            throw error;
+        }
+    },
+
+    // Thêm methods để quản lý pending feedback
+    getPendingFeedbackAppointment: async () => {
+        try {
+            return JSON.parse(localStorage.getItem('pendingFeedback'));
+        } catch (error) {
+            return null;
+        }
+    },
+
+    clearPendingFeedback: () => {
+        localStorage.removeItem('pendingFeedback');
     }
 };
 

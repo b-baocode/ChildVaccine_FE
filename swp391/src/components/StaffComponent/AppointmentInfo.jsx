@@ -7,12 +7,13 @@ const StaffAppointment = () => {
   const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
   const [symptoms, setSymptoms] = useState('');
   const [notes, setNotes] = useState('');
-  const [status, setStatus] = useState('PENDING');
+  const [status, setStatus] = useState('CONFIRMED');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showWarningModal, setShowWarningModal] = useState(false); // Thêm state cho warningModal
+  const [warningMessage, setWarningMessage] = useState(''); // Lưu thông báo lỗi
   const [pendingStatusChange, setPendingStatusChange] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-  // Fetch appointments từ appointmentService
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -26,7 +27,6 @@ const StaffAppointment = () => {
     fetchAppointments();
   }, []);
 
-  // Handle ESC key để đóng update modal
   useEffect(() => {
     const handleEscKey = (event) => {
       if (event.key === 'Escape' && showUpdateModal) {
@@ -46,7 +46,7 @@ const StaffAppointment = () => {
   const handleUpdateClick = (appointment) => {
     setSelectedAppointmentId(appointment.appId);
     setSymptoms(appointment.symptoms || '');
-    setNotes(''); // Để trống notes như yêu cầu
+    setNotes('');
     setStatus(appointment.status);
     setShowUpdateModal(true);
   };
@@ -62,35 +62,69 @@ const StaffAppointment = () => {
     setSelectedAppointmentId(null);
   };
 
-  const handleStatusChange = async (appointmentId, newStatus) => {
-    setPendingStatusChange({ appointmentId, newStatus });
-    setShowConfirmModal(true);
+  const handleStatusChange = (appointmentId, newStatus) => {
+    const currentAppointment = appointments.find((appt) => appt.appId === appointmentId);
+    const currentStatus = currentAppointment.status;
+
+    // Kiểm tra logic trước khi hiển thị modal
+    if (currentStatus === 'CANCELLED' && newStatus !== 'CANCELLED') {
+      setWarningMessage('Không thể thay đổi trạng thái từ CANCELLED sang trạng thái khác.');
+      setShowWarningModal(true);
+    } else if (currentStatus === 'COMPLETED' && newStatus === 'CONFIRMED') {
+      setWarningMessage('Không thể thay đổi trạng thái từ COMPLETED về CONFIRMED.');
+      setShowWarningModal(true);
+    } else {
+      setPendingStatusChange({ appointmentId, newStatus });
+      setShowConfirmModal(true);
+    }
   };
 
-  const confirmStatusChange = () => {
+  const confirmStatusChange = async () => {
     const { appointmentId, newStatus } = pendingStatusChange;
-    const updatedAppointments = appointments.map((appointment) =>
-      appointment.appId === appointmentId
-        ? { ...appointment, status: newStatus }
-        : appointment
-    );
-    setAppointments(updatedAppointments);
-    setShowConfirmModal(false);
-  };
+    try {
+        const updatedAppointment = await appointmentService.updateAppointmentStatus(
+            appointmentId,
+            newStatus.toUpperCase()
+        );
+        const updatedAppointments = appointments.map((appointment) =>
+            appointment.appId === appointmentId ? updatedAppointment : appointment
+        );
+        setAppointments(updatedAppointments);
+        setShowConfirmModal(false);
+
+        // Nếu status là COMPLETED, emit event qua socket (nếu có)
+        if (newStatus.toUpperCase() === 'COMPLETED') {
+            // Nếu bạn có socket, có thể emit event ở đây
+            console.log('🔔 Appointment completed, feedback required:', appointmentId);
+        }
+    } catch (error) {
+        console.error('Error updating appointment status:', error);
+        alert(error.message || 'Có lỗi xảy ra khi cập nhật trạng thái. Vui lòng thử lại!');
+    }
+};
 
   const handleCloseModal = () => {
     setShowUpdateModal(false);
     setSelectedAppointmentId(null);
     setSymptoms('');
     setNotes('');
-    setStatus('PENDING');
+    setStatus('CONFIRMED');
   };
 
-  // Helper để xác định serviceId (vaccineId hoặc packageId)
+  const handleCloseWarningModal = () => {
+    setShowWarningModal(false);
+    setWarningMessage('');
+  };
+
   const getServiceId = (appointment) => {
-    return appointment.vaccineId || appointment.packageId || 'N/A';
+    if (appointment.vaccineId && typeof appointment.vaccineId === 'object') {
+      return appointment.vaccineId.vaccineId;
+    }
+    if (appointment.packageId && typeof appointment.packageId === 'object') {
+      return appointment.packageId.packageId;
+    }
+    return "N/A";
   };
-
   return (
     <div className="appointment-page">
       <h1>Appointments</h1>
@@ -113,8 +147,8 @@ const StaffAppointment = () => {
           {appointments.map((appointment) => (
             <tr key={appointment.appId}>
               <td>{appointment.appId}</td>
-              <td>{appointment.customerId}</td>
-              <td>{appointment.childId}</td>
+              <td>{appointment.customerId?.cusId || "N/A"}</td>
+              <td>{appointment.childId?.childId || "N/A"}</td>
               <td>{getServiceId(appointment)}</td>
               <td>{appointment.appointmentDate}</td>
               <td>{appointment.appointmentTime}</td>
@@ -124,7 +158,6 @@ const StaffAppointment = () => {
                   onChange={(e) => handleStatusChange(appointment.appId, e.target.value)}
                   className="status-select"
                 >
-                  <option value="PENDING">PENDING</option>
                   <option value="CONFIRMED">CONFIRMED</option>
                   <option value="COMPLETED">COMPLETED</option>
                   <option value="CANCELLED">CANCELLED</option>
@@ -152,6 +185,21 @@ const StaffAppointment = () => {
               </button>
               <button className="cancel-button" onClick={() => setShowConfirmModal(false)}>
                 Hủy
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Warning Modal */}
+      {showWarningModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Cảnh báo</h2>
+            <p>{warningMessage}</p>
+            <div className="modal-buttons">
+              <button className="cancel-button" onClick={handleCloseWarningModal}>
+                Đóng
               </button>
             </div>
           </div>
@@ -209,4 +257,4 @@ const StaffAppointment = () => {
   );
 };
 
-export default StaffAppointment;
+export default StaffAppointment;  

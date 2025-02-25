@@ -111,6 +111,8 @@ const Register = () => {
                         <input
                             type="password"
                             name="password"
+                            value={formData.password}
+                            onChange={handleChange}
                             placeholder="Mật khẩu"
                             required
                         />
@@ -120,6 +122,8 @@ const Register = () => {
                         <input
                             type="password"
                             name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
                             placeholder="Xác nhận mật khẩu"
                             required
                         />

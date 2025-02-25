@@ -1,9 +1,11 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import appointmentService from './service/appointmentService';
+
 import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
-import { AuthProvider } from './context/AuthContext';
 import './App.css';
 import './styles/Home.css';
 import About from './components/About';
@@ -33,6 +35,24 @@ import ChildProfiles from './components/ChildProfiles';
 import PaymentReview from './components/PaymentReview';
 import ProtectedRoute from './components/ProtectedRoute';
 function App() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkPendingFeedback = async () => {
+        if (user?.role === 'CUSTOMER') {
+            const pendingFeedback = await appointmentService.getPendingFeedbackAppointment();
+            if (pendingFeedback) {
+                navigate('/feedback');
+            }
+        }
+    };
+
+    checkPendingFeedback();
+  }, [user, navigate]);
+}
+
+const AppWrapper = () => {
   return (
     <AuthProvider>
       <Router>
@@ -115,4 +135,4 @@ function App() {
   );
 }
 
-export default App;
+export default AppWrapper;

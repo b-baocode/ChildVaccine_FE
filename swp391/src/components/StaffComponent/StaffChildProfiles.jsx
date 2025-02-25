@@ -1,191 +1,83 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaUserCircle, FaNotesMedical, FaRuler, FaWeight, FaSearch } from 'react-icons/fa';
+import childService from '../../service/childService';
 import '../../styles/StaffStyles/StaffChildProfiles.css';
 
+
 const StaffChildProfile = () => {
-  const { id } = useParams();
-  const [activeTab, setActiveTab] = useState('profile');
-  const [childData, setChildData] = useState(null);
-  const [childMedicalRecords, setChildMedicalRecords] = useState([]);
-  const [selectedChildId, setSelectedChildId] = useState(id || 1);
-  const [searchTerm, setSearchTerm] = useState('');
+    const { id } = useParams();
+    const [activeTab, setActiveTab] = useState('profile');
+    const [childData, setChildData] = useState(null);
+    const [childrenProfiles, setChildrenProfiles] = useState([]);
+    const [childMedicalRecords, setChildMedicalRecords] = useState([]);
+    const [selectedChildId, setSelectedChildId] = useState(id || '');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  // Mock data trực tiếp trong component
-  const childrenProfiles = [
-    {
-      child_id: 1,
-      cus_id: 101,
-      full_name: "Nguyễn Minh Anh",
-      date_of_birth: "2020-03-15",
-      gender: "Nữ",
-      height: 98.5,
-      weight: 15.8,
-      blood_type: "O+",
-      allergies: "Dị ứng với đậu phộng",
-      health_note: "Tiền sử viêm phế quản"
-    },
-    {
-      child_id: 2,
-      cus_id: 102,
-      full_name: "Trần Đức Minh",
-      date_of_birth: "2021-07-22",
-      gender: "Nam",
-      height: 85.2,
-      weight: 12.5,
-      blood_type: "A+",
-      allergies: "Không",
-      health_note: "Khỏe mạnh"
-    },
-    {
-      child_id: 3,
-      cus_id: 103,
-      full_name: "Lê Thu Hà",
-      date_of_birth: "2022-01-10",
-      gender: "Nữ",
-      height: 78.5,
-      weight: 10.2,
-      blood_type: "B+",
-      allergies: "Dị ứng với sữa bò",
-      health_note: "Đang theo dõi chậm tăng cân"
-    },
-    {
-      child_id: 4,
-      cus_id: 104,
-      full_name: "Phạm Tuấn Kiệt",
-      date_of_birth: "2019-11-30",
-      gender: "Nam",
-      height: 105.0,
-      weight: 17.3,
-      blood_type: "AB+",
-      allergies: "Không",
-      health_note: "Tiền sử co giật do sốt cao"
-    },
-    {
-      child_id: 5,
-      cus_id: 105,
-      full_name: "Hoàng Mai Anh",
-      date_of_birth: "2021-09-05",
-      gender: "Nữ",
-      height: 82.3,
-      weight: 11.8,
-      blood_type: "O-",
-      allergies: "Dị ứng với hải sản",
-      health_note: "Khỏe mạnh"
-    }
-  ];
+    useEffect(() => {
+      const fetchChildren = async () => {
+          try {
+              setLoading(true);
+              const data = await childService.getAllChildren();
+  
+              const transformedData = data.map(child => ({
+                  child_id: child.childId,
+                  cus_id: child.customerId,
+                  full_name: child.fullName,
+                  date_of_birth: child.dateOfBirth,
+                  gender: child.gender === 'MALE' ? 'Nam' : 
+                         child.gender === 'FEMALE' ? 'Nữ' : 'Khác',
+                  height: child.height || 0,
+                  weight: child.weight || 0,
+                  blood_type: child.bloodType || 'Chưa xác định',
+                  allergies: child.allergies || 'Không',
+                  health_note: child.healthNote || 'Không có ghi chú'
+              }));
+  
+              console.log('Transformed children data:', transformedData);
+              setChildrenProfiles(transformedData);
+              
+              // Chỉ set selectedChildId nếu chưa có giá trị
+              if (!selectedChildId && transformedData.length > 0) {
+                  setSelectedChildId(transformedData[0].child_id);
+              }
+          } catch (err) {
+              console.error('Error fetching children:', err);
+              setError('Không thể tải danh sách trẻ');
+          } finally {
+              setLoading(false);
+          }
+      };
+  
+      fetchChildren();
+    }, []);// Empty dependency array as this should only run once on mount
 
-  const medicalRecordsData = [
-    {
-      child_id: 1,
-      records: [
-        {
-          appointment_id: 101,
-          staff_id: 201,
-          staff_name: "BS. Nguyễn Văn A",
-          date: "2024-03-10",
-          symptoms: "Sốt nhẹ 37.8°C, ho khan",
-          notes: "Tiêm vaccine MMR mũi 2, theo dõi 30 phút sau tiêm. Kê đơn thuốc hạ sốt."
-        },
-        {
-          appointment_id: 102,
-          staff_id: 202,
-          staff_name: "BS. Trần Thị B",
-          date: "2024-01-15",
-          symptoms: "Khám định kỳ, không có triệu chứng bất thường",
-          notes: "Phát triển bình thường theo độ tuổi. Tư vấn chế độ dinh dưỡng."
-        }
-      ]
-    },
-    {
-      child_id: 2,
-      records: [
-        {
-          appointment_id: 201,
-          staff_id: 203,
-          staff_name: "BS. Lê Văn C",
-          date: "2024-03-05",
-          symptoms: "Ho có đờm, sốt 38.5°C",
-          notes: "Viêm đường hô hấp trên. Kê đơn kháng sinh và thuốc ho."
-        }
-      ]
-    },
-    {
-      child_id: 3,
-      records: [
-        {
-          appointment_id: 301,
-          staff_id: 204,
-          staff_name: "BS. Hoàng Thị D",
-          date: "2024-02-20",
-          symptoms: "Biếng ăn, chậm tăng cân",
-          notes: "Tư vấn chế độ dinh dưỡng đặc biệt. Hẹn tái khám sau 2 tuần."
-        }
-      ]
-    },
-    {
-      child_id: 4,
-      records: [
-        {
-          appointment_id: 401,
-          staff_id: 205,
-          staff_name: "BS. Phan Văn E",
-          date: "2024-03-01",
-          symptoms: "Sốt cao 39.5°C, co giật",
-          notes: "Nhập viện theo dõi. Kê đơn thuốc hạ sốt và chống co giật."
-        },
-        {
-          appointment_id: 402,
-          staff_id: 205,
-          staff_name: "BS. Phan Văn E",
-          date: "2024-03-08",
-          symptoms: "Khám lại sau điều trị",
-          notes: "Tình trạng ổn định. Tiếp tục theo dõi và dùng thuốc theo đơn."
-        }
-      ]
-    },
-    {
-      child_id: 5,
-      records: [
-        {
-          appointment_id: 501,
-          staff_id: 206,
-          staff_name: "BS. Mai Thị F",
-          date: "2024-01-25",
-          symptoms: "Khám định kỳ 6 tháng",
-          notes: "Phát triển tốt. Tiêm vaccine theo lịch."
-        },
-        {
-          appointment_id: 502,
-          staff_id: 207,
-          staff_name: "BS. Trương Văn G",
-          date: "2024-03-12",
-          symptoms: "Phát ban, ngứa sau ăn tôm",
-          notes: "Dị ứng hải sản. Kê đơn thuốc kháng dị ứng và hướng dẫn phòng tránh."
-        }
-      ]
+  // Second useEffect to handle selected child changes
+  useEffect(() => {
+    if (!selectedChildId && childrenProfiles.length > 0) {
+        setSelectedChildId(childrenProfiles[0].child_id);
+    } 
+  }, [childrenProfiles]); // Chạy khi danh sách trẻ em thay đổi
+
+useEffect(() => {
+    if (selectedChildId) {
+        const selectedChild = childrenProfiles.find(child => child.child_id === selectedChildId);
+        setChildData(selectedChild || null);
     }
-  ];
+}, [selectedChildId, childrenProfiles]);
 
   const filteredChildren = childrenProfiles.filter(child =>
-    child.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    child.child_id.toString().includes(searchTerm)
+      child.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      child.child_id.toString().includes(searchTerm)
   );
-
-
-  useEffect(() => {
-    const targetId = parseInt(selectedChildId);
-    const child = childrenProfiles.find(child => child.child_id === targetId);
-    setChildData(child || childrenProfiles[0]);
-
-    const records = medicalRecordsData.find(record => record.child_id === targetId);
-    setChildMedicalRecords(records ? records.records : []);
-  }, [selectedChildId]);
 
   if (!childData) {
     return <div className="loading">Đang tải thông tin...</div>;
   }
 
+  // In the same file
   const calculateAge = (birthDate) => {
     const today = new Date();
     const birth = new Date(birthDate);
@@ -193,14 +85,14 @@ const StaffChildProfile = () => {
     const monthDiff = today.getMonth() - birth.getMonth();
     
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
+        age--;
     }
 
     if (age === 0) {
-      const monthAge = today.getMonth() - birth.getMonth() + 
-        (today.getDate() < birth.getDate() ? -1 : 0) + 
-        (today.getFullYear() - birth.getFullYear()) * 12;
-      return `${monthAge} tháng`;
+        const monthAge = today.getMonth() - birth.getMonth() + 
+            (today.getDate() < birth.getDate() ? -1 : 0) + 
+            (today.getFullYear() - birth.getFullYear()) * 12;
+        return `${monthAge} tháng`;
     }
     
     return `${age} tuổi`;
@@ -208,30 +100,45 @@ const StaffChildProfile = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return "Không có dữ liệu";
-    return new Date(dateString).toLocaleDateString('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
     });
   };
 
+  // In the same file
   const ProfileList = () => (
     <div className="profiles-sidebar">
-      <div className="profiles-list">
-        {filteredChildren.map(child => (
-          <div
-            key={child.child_id}
-            className={`profile-item ${child.child_id === parseInt(selectedChildId) ? 'active' : ''}`}
-            onClick={() => setSelectedChildId(child.child_id)}
-          >
-            <FaUserCircle className="profile-icon" />
-            <div className="profile-brief">
-              <h3>{child.full_name}</h3>
-              <p>ID: {child.child_id} • {calculateAge(child.date_of_birth)}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+        <div className="search-box">
+            <FaSearch className="search-icon" />
+            <input
+                type="text"
+                placeholder="Tìm kiếm theo tên hoặc ID..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
+        </div>
+        <div className="profiles-list">
+            {filteredChildren.map(child => (
+                <div
+                    key={child.child_id}
+                    className={`profile-item ${child.child_id === selectedChildId ? 'active' : ''}`}
+                    onClick={() => setSelectedChildId(child.child_id)}
+                >
+                    <FaUserCircle className="profile-icon" />
+                    <div className="profile-brief">
+                        <h3>{child.full_name}</h3>
+                        <p>
+                            <span>ID: {child.child_id}</span>
+                            <span> • </span>
+                            <span>{calculateAge(child.date_of_birth)}</span>
+                        </p>
+                    </div>
+                </div>
+            ))}
+        </div>
     </div>
   );
 

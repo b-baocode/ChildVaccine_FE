@@ -1,109 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext';
+import feedbackService from '../../service/feedbackService';
+import appointmentService from '../../service/appointmentService'; // Add this import
 import '../../styles/CusStyles/Feedback.css';
 
 const Feedback = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [pendingFeedback, setPendingFeedback] = useState(null);
   const [rating, setRating] = useState(0);
-  const [hover, setHover] = useState(0);
-  const [message, setMessage] = useState('');
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [feedback, setFeedback] = useState('');
+  const [appointmentInfo, setAppointmentInfo] = useState(null);;
 
-  // Mock data for vaccination details
-  const vaccinationDetails = {
-    date: "2024-03-15",
-    time: "09:30",
-    childName: "Nguyễn Minh Anh",
-    vaccine: "MMR",
-    doctor: "BS. Nguyễn Văn A",
-    location: "VNVC Quận 1"
-  };
+  useEffect(() => {
+    const loadAppointmentInfo = async () => {
+        const pendingFeedback = await appointmentService.getPendingFeedbackAppointment();
+        if (!pendingFeedback) {
+            navigate('/');
+            return;
+        }
+        setAppointmentInfo(pendingFeedback.appointmentInfo);
+    };
 
-  const handleSubmit = (e) => {
+    loadAppointmentInfo();
+  }, [navigate]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically send the feedback to your backend
-    console.log({ rating, message });
-    setShowSuccess(true);
-    
-    // Redirect to home after 2 seconds
-    setTimeout(() => {
-      navigate('/');
-    }, 2000);
-  };
+    try {
+        const feedbackData = {
+            appointmentId: appointmentInfo.appId,
+            customerId: appointmentInfo.customerId,
+            rating: parseInt(rating),
+            feedback: feedback
+        };
+
+        await feedbackService.submitFeedback(feedbackData);
+        appointmentService.clearPendingFeedback();
+        navigate('/');
+    } catch (error) {
+        console.error('Error submitting feedback:', error);
+    }
+};
+
+  if (loading) {
+      return <div>Loading...</div>;
+  }
+
+  if (!pendingFeedback) {
+      return <div>No pending feedback required.</div>;
+  }
 
   return (
-    <div className="feedback-overlay">
-      <div className="feedback-container">
-        <h2>Đánh giá buổi tiêm chủng</h2>
-        
-        <div className="vaccination-details">
-          <p><strong>Ngày tiêm:</strong> {vaccinationDetails.date}</p>
-          <p><strong>Thời gian:</strong> {vaccinationDetails.time}</p>
-          <p><strong>Trẻ:</strong> {vaccinationDetails.childName}</p>
-          <p><strong>Vaccine:</strong> {vaccinationDetails.vaccine}</p>
-          <p><strong>Bác sĩ:</strong> {vaccinationDetails.doctor}</p>
-          <p><strong>Địa điểm:</strong> {vaccinationDetails.location}</p>
-        </div>
-
+    <div className="feedback-container">
+        <h2>Đánh giá dịch vụ</h2>
         <form onSubmit={handleSubmit}>
-          <div className="star-rating">
-            <p>Mức độ hài lòng của bạn:</p>
-            <div className="stars">
-              {[...Array(5)].map((_, index) => {
-                const ratingValue = index + 1;
-                return (
-                  <label key={index}>
-                    <input
-                      type="radio"
-                      name="rating"
-                      value={ratingValue}
-                      onClick={() => setRating(ratingValue)}
-                    />
-                    <FaStar
-                      className="star"
-                      color={ratingValue <= (hover || rating) ? "#ffc107" : "#e4e5e9"}
-                      size={30}
-                      onMouseEnter={() => setHover(ratingValue)}
-                      onMouseLeave={() => setHover(0)}
-                    />
-                  </label>
-                );
-              })}
+            <div className="rating-container">
+                <label>Đánh giá của bạn:</label>
+                <div className="stars">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                            key={star}
+                            className={`star ${star <= rating ? 'active' : ''}`}
+                            onClick={() => setRating(star)}
+                        >
+                            ★
+                        </span>
+                    ))}
+                </div>
             </div>
-          </div>
 
-          <div className="feedback-message">
-            <label htmlFor="message">Nhận xét của bạn:</label>
-            <textarea
-              id="message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Chia sẻ trải nghiệm của bạn..."
-              rows="4"
-            />
-          </div>
+            <div className="feedback-input">
+                <label>Nhận xét:</label>
+                <textarea
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                    required
+                    placeholder="Chia sẻ trải nghiệm của bạn..."
+                />
+            </div>
 
-          <div className="button-group">
-            <button type="button" className="cancel-btn" onClick={() => navigate('/')}>
-              Hủy bỏ
+            <button type="submit" className="submit-btn">
+                Gửi đánh giá
             </button>
-            <button type="submit" className="submit-btn" disabled={!rating}>
-              Gửi đánh giá
-            </button>
-          </div>
         </form>
-
-        {showSuccess && (
-          <div className="success-popup">
-            <div className="success-content">
-              <div className="success-icon">✓</div>
-              <h3>Cảm ơn bạn đã đánh giá!</h3>
-              <p>Phản hồi của bạn đã được ghi nhận.</p>
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 };
