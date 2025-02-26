@@ -109,3 +109,50 @@
   color: #666;
   margin: 0;
 }
+
+.logout-button {
+  width: 100%;
+  padding: 10px 15px;
+  margin-top: 15px;
+  background-color: #f8f9fa;
+  border: none;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+  background-color: #e9ecef;
+}
+
+.logout-button .sidebar-icon {
+  margin-right: 10px;
+  color: #dc3545; /* Màu đỏ cho icon đăng xuất */
+}
+
+.logout-title {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.success-modal {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: #28a745;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.success-content h3 {
+  margin: 0 0 5px 0;
+}
+
+.success-content p {
+  margin: 0;
+}

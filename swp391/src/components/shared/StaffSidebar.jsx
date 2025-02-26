@@ -5,12 +5,38 @@ import {
   FaSyringe,
   FaUserMd,
   FaClipboardList,
-  FaExclamationCircle
+  FaExclamationCircle,
+  FaSignOutAlt // Thêm icon đăng xuất
 } from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext'; // Thêm import useAuth
 import '../../styles/StaffStyles/StaffSidebar.css';
 
 const StaffSidebar = () => {
   const location = useLocation();
+  const { logout } = useAuth(); // Lấy hàm logout từ context
+  const [showLogoutDialog, setShowLogoutDialog] = React.useState(false); // Thêm state cho dialog
+
+  const handleLogoutConfirm = async () => {
+    try {
+      await logout();
+      setShowLogoutDialog(false);
+      // Optional: Show logout success message
+      const modal = document.createElement('div');
+      modal.className = 'success-modal';
+      modal.innerHTML = `
+        <div class="success-content">
+          <h3>Đăng xuất thành công</h3>
+          <p>Hẹn gặp lại!</p>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      setTimeout(() => {
+        document.body.removeChild(modal);
+      }, 1500);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   const menuItems = [
     {
@@ -52,12 +78,18 @@ const StaffSidebar = () => {
 
       <div className="sidebar-footer">
         <div className="staff-info">
-          <img src="/staff-avatar.png" alt="Staff" className="staff-avatar" />
           <div className="staff-details">
             <p className="staff-name">Nhân viên y tế</p>
             <p className="staff-role">Y tá tiêm chủng</p>
           </div>
         </div>
+        <button 
+          className="logout-button"
+          onClick={handleLogoutConfirm}
+        >
+          <span className="sidebar-icon"><FaSignOutAlt /></span>
+          <span className="logout-title">Đăng xuất</span>
+        </button>
       </div>
     </div>
   );

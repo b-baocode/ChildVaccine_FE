@@ -135,7 +135,42 @@ const appointmentService = {
 
     clearPendingFeedback: () => {
         localStorage.removeItem('pendingFeedback');
-    }
+    },
+
+    getCompletedAppointmentsWithoutFeedback: async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_BASE_URL}/appointment/completed-without-feedback`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const data = await response.json();
+            console.log('📡 Completed Appointments Without Feedback Response:', {
+                status: response.status,
+                statusText: response.statusText,
+                headers: Object.fromEntries(response.headers.entries()),
+                data: data,
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch completed appointments without feedback');
+            }
+
+            console.log('✅ Successfully Fetched Completed Appointments Without Feedback:', data);
+            return data;
+        } catch (error) {
+            console.error('❌ Error Fetching Completed Appointments Without Feedback:', {
+                message: error.message,
+                stack: error.stack,
+            });
+            return [];
+        }
+    },
+    
 };
 
 export default appointmentService;

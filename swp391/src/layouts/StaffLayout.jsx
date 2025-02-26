@@ -3,6 +3,8 @@ import { Outlet } from 'react-router-dom';
 import StaffSidebar from '../components/shared/StaffSidebar';
 import '../styles/StaffStyles/StaffLayout.css';
 
+
+
 const StaffLayout = () => {
   return (
     <div className="staff-layout">

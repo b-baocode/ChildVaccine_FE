@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/Login.css';
 import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
 import authService from '../service/AuthenService';
+import appointmentService from '../service/appointmentService';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -37,6 +38,25 @@ const Login = () => {
         const { user } = response.body;
         await login(response);
         
+        // 🔍 Kiểm tra danh sách appointment chưa feedback
+        if (user.role === 'CUSTOMER') {
+            const pendingFeedbackAppointments = await appointmentService.getPendingFeedbackAppointment();
+            console.log("Raw API response:", pendingFeedbackAppointments);
+
+            // 🔥 Chuyển đổi thành mảng nếu cần
+            const appointmentsArray = Array.isArray(pendingFeedbackAppointments)
+                ? pendingFeedbackAppointments
+                : [pendingFeedbackAppointments];
+
+            console.log("Converted appointmentsArray:", appointmentsArray);
+
+            // 👉 Kiểm tra nếu có ít nhất 1 lịch hẹn, chuyển ngay đến trang feedback
+            if (appointmentsArray.length > 0) {
+                navigate('/feedback', { state: { appointment: appointmentsArray[0] } });
+                return;
+            }
+        }
+
         // Show success modal and navigate
         const modal = document.createElement('div');
         modal.className = 'success-modal';

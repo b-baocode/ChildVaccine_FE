@@ -34,6 +34,7 @@ import AddChildForm from './components/CusComponent/AddChildForm';
 import ChildProfiles from './components/ChildProfiles';
 import PaymentReview from './components/PaymentReview';
 import ProtectedRoute from './components/ProtectedRoute';
+
 function App() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -41,9 +42,9 @@ function App() {
   useEffect(() => {
     const checkPendingFeedback = async () => {
         if (user?.role === 'CUSTOMER') {
-            const pendingFeedback = await appointmentService.getPendingFeedbackAppointment();
-            if (pendingFeedback) {
-                navigate('/feedback');
+            const pendingAppointments = await appointmentService.getCompletedAppointmentsWithoutFeedback();
+            if (pendingAppointments.length > 0) {
+                navigate('/feedback', { state: { appointment: pendingAppointments[0] } });
             }
         }
     };

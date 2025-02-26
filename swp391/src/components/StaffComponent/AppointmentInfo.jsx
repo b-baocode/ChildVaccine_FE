@@ -80,28 +80,39 @@ const StaffAppointment = () => {
   };
 
   const confirmStatusChange = async () => {
+    if (!pendingStatusChange) return;
+
     const { appointmentId, newStatus } = pendingStatusChange;
+
     try {
         const updatedAppointment = await appointmentService.updateAppointmentStatus(
             appointmentId,
             newStatus.toUpperCase()
         );
-        const updatedAppointments = appointments.map((appointment) =>
-            appointment.appId === appointmentId ? updatedAppointment : appointment
-        );
-        setAppointments(updatedAppointments);
-        setShowConfirmModal(false);
 
-        // Nếu status là COMPLETED, emit event qua socket (nếu có)
+        setAppointments((prevAppointments) =>
+            prevAppointments.map((appointment) =>
+                appointment.appId === appointmentId ? updatedAppointment : appointment
+            )
+        );
+
+        setShowConfirmModal(false);
+        setPendingStatusChange(null);
+
+        // Hiển thị thông báo cập nhật thành công
+        alert(`Trạng thái đã được cập nhật thành ${newStatus.toUpperCase()}!`);
+
+        // Nếu status là COMPLETED, có thể phát sự kiện qua WebSocket (nếu cần)
         if (newStatus.toUpperCase() === 'COMPLETED') {
-            // Nếu bạn có socket, có thể emit event ở đây
             console.log('🔔 Appointment completed, feedback required:', appointmentId);
+            // Gửi event socket ở đây nếu hệ thống hỗ trợ
         }
+
     } catch (error) {
         console.error('Error updating appointment status:', error);
         alert(error.message || 'Có lỗi xảy ra khi cập nhật trạng thái. Vui lòng thử lại!');
     }
-};
+  };
 
   const handleCloseModal = () => {
     setShowUpdateModal(false);

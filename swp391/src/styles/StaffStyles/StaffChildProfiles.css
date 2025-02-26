@@ -4,6 +4,7 @@
   background: #f5f5f5;
 }
 
+
 .profiles-sidebar {
   width: 300px;
   background: white;
@@ -12,11 +13,13 @@
   flex-direction: column;
 }
 
+
 .profiles-list {
   flex: 1;
   overflow-y: auto;
   padding: 15px;
 }
+
 
 .profile-item {
   display: flex;
@@ -29,18 +32,22 @@
   margin-bottom: 10px;
 }
 
+
 .profile-item:hover {
   background: #f0f7ff;
 }
+
 
 .profile-item.active {
   background: #e3f2fd;
 }
 
+
 .profile-icon {
   font-size: 2.5rem;
   color: #1976d2;
 }
+
 
 .profile-brief h3 {
   margin: 0;
@@ -48,17 +55,20 @@
   color: #333;
 }
 
+
 .profile-brief p {
   margin: 5px 0 0;
   font-size: 0.875rem;
   color: #666;
 }
 
+
 .profile-content {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
 }
+
 
 .child-profile-container {
     background: #ffffff;
@@ -68,7 +78,7 @@
     max-width: 1200px;
     margin: 0 auto;
   }
-  
+ 
   .profile-header {
     display: flex;
     align-items: center;
@@ -76,26 +86,26 @@
     padding-bottom: 24px;
     border-bottom: 1px solid #e0e0e0;
   }
-  
+ 
   .profile-avatar {
     background: #f5f5f5;
     border-radius: 50%;
     padding: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
+ 
   .profile-basic-info h1 {
     margin: 0 0 16px 0;
     color: #2c3e50;
     font-size: 1.8rem;
   }
-  
+ 
   .profile-tags {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
   }
-  
+ 
   .profile-tag {
     background: #e3f2fd;
     color: #1976d2;
@@ -104,14 +114,14 @@
     font-size: 0.9rem;
     font-weight: 500;
   }
-  
+ 
   .profile-tabs {
     display: flex;
     gap: 16px;
     margin: 24px 0;
     border-bottom: 1px solid #e0e0e0;
   }
-  
+ 
   .tab-btn {
     padding: 12px 24px;
     background: none;
@@ -122,16 +132,16 @@
     position: relative;
     transition: all 0.3s ease;
   }
-  
+ 
   .tab-btn:hover {
     color: #1976d2;
   }
-  
+ 
   .tab-btn.active {
     color: #1976d2;
     font-weight: 500;
   }
-  
+ 
   .tab-btn.active::after {
     content: '';
     position: absolute;
@@ -141,44 +151,44 @@
     height: 2px;
     background: #1976d2;
   }
-  
+ 
   .details-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 24px;
     margin-top: 24px;
   }
-  
+ 
   .detail-card {
     background: #f8f9fa;
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
-  
+ 
   .card-header {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 20px;
   }
-  
+ 
   .card-header-icons {
     display: flex;
     gap: 8px;
   }
-  
+ 
   .card-icon {
     color: #1976d2;
     font-size: 1.2rem;
   }
-  
+ 
   .card-header h3 {
     margin: 0;
     color: #2c3e50;
     font-size: 1.1rem;
   }
-  
+ 
   .metric-item {
     display: flex;
     justify-content: space-between;
@@ -186,27 +196,27 @@
     padding: 8px 0;
     border-bottom: 1px dashed #e0e0e0;
   }
-  
+ 
   .metric-label {
     color: #666;
     font-weight: 500;
   }
-  
+ 
   .metric-value {
     color: #2c3e50;
     font-weight: 600;
   }
-  
+ 
   .health-info {
     margin-bottom: 16px;
   }
-  
+ 
   .health-info h4 {
     margin: 0 0 8px 0;
     color: #2c3e50;
     font-size: 1rem;
   }
-  
+ 
   .health-text {
     margin: 0;
     color: #666;
@@ -215,23 +225,23 @@
     background: #fff;
     border-radius: 6px;
   }
-  
+ 
   .health-text.warning {
     color: #f57c00;
     background: #fff3e0;
   }
-  
+ 
   .health-text.normal {
     color: #2e7d32;
     background: #e8f5e9;
   }
-  
+ 
   .medical-records {
     display: flex;
     flex-direction: column;
     gap: 20px;
   }
-  
+ 
   .medical-record-card {
     background: #fff;
     border-radius: 12px;
@@ -239,7 +249,7 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border-left: 4px solid #1976d2;
   }
-  
+ 
   .record-header {
     display: flex;
     justify-content: space-between;
@@ -248,18 +258,18 @@
     padding-bottom: 16px;
     border-bottom: 1px solid #e0e0e0;
   }
-  
+ 
   .record-date h3 {
     margin: 0 0 4px 0;
     color: #2c3e50;
     font-size: 1.1rem;
   }
-  
+ 
   .record-id {
     color: #666;
     font-size: 0.9rem;
   }
-  
+ 
   .staff-id {
     background: #e3f2fd;
     color: #1976d2;
@@ -267,23 +277,23 @@
     border-radius: 4px;
     font-size: 0.9rem;
   }
-  
+ 
   .record-field {
     margin-bottom: 16px;
   }
-  
+ 
   .record-field h4 {
     margin: 0 0 8px 0;
     color: #2c3e50;
     font-size: 1rem;
   }
-  
+ 
   .record-field p {
     margin: 0;
     color: #666;
     line-height: 1.6;
   }
-  
+ 
   .no-records {
     text-align: center;
     padding: 40px;
@@ -291,49 +301,54 @@
     background: #f8f9fa;
     border-radius: 8px;
   }
-  
+ 
   .loading {
     text-align: center;
     padding: 40px;
     color: #666;
   }
-  
+ 
   @media (max-width: 768px) {
     .profile-header {
       flex-direction: column;
       text-align: center;
     }
-  
+ 
     .profile-tags {
       justify-content: center;
     }
-  
+ 
     .record-header {
       flex-direction: column;
       align-items: center;
       text-align: center;
       gap: 12px;
     }
-  
+ 
     .staff-id {
       margin-top: 8px;
     }
   }
+
 
   /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
+
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
+
 
 ::-webkit-scrollbar-thumb {
   background: #c1c1c1;
   border-radius: 4px;
 }
 
+
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+

@@ -1,23 +1,42 @@
-const API_BASE_URL = 'http://localhost:8080/vaccinatecenter';
+const API_BASE_URL = 'http://localhost:8080/vaccinatecenter/api';
 
 const feedbackService = {
     submitFeedback: async (feedbackData) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${API_BASE_URL}/api/feedback/submit`, {
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            const response = await fetch(`${API_BASE_URL}/feedback/submit`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(feedbackData)
+                body: JSON.stringify(feedbackData),
+                credentials: 'include'
             });
 
             if (!response.ok) {
-                throw new Error('Failed to submit feedback');
+                const errorText = await response.text();
+                const errorStatus = response.status;
+                const contentType = response.headers.get('Content-Type') || 'unknown';
+                console.error('Server response error:', {
+                    status: errorStatus,
+                    contentType: contentType,
+                    body: errorText
+                });
+                throw new Error(`Failed to submit feedback: ${errorText || `Status ${errorStatus}`}`);
             }
 
-            return await response.json();
+            const contentType = response.headers.get('Content-Type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                throw new Error(`Expected JSON response, but got: ${text.substring(0, 100)}...`);
+            }
+
+            return await response.json(); // Return FeedbackDTO
         } catch (error) {
             console.error('Error submitting feedback:', error);
             throw error;
@@ -27,17 +46,36 @@ const feedbackService = {
     getPendingFeedback: async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`${API_BASE_URL}/api/feedback/pending`, {
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            const response = await fetch(`${API_BASE_URL}/feedback/getall`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
-                }
+                },
+                credentials: 'include'
             });
 
             if (!response.ok) {
-                throw new Error('Failed to fetch pending feedback');
+                const errorText = await response.text();
+                const errorStatus = response.status;
+                const contentType = response.headers.get('Content-Type') || 'unknown';
+                console.error('Server response error fetching pending feedback:', {
+                    status: errorStatus,
+                    contentType: contentType,
+                    body: errorText
+                });
+                throw new Error(`Failed to fetch pending feedback: ${errorText || `Status ${errorStatus}`}`);
             }
 
-            return await response.json();
+            const contentType = response.headers.get('Content-Type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                throw new Error(`Expected JSON response, but got: ${text.substring(0, 100)}...`);
+            }
+
+            return await response.json(); // Return list of FeedbackDTOs
         } catch (error) {
             console.error('Error fetching pending feedback:', error);
             throw error;
