@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/ChildProfiles.css';
 import sessionService from '../service/sessionService';
 import customerService from '../service/customerService';
-
+import childService from '../service/childService'; // Import childService
 
 function ChildProfiles() {
   const navigate = useNavigate();
@@ -44,7 +44,6 @@ function ChildProfiles() {
         
         if (sessionData) {
           const children = await customerService.getCustomerChildren(sessionData.cusId);
-          // Transform data to match frontend structure
           const transformedChildren = children.map(child => ({
             id: child.childId,
             name: child.fullName,
@@ -84,8 +83,8 @@ function ChildProfiles() {
     return {
       id: child.id,
       basicInfo: {
-        height: parseFloat(child.height),
-        weight: parseFloat(child.weight),
+        height: parseFloat(child.height) || '', // Ensure numeric or empty for input
+        weight: parseFloat(child.weight) || '', // Ensure numeric or empty for input
         bloodType: child.medicalInfo.bloodType,
         allergies: child.medicalInfo.allergies,
         healthNote: child.medicalInfo.healthNote
@@ -97,80 +96,81 @@ function ChildProfiles() {
     navigate('/login');
   };
 
-
   const handleCloseDialog = () => {
     setShowLoginDialog(false);
     navigate('/');
   };
 
-
   const handleEdit = () => {
-  if (!selectedMedicalRecord) return;
+    if (!selectedMedicalRecord) return;
   
-  setIsEditing(true);
-  setEditedInfo({
-    height: selectedMedicalRecord.basicInfo.height || '',
-    weight: selectedMedicalRecord.basicInfo.weight || '',
-    healthNote: selectedMedicalRecord.basicInfo.healthNote || ''
-  });
-};
-
-const handleSave = async () => {
-  try {
-    const sessionData = await sessionService.checkSession();
-    if (!sessionData) throw new Error('No session data found');
-
-    // Here you would typically call an API to update the medical record
-    const updatedProfiles = childProfiles.map(profile => {
-      if (profile.id === selectedMedicalRecord.id) {
-        return {
-          ...profile,
-          height: `${editedInfo.height} cm`,
-          weight: `${editedInfo.weight} kg`,
-          medicalInfo: {
-            ...profile.medicalInfo,
-            healthNote: editedInfo.healthNote
-          }
-        };
-      }
-      return profile;
+    setIsEditing(true);
+    setEditedInfo({
+      height: selectedMedicalRecord.basicInfo.height || '',
+      weight: selectedMedicalRecord.basicInfo.weight || '',
+      healthNote: selectedMedicalRecord.basicInfo.healthNote || ''
     });
+  };
 
-    setChildProfiles(updatedProfiles);
-    setIsEditing(false);
-    setShowMedicalRecord(false);
-    setSelectedMedicalRecord(null);
-  } catch (error) {
-    console.error('Error updating medical record:', error);
-    setError('Failed to update medical record');
-  }
-};
+  const handleSave = async () => {
+    try {
+      const sessionData = await sessionService.checkSession();
+      if (!sessionData) throw new Error('No session data found');
 
+      // Prepare data for the API call (only send fields that can be updated)
+      const updateData = {
+        height: parseFloat(editedInfo.height) || 0, // Ensure numeric values
+        weight: parseFloat(editedInfo.weight) || 0, // Ensure numeric values
+        healthNote: editedInfo.healthNote || '' // Ensure string or empty
+      };
+
+      // Call the backend API to update the child profile
+      await childService.updateChildProfile(selectedMedicalRecord.id, updateData);
+
+      // Update the local state with the new data
+      const updatedProfiles = childProfiles.map(profile => {
+        if (profile.id === selectedMedicalRecord.id) {
+          return {
+            ...profile,
+            height: `${editedInfo.height} cm`,
+            weight: `${editedInfo.weight} kg`,
+            medicalInfo: {
+              ...profile.medicalInfo,
+              healthNote: editedInfo.healthNote
+            }
+          };
+        }
+        return profile;
+      });
+
+      setChildProfiles(updatedProfiles);
+      setIsEditing(false);
+      setShowMedicalRecord(false);
+      setSelectedMedicalRecord(null);
+    } catch (error) {
+      console.error('Error updating medical record:', error);
+      setError('Cập nhật thông tin trẻ thất bại: ' + error.message);
+    }
+  };
 
   const handleCancel = () => {
     setIsEditing(false);
+    setEditedInfo({
+      height: '',
+      weight: '',
+      healthNote: ''
+    });
   };
-
 
   const handleDelete = async (childId) => {
-    // try {
-    //   setProfileToDelete(childId);
-    //   setShowDeleteConfirm(true);
-    // } catch (error) {
-    //   console.error('Error preparing to delete child profile:', error);
-    //   setError('Failed to prepare deletion');
-    // }
-    console.error('Error preparing to delete child profile:')
+    console.error('Error preparing to delete child profile:'); // Placeholder for now
   };
-
-
 
   const handleConfirmDelete = async () => {
     try {
       const sessionData = await sessionService.checkSession();
       if (!sessionData) throw new Error('No session data found');
   
-      // Here you would typically call an API to delete the child profile
       const newProfiles = childProfiles.filter(profile => profile.id !== profileToDelete);
       setChildProfiles(newProfiles);
       setShowDeleteConfirm(false);
@@ -181,12 +181,10 @@ const handleSave = async () => {
     }
   };
 
-
   const handleCancelDelete = () => {
     setShowDeleteConfirm(false);
     setProfileToDelete(null);
   };
-
 
   if (showLoginDialog) {
     return (
@@ -206,7 +204,6 @@ const handleSave = async () => {
       </div>
     );
   }
-
 
   return (
     <div className="child-profiles-page">
@@ -285,7 +282,6 @@ const handleSave = async () => {
         </>
       )}
 
-
       {showReactions && selectedVaccination && (
         <div className="reactions-modal-overlay">
           <div className="reactions-modal">
@@ -335,7 +331,6 @@ const handleSave = async () => {
         </div>
       )}
 
-
       {showMedicalRecord && selectedMedicalRecord && (
         <div className="medical-modal-overlay">
           <div className="medical-modal">
@@ -346,6 +341,8 @@ const handleSave = async () => {
                 onClick={() => {
                   setShowMedicalRecord(false);
                   setSelectedMedicalRecord(null);
+                  setIsEditing(false); // Reset editing state when closing
+                  setEditedInfo({ height: '', weight: '', healthNote: '' }); // Reset edited info
                 }}
               >
                 ×
@@ -362,10 +359,10 @@ const handleSave = async () => {
                   ) : (
                     <div className="edit-actions">
                       <button className="save-medical-btn" onClick={handleSave}>
-                        <FaSave /> Lưu
+                        <FaSave /> LƯU
                       </button>
                       <button className="cancel-medical-btn" onClick={handleCancel}>
-                        <FaTimes /> Hủy
+                        <FaTimes /> HỦY
                       </button>
                     </div>
                   )}
@@ -378,11 +375,12 @@ const handleSave = async () => {
                         type="number"
                         step="0.1"
                         value={editedInfo.height}
-                        onChange={(e) => setEditedInfo({...editedInfo, height: e.target.value})}
+                        onChange={(e) => setEditedInfo({ ...editedInfo, height: e.target.value })}
                         className="edit-input"
+                        placeholder="Chiều cao (cm)"
                       />
                     ) : (
-                      <span>{selectedMedicalRecord.basicInfo.height} cm</span>
+                      <span>{selectedMedicalRecord.basicInfo.height || 0} cm</span>
                     )}
                   </div>
                   <div className="info-item">
@@ -392,16 +390,17 @@ const handleSave = async () => {
                         type="number"
                         step="0.1"
                         value={editedInfo.weight}
-                        onChange={(e) => setEditedInfo({...editedInfo, weight: e.target.value})}
+                        onChange={(e) => setEditedInfo({ ...editedInfo, weight: e.target.value })}
                         className="edit-input"
+                        placeholder="Cân nặng (kg)"
                       />
                     ) : (
-                      <span>{selectedMedicalRecord.basicInfo.weight} kg</span>
+                      <span>{selectedMedicalRecord.basicInfo.weight || 0} kg</span>
                     )}
                   </div>
                   <div className="info-item">
                     <label>Nhóm máu:</label>
-                    <span>{selectedMedicalRecord.basicInfo.bloodType}</span>
+                    <span>{selectedMedicalRecord.basicInfo.bloodType || 'Không có'}</span>
                   </div>
                   <div className="info-item">
                     <label>Dị ứng:</label>
@@ -412,9 +411,10 @@ const handleSave = async () => {
                     {isEditing ? (
                       <textarea
                         value={editedInfo.healthNote}
-                        onChange={(e) => setEditedInfo({...editedInfo, healthNote: e.target.value})}
+                        onChange={(e) => setEditedInfo({ ...editedInfo, healthNote: e.target.value })}
                         className="edit-input"
                         rows="3"
+                        placeholder="Ghi chú sức khỏe..."
                       />
                     ) : (
                       <span>{selectedMedicalRecord.basicInfo.healthNote || 'Không có'}</span>
@@ -426,7 +426,6 @@ const handleSave = async () => {
           </div>
         </div>
       )}
-
 
       {showDeleteConfirm && (
         <div className="delete-confirm-overlay">
@@ -447,7 +446,6 @@ const handleSave = async () => {
           </div>
         </div>
       )}
-
 
       {showVaccinationModal && selectedChildVaccinations && (
         <div className="medical-modal-overlay">
@@ -499,6 +497,4 @@ const handleSave = async () => {
   );
 }
 
-
 export default ChildProfiles;
-

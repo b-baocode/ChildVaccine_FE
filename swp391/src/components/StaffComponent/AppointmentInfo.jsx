@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import appointmentService from '../../service/appointmentService'; // Điều chỉnh đường dẫn nếu cần
 import '../../styles/StaffStyles/Appointments.css';
+import recordService from '../../service/recordService';
+
 
 const StaffAppointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -51,16 +53,42 @@ const StaffAppointment = () => {
     setShowUpdateModal(true);
   };
 
-  const handleSaveClick = (appointmentId) => {
-    const updatedAppointments = appointments.map((appointment) =>
-      appointment.appId === appointmentId
-        ? { ...appointment, status, symptoms, notes: '' }
-        : appointment
-    );
-    setAppointments(updatedAppointments);
-    setShowUpdateModal(false);
-    setSelectedAppointmentId(null);
-  };
+ 
+const handleSaveClick = async (appointmentId) => {
+  try {
+      // Create record data
+      const recordData = {
+          appointmentId: appointmentId,
+          staffId: 'S001', // Replace with actual staff ID from session/context
+          symptoms: symptoms,
+          notes: notes,
+          appointmentDate: new Date().toISOString().split('T')[0]
+      };
+
+      // Save record
+      await recordService.createRecord(recordData);
+
+      // Update local state
+      const updatedAppointments = appointments.map((appointment) =>
+          appointment.appId === appointmentId
+              ? { ...appointment, symptoms, notes }
+              : appointment
+      );
+      setAppointments(updatedAppointments);
+
+      // Show success message
+      alert('Cập nhật thông tin thành công!');
+
+      // Close modal and reset form
+      setShowUpdateModal(false);
+      setSelectedAppointmentId(null);
+      setSymptoms('');
+      setNotes('');
+  } catch (error) {
+      console.error('Error saving record:', error);
+      alert(error.message || 'Có lỗi xảy ra khi lưu thông tin. Vui lòng thử lại!');
+  }
+};
 
   const handleStatusChange = (appointmentId, newStatus) => {
     const currentAppointment = appointments.find((appt) => appt.appId === appointmentId);

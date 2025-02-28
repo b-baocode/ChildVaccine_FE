@@ -1460,7 +1460,106 @@ textarea.edit-input {
   }
 }
 
+/* ChildProfiles.css */
+.save-medical-btn {
+  background-color: #4CAF50; /* Green color for "LƯU" */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin-right: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
 
+.save-medical-btn:hover {
+  background-color: #45a049;
+}
+
+.cancel-medical-btn {
+  background-color: #f44336; /* Red color for "HỦY" */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.cancel-medical-btn:hover {
+  background-color: #da190b;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.info-grid {
+  display: grid;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-item label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.info-item.full-width {
+  grid-column: span 2;
+}
+
+.medical-modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.medical-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.medical-modal-header h3 {
+  margin: 0;
+  color: #ff9800; /* Match the orange header in the image */
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.basic-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.basic-info-header h4 {
+  margin: 0;
+  color: #ff9800; /* Match the orange header in the image */
+}
+
+.edit-actions {
+  display: flex;
+  gap: 10px;
+}
 
 
 

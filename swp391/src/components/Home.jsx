@@ -21,19 +21,22 @@ import {
     FaSearch
 } from 'react-icons/fa';
 import LogoutConfirmDialog from './LogoutConfirmDialog';
+import appointmentService from '../service/appointmentService';
 
 
 const Home = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, pendingFeedback } = useAuth();
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
     const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+    const [pendingAppointments, setPendingAppointments] = useState([]);
+    const [showNotification, setShowNotification] = useState(false);
     const dropdownRef = useRef(null);
 
     const TopBanner = () => (
         <div className="top-banner">
             <div className="banner-content">
-                <span>Trung tâm tiêm chủng Long Châu</span>
+                <span>Trung tâm tiêm chủng</span>
                 <a href="#" className="banner-link">Xem chi tiết</a>
             </div>
             <div className="banner-actions">
@@ -48,8 +51,26 @@ const Home = () => {
     );
 
     useEffect(() => {
-        console.log('Current user in Home:', user); // Debug log
-    }, [user]);
+        console.log('Pending Appointments updated in Home:', pendingAppointments); // Log để debug
+        setShowNotification(pendingAppointments.length > 0);
+    }, [pendingAppointments])
+
+    console.log('User in Home:', user); // Log để debug user.cusId
+    console.log('Pending Appointments in Home:', pendingAppointments); // Log để debug
+
+    const handleFeedbackClick = () => {
+        if (pendingAppointments.length > 0) {
+            const latestAppointment = [...pendingAppointments].sort(
+                (a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate)
+            )[0];
+            navigate('/feedback', { state: { appointment: latestAppointment } });
+            setShowNotification(false); // Ẩn thông báo sau khi chuyển đến trang Feedback
+        }
+    };
+
+    const handleNotificationCancel = () => {
+        setShowNotification(false);
+    };
 
 
     const handleLoginClick = () => {
@@ -134,6 +155,21 @@ const Home = () => {
 
     return (
         <div className="home">
+            {/* Notification */}
+            {showNotification && pendingAppointments.length > 0 && (
+                <div className="feedback-notification">
+                    <p>Bạn có {pendingAppointments.length} buổi hẹn chưa đánh giá</p>
+                    <div className="notification-buttons">
+                        <button onClick={handleNotificationCancel} className="cancel-btn">
+                            Hủy
+                        </button>
+                        <button onClick={handleFeedbackClick} className="feedback-btn">
+                            Đánh giá
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <TopBanner />       
 
             <div className="header">

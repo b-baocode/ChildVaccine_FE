@@ -1333,3 +1333,36 @@
   margin-top: 0.25rem;
 }
 
+.feedback-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ffeb3b;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+.notification-buttons {
+  margin-top: 10px;
+}
+
+.cancel-btn, .feedback-btn {
+  padding: 5px 15px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #ccc;
+  color: #333;
+}
+
+.feedback-btn {
+  background-color: #4CAF50;
+  color: white;
+}

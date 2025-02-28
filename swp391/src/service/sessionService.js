@@ -24,7 +24,11 @@ const sessionService = {
                 const errorText = await response.text();
                 const errorStatus = response.status;
                 const errorMessage = errorText || `Session invalid (Status: ${errorStatus})`;
-                console.error("Session check failed:", errorMessage);
+                console.error("Session check failed:", {
+                    status: errorStatus,
+                    message: errorMessage,
+                    responseText: errorText
+                });
                 throw new Error(errorMessage);
             }
 
@@ -32,10 +36,17 @@ const sessionService = {
             console.log("Session data received:", sessionData);
             return sessionData;
         } catch (error) {
-            console.error('Session check failed:', error.message);
+            console.error('Session check failed:', {
+                message: error.message,
+                stack: error.stack
+            });
             throw error;
         }
-    }
+    },
+
+    getSession: async () => {
+        return await sessionService.checkSession();
+      }
 };
 
 export default sessionService;

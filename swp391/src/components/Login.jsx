@@ -37,23 +37,29 @@ const Login = () => {
 
         const { user } = response.body;
         await login(response);
-        
+
         // 🔍 Kiểm tra danh sách appointment chưa feedback
         if (user.role === 'CUSTOMER') {
             const pendingFeedbackAppointments = await appointmentService.getPendingFeedbackAppointment();
             console.log("Raw API response:", pendingFeedbackAppointments);
 
-            // 🔥 Chuyển đổi thành mảng nếu cần
-            const appointmentsArray = Array.isArray(pendingFeedbackAppointments)
-                ? pendingFeedbackAppointments
-                : [pendingFeedbackAppointments];
+            // 🔥 Chuyển đổi và kiểm tra dữ liệu từ API
+            let appointmentsArray = [];
+            if (Array.isArray(pendingFeedbackAppointments)) {
+                appointmentsArray = pendingFeedbackAppointments;
+            } else if (pendingFeedbackAppointments && typeof pendingFeedbackAppointments === 'object') {
+                // Nếu API trả về một đối tượng đơn lẻ, chuyển thành mảng
+                appointmentsArray = [pendingFeedbackAppointments];
+            } else {
+                appointmentsArray = [];
+            }
 
             console.log("Converted appointmentsArray:", appointmentsArray);
 
-            // 👉 Kiểm tra nếu có ít nhất 1 lịch hẹn, chuyển ngay đến trang feedback
+            // 👉 Lưu thông tin lịch hẹn chưa feedback vào context hoặc state để truyền đến trang home
             if (appointmentsArray.length > 0) {
-                navigate('/feedback', { state: { appointment: appointmentsArray[0] } });
-                return;
+                // Giả sử useAuth hoặc context có phương thức để lưu thông tin
+                login({ ...response, pendingFeedback: appointmentsArray[0] });
             }
         }
 

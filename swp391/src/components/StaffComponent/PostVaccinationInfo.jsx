@@ -1,50 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { FaExclamationTriangle, FaClock, FaUserInjured, FaNotesMedical } from 'react-icons/fa';
 import '../../styles/StaffStyles/PostVaccinationInfo.css';
+import reactionService from '../../service/reactionService';
 
 const PostVaccineInfo = () => {
   const [reactions, setReactions] = useState([]);
   const [selectedSeverity, setSelectedSeverity] = useState('all');
-
-  // Mock data cho phản ứng sau tiêm
-  const reactionData = [
-    {
-      id: 1,
-      child_id: 1,
-      child_name: "Nguyễn Minh Anh",
-      appointment_id: "APT001",
-      vaccine_name: "MMR",
-      symptoms: "Sốt nhẹ 38°C, đau tại chỗ tiêm",
-      severity: "MILD",
-      reaction_date: "2024-03-15T14:30:00",
-      notes: "Theo dõi 30 phút sau tiêm, cho về sau khi ổn định"
-    },
-    {
-      id: 2,
-      child_id: 2,
-      child_name: "Trần Đức Minh",
-      appointment_id: "APT002",
-      vaccine_name: "DPT",
-      symptoms: "Sốt cao 39°C, quấy khóc nhiều",
-      severity: "MODERATE",
-      reaction_date: "2024-03-15T10:15:00",
-      notes: "Kê đơn thuốc hạ sốt, tái khám nếu sốt kéo dài"
-    },
-    {
-      id: 3,
-      child_id: 3,
-      child_name: "Lê Thu Hà",
-      appointment_id: "APT003",
-      vaccine_name: "Viêm gan B",
-      symptoms: "Phản ứng dị ứng, khó thở",
-      severity: "SEVERE",
-      reaction_date: "2024-03-14T09:45:00",
-      notes: "Chuyển khoa cấp cứu để theo dõi và điều trị"
-    }
-  ];
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    setReactions(reactionData);
+    const fetchReactions = async () => {
+      try {
+        setLoading(true);
+        const data = await reactionService.getAllReactions();
+        setReactions(data);
+      } catch (err) {
+        console.error('Error fetching reactions:', err);
+        setError('Không thể tải dữ liệu phản ứng sau tiêm');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReactions();
   }, []);
 
   const getSeverityColor = (severity) => {
@@ -71,8 +50,11 @@ const PostVaccineInfo = () => {
   };
 
   const filteredReactions = selectedSeverity === 'all' 
-    ? reactions 
-    : reactions.filter(reaction => reaction.severity === selectedSeverity);
+  ? reactions 
+  : reactions.filter(reaction => reaction.severity === selectedSeverity);
+
+  if (loading) return <div className="loading">Đang tải dữ liệu...</div>;
+  if (error) return <div className="error-message">{error}</div>;
 
   return (
     <div className="post-vaccine-container">
@@ -104,14 +86,14 @@ const PostVaccineInfo = () => {
               </div>
               <div className="datetime">
                 <FaClock />
-                {formatDateTime(reaction.reaction_date)}
+                {formatDateTime(reaction.reactionDate)}
               </div>
             </div>
 
             <div className="patient-info">
-              <h3>{reaction.child_name}</h3>
-              <span className="appointment-id">Mã tiêm: {reaction.appointment_id}</span>
-              <span className="vaccine-name">Vaccine: {reaction.vaccine_name}</span>
+              <h3>{reaction.childName}</h3>
+              <span className="appointment-id">Mã tiêm: {reaction.appointmentId}</span>
+              <span className="child-id">Mã trẻ: {reaction.childId}</span>
             </div>
 
             <div className="reaction-details">
@@ -121,14 +103,6 @@ const PostVaccineInfo = () => {
                   <h4>Triệu chứng:</h4>
                 </div>
                 <p>{reaction.symptoms}</p>
-              </div>
-
-              <div className="notes">
-                <div className="detail-header">
-                  <FaNotesMedical />
-                  <h4>Ghi chú:</h4>
-                </div>
-                <p>{reaction.notes}</p>
               </div>
             </div>
           </div>

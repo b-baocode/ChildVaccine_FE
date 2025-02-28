@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaSave } from 'react-icons/fa';
 import childService from '../../service/childService';
@@ -7,41 +7,71 @@ import '../../styles/CusStyles/AddChildForm.css';
 
 const AddChildForm = () => {
   const navigate = useNavigate();
-    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-    const [error, setError] = useState('');
-    const [childInfo, setChildInfo] = useState({
-        fullName: '',
-        dateOfBirth: '',
-        gender: 'MALE',
-        height: '',
-        weight: '',
-        bloodType: '',
-        allergies: '',
-        healthNote: ''  // Changed from medicalConditions to match backend
-    });
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [error, setError] = useState('');
+  const [childInfo, setChildInfo] = useState({
+    fullName: '',
+    dateOfBirth: '',
+    gender: 'MALE',
+    height: '',
+    weight: '',
+    bloodType: '',
+    allergies: '',
+    healthNote: ''
+  });
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
+  // Fetch session data when the component mounts
+  useEffect(() => {
+    const fetchSession = async () => {
       try {
-          // Format the data before sending
-          const formattedData = {
-              ...childInfo,
-              height: parseFloat(childInfo.height) || 0,
-              weight: parseFloat(childInfo.weight) || 0
-          };
-  
-          // The customerId will be added in the service layer
-          await childService.addChildProfile(formattedData);
-          
-          setShowSuccessMessage(true);
-          setTimeout(() => {
-              navigate(-1);
-          }, 2000);
+        const sessionData = await sessionService.checkSession();
+        if (!sessionData || !sessionData.cusId) {
+          setError('Không thể tìm thấy thông tin khách hàng. Vui lòng đăng nhập lại.');
+        }
       } catch (err) {
-          setError(err.message || 'Có lỗi xảy ra khi thêm hồ sơ trẻ');
-          console.error('Error adding child:', err);
+        setError('Lỗi khi kiểm tra session: ' + err.message);
       }
     };
+    fetchSession();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const sessionData = await sessionService.checkSession();
+      const cusId = sessionData.cusId;
+
+      if (!cusId) {
+        setError('Không thể tìm thấy ID khách hàng. Vui lòng đăng nhập lại.');
+        return;
+      }
+
+      const genderMapping = {
+        MALE: "0",
+        FEMALE: "1",
+        OTHER: "2"
+      };
+
+      const formattedData = {
+        ...childInfo,
+        height: parseFloat(childInfo.height) || 0,
+        weight: parseFloat(childInfo.weight) || 0,
+        gender: genderMapping[childInfo.gender] || childInfo.gender
+      };
+
+      // Call the service and handle the plain text response
+      const response = await childService.addChildProfile(formattedData);
+      console.log('Response from addChildProfile:', response); // Should log "Thêm trẻ thành công"
+
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        navigate(-1); // Navigate back to the previous page after 2 seconds
+      }, 2000);
+    } catch (err) {
+      setError(err.message || 'Có lỗi xảy ra khi thêm hồ sơ trẻ');
+      console.error('Error adding child:', err);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,9 +81,8 @@ const AddChildForm = () => {
     }));
   };
 
-  // Cập nhật hàm xử lý nút quay lại
   const handleBack = () => {
-    navigate(-1); // Quay lại trang trước đó trong history stack
+    navigate(-1); // Navigate back to the previous page
   };
 
   return (
@@ -71,6 +100,8 @@ const AddChildForm = () => {
         </div>
       )}
 
+      {error && <div className="error-message">{error}</div>}
+
       <form onSubmit={handleSubmit} className="add-child-form">
         <div className="form-section">
           <h3>Thông tin cơ bản</h3>
@@ -78,7 +109,7 @@ const AddChildForm = () => {
             <label>Họ và tên</label>
             <input
               type="text"
-              name="fullName"  // Changed from name
+              name="fullName"
               value={childInfo.fullName}
               onChange={handleChange}
               required
@@ -90,7 +121,7 @@ const AddChildForm = () => {
               <label>Ngày sinh</label>
               <input
                 type="date"
-                name="dateOfBirth"  // Changed from birthday
+                name="dateOfBirth"
                 value={childInfo.dateOfBirth}
                 onChange={handleChange}
                 required
@@ -103,8 +134,9 @@ const AddChildForm = () => {
                 value={childInfo.gender}
                 onChange={handleChange}
               >
-                <option value="MALE">Nam</option>  // Updated values to match backend
+                <option value="MALE">Nam</option>
                 <option value="FEMALE">Nữ</option>
+                <option value="OTHER">Khác</option>
               </select>
             </div>
           </div>
@@ -151,23 +183,23 @@ const AddChildForm = () => {
         <div className="form-section">
           <h3>Thông tin y tế</h3>
           <div className="form-group">
-              <label>Dị ứng (nếu có)</label>
-              <textarea
-                  name="allergies"
-                  value={childInfo.allergies}
-                  onChange={handleChange}
-                  placeholder="Các dị ứng nếu có..."
-              />
+            <label>Dị ứng (nếu có)</label>
+            <textarea
+              name="allergies"
+              value={childInfo.allergies}
+              onChange={handleChange}
+              placeholder="Các dị ứng nếu có..."
+            />
           </div>
 
           <div className="form-group">
-              <label>Ghi chú sức khỏe</label>
-              <textarea
-                  name="healthNote"
-                  value={childInfo.healthNote}
-                  onChange={handleChange}
-                  placeholder="Thông tin sức khỏe khác..."
-              />
+            <label>Ghi chú sức khỏe</label>
+            <textarea
+              name="healthNote"
+              value={childInfo.healthNote}
+              onChange={handleChange}
+              placeholder="Thông tin sức khỏe khác..."
+            />
           </div>
         </div>
 

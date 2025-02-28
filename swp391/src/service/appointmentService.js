@@ -81,6 +81,44 @@ const appointmentService = {
             throw error; // Ném lỗi để component xử lý
         }
     },
+
+    getAppointmentsByChildId: async (childId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_BASE_URL}/appointment/byChild/${childId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            console.log('📡 Child Appointments Response:', {
+                status: response.status,
+                statusText: response.statusText,
+                headers: Object.fromEntries(response.headers.entries()),
+                data: data
+            });
+
+            if (!response.ok) {
+                if (response.status === 204) {
+                    return []; // Return empty array for no content
+                }
+                throw new Error('Failed to fetch child appointments');
+            }
+
+            console.log('✅ Successfully Fetched Child Appointments:', data);
+            return data;
+        } catch (error) {
+            console.error('❌ Error Fetching Child Appointments:', {
+                message: error.message,
+                stack: error.stack
+            });
+            throw error;
+        }
+    },
+
     updateAppointmentStatus: async (appId, status) => {
         try {
             const token = localStorage.getItem('token');
@@ -105,14 +143,6 @@ const appointmentService = {
                 throw new Error(data.error || 'Failed to update status');
             }
 
-            // Nếu status là COMPLETED, lưu thông tin để trigger feedback
-            if (status === 'COMPLETED') {
-                localStorage.setItem('pendingFeedback', JSON.stringify({
-                    appointmentId: appId,
-                    appointmentInfo: data.appointment
-                }));
-            }
-
             console.log('✅ Status Updated Successfully:', data);
             return data.appointment;
         } catch (error) {
@@ -124,22 +154,17 @@ const appointmentService = {
         }
     },
 
-    // Thêm methods để quản lý pending feedback
+    // Cập nhật để lấy danh sách từ server thay vì localStorage
     getPendingFeedbackAppointment: async () => {
         try {
-            return JSON.parse(localStorage.getItem('pendingFeedback'));
-        } catch (error) {
-            return null;
-        }
-    },
-
-    clearPendingFeedback: () => {
-        localStorage.removeItem('pendingFeedback');
-    },
-
-    getCompletedAppointmentsWithoutFeedback: async () => {
-        try {
             const token = localStorage.getItem('token');
+            if (!token) {
+                console.warn('No token found, user might not be logged in.');
+                return [];
+            }
+
+            console.log('Fetching pending feedback with token:', token.substring(0, 10) + '...'); // Log để debug
+
             const response = await fetch(`${API_BASE_URL}/appointment/completed-without-feedback`, {
                 method: 'GET',
                 headers: {
@@ -148,29 +173,50 @@ const appointmentService = {
                 }
             });
 
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('API Error for pending feedback:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    errorText: errorText
+                });
+                throw new Error('Failed to fetch pending feedback appointments');
+            }
+
             const data = await response.json();
-            console.log('📡 Completed Appointments Without Feedback Response:', {
+            console.log('📡 Pending Feedback Appointments Response (Raw):', {
                 status: response.status,
                 statusText: response.statusText,
                 headers: Object.fromEntries(response.headers.entries()),
                 data: data,
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch completed appointments without feedback');
-            }
+            // Đảm bảo data là mảng, nếu không trả về mảng rỗng
+            const normalizedData = Array.isArray(data) ? data : [];
+            console.log('✅ Successfully Fetched Pending Feedback Appointments (Normalized):', normalizedData);
 
-            console.log('✅ Successfully Fetched Completed Appointments Without Feedback:', data);
-            return data;
+            // Kiểm tra định dạng cusId trong dữ liệu
+            normalizedData.forEach((appt, index) => {
+                console.log(`Appointment ${index + 1} cusId:`, appt.cusId, 'Type:', typeof appt.cusId);
+            });
+
+            return normalizedData;
         } catch (error) {
-            console.error('❌ Error Fetching Completed Appointments Without Feedback:', {
+            console.error('❌ Error Fetching Pending Feedback Appointments:', {
                 message: error.message,
                 stack: error.stack,
             });
-            return [];
+            return []; // Trả về mảng rỗng nếu có lỗi
         }
     },
-    
+
+    clearPendingFeedback: () => {
+        localStorage.removeItem('pendingFeedback');
+    },
+
+    getCompletedAppointmentsWithoutFeedback: async () => {
+        return await appointmentService.getPendingFeedbackAppointment();
+    },
 };
 
 export default appointmentService;

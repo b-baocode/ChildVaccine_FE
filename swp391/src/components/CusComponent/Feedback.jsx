@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 import feedbackService from '../../service/feedbackService';
@@ -15,12 +15,20 @@ const Feedback = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showThanks, setShowThanks] = useState(false);
 
+    useEffect(() => {
+        if (!appointmentData) {
+            const timer = setTimeout(() => {
+                navigate('/');
+            }, 2000); // Chuyển hướng sau 2 giây
+            return () => clearTimeout(timer); // Cleanup để tránh memory leak
+        }
+    }, [appointmentData, navigate]);
+
     if (!appointmentData) {
         return <div>Không có lịch hẹn nào cần đánh giá.</div>;
     }
 
-    const { appointmentId, appointmentInfo } = appointmentData;
-    const { customerId, childId, appointmentDate, vaccineId, packageId } = appointmentInfo;
+    const { appId, cusId, cusName, childName, appointmentDate, vaccineOrPackage } = appointmentData;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -35,7 +43,7 @@ const Feedback = () => {
             }
 
             const feedbackData = {
-                appointmentId: appointmentId,
+                appointmentId: appId,
                 rating: parseInt(rating),
                 feedback: feedback
             };
@@ -61,11 +69,11 @@ const Feedback = () => {
         <div className="feedback-container">
             <h2>Đánh giá dịch vụ</h2>
             <div className="appointment-info">
-                <p><strong>Mã lịch hẹn:</strong> {appointmentId}</p>
-                <p><strong>Khách hàng:</strong> {customerId.fullName}</p>
-                <p><strong>Trẻ em:</strong> {childId.fullName}</p>
+                <p><strong>Mã lịch hẹn:</strong> {appId}</p>
+                <p><strong>Khách hàng:</strong> {cusName}</p>
+                <p><strong>Trẻ em:</strong> {childName}</p>
                 <p><strong>Ngày hẹn:</strong> {appointmentDate}</p>
-                <p><strong>Dịch vụ:</strong> {packageId ? packageId.name : vaccineId.name}</p>
+                <p><strong>Dịch vụ:</strong> {vaccineOrPackage}</p>
             </div>
 
             {error && <div className="error-message" style={{ color: 'red', margin: '10px 0' }}>{error}</div>}
