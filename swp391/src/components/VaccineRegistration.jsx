@@ -101,6 +101,18 @@ const VaccineRegistration = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
+        // Add date validation
+        const selectedDate = new Date(formData.appointmentDate);
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+    
+        if (selectedDate < tomorrow) {
+            setError('Vui lòng chọn ngày từ ngày mai trở đi');
+            return;
+        }
+    
         setShowConfirmModal(true);
     };
 
@@ -184,6 +196,17 @@ const VaccineRegistration = () => {
         }));
     };
 
+    const getTomorrowDate = () => {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return tomorrow.toISOString().split('T')[0];
+    };
+
+    const getSelectedChildName = () => {
+        const selectedChild = childProfiles.find(child => child.childId === formData.childProfile);
+        return selectedChild ? selectedChild.fullName : 'Không tìm thấy';
+    };
+
     // Xử lý chọn vaccine/gói cụ thể
     const handleSelectItem = (item) => {
         const itemId = selectedType === 'single' ? item.vaccineId : item.packageId;
@@ -224,7 +247,9 @@ const VaccineRegistration = () => {
                     <div className="info-grid">
                         <div key="child-profile" className="info-item">
                             <span className="label">Hồ sơ trẻ:</span>
-                            <span className="value">{formData.childProfile}</span>
+                            <span className="value">
+                                {formData.childProfile} - {getSelectedChildName()}
+                            </span>
                         </div>
                         <div key="selected-item" className="info-item">
                             <span className="label">Vắc xin đã chọn:</span>
@@ -435,6 +460,7 @@ const VaccineRegistration = () => {
                                         name="appointmentDate"
                                         value={formData.appointmentDate}
                                         onChange={handleInputChange}
+                                        min={getTomorrowDate()} // This sets the minimum date to tomorrow
                                         required
                                     />
                                 </div>

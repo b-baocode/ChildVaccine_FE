@@ -7,17 +7,26 @@ const feedbackService = {
             if (!token) {
                 throw new Error('No authentication token found');
             }
-
+    
+            // Format data according to the API requirements
+            const formattedData = {
+                appointmentId: feedbackData.appointmentId,
+                rating: parseInt(feedbackData.rating),
+                feedback: feedbackData.feedback?.trim() || null
+            };
+    
+            console.log('Sending feedback data:', formattedData); // Debug log
+    
             const response = await fetch(`${API_BASE_URL}/feedback/submit`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(feedbackData),
+                body: JSON.stringify(formattedData),
                 credentials: 'include'
             });
-
+    
             if (!response.ok) {
                 const errorText = await response.text();
                 const errorStatus = response.status;
@@ -29,14 +38,10 @@ const feedbackService = {
                 });
                 throw new Error(`Failed to submit feedback: ${errorText || `Status ${errorStatus}`}`);
             }
-
-            const contentType = response.headers.get('Content-Type');
-            if (!contentType || !contentType.includes('application/json')) {
-                const text = await response.text();
-                throw new Error(`Expected JSON response, but got: ${text.substring(0, 100)}...`);
-            }
-
-            return await response.json(); // Return FeedbackDTO
+    
+            const result = await response.json();
+            console.log('Feedback submitted successfully:', result);
+            return result;
         } catch (error) {
             console.error('Error submitting feedback:', error);
             throw error;

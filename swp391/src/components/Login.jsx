@@ -137,7 +137,7 @@ const Login = () => {
                             <input type="checkbox" />
                             <span>Ghi nhớ đăng nhập</span>
                         </label>
-                        <a href="#" className="forgot-password">Quên mật khẩu?</a>
+                        <a href="/forgot-password" className="forgot-password">Quên mật khẩu?</a>
                     </div>
 
                     <button type="submit" className="submit-btn">

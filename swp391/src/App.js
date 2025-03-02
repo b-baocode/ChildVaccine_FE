@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import appointmentService from './service/appointmentService';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 
 import Home from './components/Home';
 import Login from './components/Login';
@@ -16,6 +15,7 @@ import News from './components/News';
 import VaccineRegistration from './components/VaccineRegistration';
 import VaccinationReactionForm from './components/VaccinationReactionForm';
 import CusFeedback from './components/CusComponent/Feedback';
+import ForgotPassword from './components/ForgotPassword';
 
 import StaffLayout from './layouts/StaffLayout';
 import AppointmentInfo from './components/StaffComponent/AppointmentInfo';
@@ -35,24 +35,6 @@ import ChildProfiles from './components/ChildProfiles';
 import PaymentReview from './components/PaymentReview';
 import ProtectedRoute from './components/ProtectedRoute';
 
-function App() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkPendingFeedback = async () => {
-        if (user?.role === 'CUSTOMER') {
-            const pendingAppointments = await appointmentService.getCompletedAppointmentsWithoutFeedback();
-            if (pendingAppointments.length > 0) {
-                navigate('/feedback', { state: { appointment: pendingAppointments[0] } });
-            }
-        }
-    };
-
-    checkPendingFeedback();
-  }, [user, navigate]);
-}
-
 const AppWrapper = () => {
   return (
     <AuthProvider>
@@ -68,6 +50,7 @@ const AppWrapper = () => {
             <Route path="/price-list" element={<PriceList />} />
             <Route path="/disease" element={<Disease />} />
             <Route path="/news" element={<News />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
 
             {/* Customer Protected routes */}
             <Route path="/register-vaccination" element={

@@ -27,6 +27,31 @@ const recordService = {
             console.error('❌ Error creating record:', error);
             throw error;
         }
+    },
+    getRecordsByChildId: async (childId) => {
+        try {
+            const token = localStorage.getItem('token');
+            console.log('🔍 Fetching vaccination records for child:', childId);
+
+            const response = await fetch(`${API_BASE_URL}/api/records/${childId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch vaccination records');
+            }
+
+            const data = await response.json();
+            console.log('✅ Vaccination records fetched:', data);
+            return data;
+        } catch (error) {
+            console.error('❌ Error fetching vaccination records:', error);
+            throw error;
+        }
     }
 };
 

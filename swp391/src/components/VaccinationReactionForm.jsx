@@ -19,6 +19,7 @@ const VaccinationReactionForm = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [submittedReaction, setSubmittedReaction] = useState(null);
 
   // Fetch children when component mounts
   useEffect(() => {
@@ -65,23 +66,35 @@ const VaccinationReactionForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        if (!selectedChild || !selectedAppointment || !description || !severity) {
-            setError('Vui lòng điền đầy đủ thông tin');
-            return;
-        }
+      if (!selectedChild || !selectedAppointment || !description.trim() || !severity) {
+        setError('Vui lòng điền đầy đủ thông tin');
+        return;
+      }
 
-        const reactionData = {
-            childId: selectedChild,
-            appointmentId: selectedAppointment,
-            symptoms: description,
-            severity: severity.toUpperCase(),
-            reactionDate: new Date().toISOString().split('T')[0] // Format: YYYY-MM-DD
-        };
+      const reactionData = {
+        childId: selectedChild,
+        appointmentId: selectedAppointment,
+        symptoms: description.trim(),
+        severity: severity, // Already in correct format (MILD, MODERATE, SEVERE)
+        reactionDate: new Date().toISOString()
+      };
 
-        console.log('💉 Submitting reaction:', reactionData);
+        // Debug logs
+        console.log('📝 Form Data:', {
+            selectedChild,
+            selectedAppointment,
+            description: description.trim(),
+            severity: severity.toUpperCase()
+        });
         
-        await reactionService.createReaction(reactionData);
+        console.log('📦 Reaction Data being sent:', reactionData);
+        setLoading(true);
+        
+        const response = await reactionService.createReaction(reactionData);
+        console.log('✅ Response from server:', response);
+        
         setShowSuccessMessage(true);
+        setError(null);
         
         // Reset form
         setSelectedChild('');
@@ -94,8 +107,13 @@ const VaccinationReactionForm = () => {
             navigate('/');
         }, 2000);
     } catch (err) {
-        console.error('Error submitting reaction:', err);
-        setError(err.message || 'Không thể gửi báo cáo phản ứng');
+        console.error('❌ Error details:', {
+            message: err.message,
+            error: err
+        });
+        setError('Không thể gửi báo cáo phản ứng. Vui lòng thử lại sau.');
+    } finally {
+        setLoading(false);
     }
 };
 
@@ -117,6 +135,24 @@ const VaccinationReactionForm = () => {
         </div>
       )}
       
+      {showSuccessMessage && submittedReaction && (
+      <div className="success-message">
+        <h3>Báo cáo phản ứng đã được gửi thành công!</h3>
+        <div className="success-details">
+          <p><strong>Mã báo cáo:</strong> {submittedReaction.id}</p>
+          <p><strong>Trẻ:</strong> {submittedReaction.child.fullName}</p>
+          <p><strong>Ngày tiêm:</strong> {new Date(submittedReaction.appointment.appointmentDate).toLocaleDateString()}</p>
+          <p><strong>Vắc-xin:</strong> {submittedReaction.appointment.vaccineId.name}</p>
+          <p><strong>Triệu chứng:</strong> {submittedReaction.symptoms}</p>
+          <p><strong>Mức độ:</strong> {
+            submittedReaction.severity === 'MILD' ? 'Nhẹ' :
+            submittedReaction.severity === 'MODERATE' ? 'Vừa' :
+            submittedReaction.severity === 'SEVERE' ? 'Nặng' : 
+            submittedReaction.severity
+          }</p>
+        </div>
+      </div>
+    )}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Chọn Hồ Sơ Trẻ:</label>
@@ -166,22 +202,22 @@ const VaccinationReactionForm = () => {
           <div className="severity-buttons">
             <button
               type="button"
-              className={`severity-btn light ${severity === 'light' ? 'active' : ''}`}
-              onClick={() => setSeverity('light')}
+              className={`severity-btn mild ${severity === 'MILD' ? 'active' : ''}`}
+              onClick={() => setSeverity('MILD')}
             >
               Nhẹ
             </button>
             <button
               type="button"
-              className={`severity-btn medium ${severity === 'medium' ? 'active' : ''}`}
-              onClick={() => setSeverity('medium')}
+              className={`severity-btn moderate ${severity === 'MODERATE' ? 'active' : ''}`}
+              onClick={() => setSeverity('MODERATE')}
             >
               Vừa
             </button>
             <button
               type="button"
-              className={`severity-btn severe ${severity === 'severe' ? 'active' : ''}`}
-              onClick={() => setSeverity('severe')}
+              className={`severity-btn severe ${severity === 'SEVERE' ? 'active' : ''}`}
+              onClick={() => setSeverity('SEVERE')}
             >
               Nặng
             </button>

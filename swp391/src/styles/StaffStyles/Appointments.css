@@ -652,7 +652,57 @@ button:hover {
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
+.status-select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  width: 100%;
+}
 
+.status-select.confirmed {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.status-select.completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-select.cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.payment-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-align: center;
+  display: inline-block;
+}
+
+.payment-status.paid {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.payment-status.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.update-btn {
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.update-btn:hover {
+  background-color: #0056b3;
+}
 
 
 

@@ -396,3 +396,15 @@
     padding: 1.5rem;
   }
 }
+
+.severity-btn.mild {
+  background-color: #4caf50;
+}
+
+.severity-btn.moderate {
+  background-color: #ff9800;
+}
+
+.severity-btn.severe {
+  background-color: #f44336;
+}

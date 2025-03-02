@@ -217,6 +217,32 @@ const appointmentService = {
     getCompletedAppointmentsWithoutFeedback: async () => {
         return await appointmentService.getPendingFeedbackAppointment();
     },
+
+    getAppointmentsByCustomerId: async (customerId) => {
+        try {
+            const token = localStorage.getItem('token');
+            console.log('📡 Fetching appointments for customer:', customerId);
+
+            const response = await fetch(`${API_BASE_URL}/appointment/byCustomer/${customerId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch appointments');
+            }
+
+            const data = await response.json();
+            console.log('✅ Successfully fetched customer appointments:', data);
+            return data;
+        } catch (error) {
+            console.error('❌ Error fetching customer appointments:', error);
+            throw error;
+        }
+    }
 };
 
 export default appointmentService;

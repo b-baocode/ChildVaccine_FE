@@ -186,26 +186,33 @@ const handleSaveClick = async (appointmentId) => {
           {appointments.map((appointment) => (
             <tr key={appointment.appId}>
               <td>{appointment.appId}</td>
-              <td>{appointment.customerId?.cusId || "N/A"}</td>
-              <td>{appointment.childId?.childId || "N/A"}</td>
-              <td>{getServiceId(appointment)}</td>
-              <td>{appointment.appointmentDate}</td>
+              <td>{appointment.customer?.cusId || "N/A"}</td>
+              <td>{appointment.child?.childId || "N/A"}</td>
+              <td>{appointment.vaccineId?.name || appointment.packageId?.name || "N/A"}</td>
+              <td>{new Date(appointment.appointmentDate).toLocaleDateString()}</td>
               <td>{appointment.appointmentTime}</td>
               <td>
                 <select
                   value={appointment.status}
                   onChange={(e) => handleStatusChange(appointment.appId, e.target.value)}
-                  className="status-select"
+                  className={`status-select ${appointment.status.toLowerCase()}`}
                 >
                   <option value="CONFIRMED">CONFIRMED</option>
                   <option value="COMPLETED">COMPLETED</option>
                   <option value="CANCELLED">CANCELLED</option>
                 </select>
               </td>
-              <td>{appointment.paymentStatus}</td>
+              <td className={`payment-status ${appointment.paymentStatus.toLowerCase()}`}>
+                {appointment.paymentStatus}
+              </td>
               <td>{appointment.notes || ''}</td>
               <td>
-                <button onClick={() => handleUpdateClick(appointment)}>Update</button>
+                <button 
+                  className="update-btn"
+                  onClick={() => handleUpdateClick(appointment)}
+                >
+                  Update
+                </button>
               </td>
             </tr>
           ))}

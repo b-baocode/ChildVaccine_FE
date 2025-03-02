@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { FaUserCircle, FaNotesMedical, FaRuler, FaWeight, FaSearch } from 'react-icons/fa';
 import childService from '../../service/childService';
 import '../../styles/StaffStyles/StaffChildProfiles.css';
-
+import appointmentService from '../../service/appointmentService';
 
 const StaffChildProfile = () => {
     const { id } = useParams();
@@ -15,6 +15,7 @@ const StaffChildProfile = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [appointments, setAppointments] = useState([]);
 
     useEffect(() => {
       const fetchChildren = async () => {
@@ -60,6 +61,21 @@ const StaffChildProfile = () => {
         setSelectedChildId(childrenProfiles[0].child_id);
     } 
   }, [childrenProfiles]); // Chạy khi danh sách trẻ em thay đổi
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+        if (selectedChildId) {
+            try {
+                const appointmentsData = await appointmentService.getAppointmentsByChildId(selectedChildId);
+                setAppointments(appointmentsData);
+            } catch (error) {
+                console.error('Error fetching appointments:', error);
+            }
+        }
+    };
+
+    fetchAppointments();
+}, [selectedChildId]);
 
 useEffect(() => {
     if (selectedChildId) {
@@ -220,34 +236,43 @@ useEffect(() => {
           </div>
         ) : (
           <div className="medical-records">
-            {childMedicalRecords.length > 0 ? (
-              childMedicalRecords.map((record) => (
-                <div key={record.appointment_id} className="medical-record-card">
-                  <div className="record-header">
-                    <div className="record-date">
-                      <h3>Lần khám ngày {formatDate(record.date)}</h3>
-                      <span className="record-id">Mã khám: {record.appointment_id}</span>
+                {appointments.length > 0 ? (
+                    appointments.map((appointment) => (
+                        <div key={appointment.appId} className="medical-record-card">
+                            <div className="record-header">
+                                <div className="record-date">
+                                    <h3>Lần tiêm ngày {formatDate(appointment.appointmentDate)}</h3>
+                                    <span className="record-id">Mã tiêm: {appointment.appId}</span>
+                                </div>
+                                <span className={`status ${appointment.status.toLowerCase()}`}>
+                                    {appointment.status === 'PENDING' && 'Chờ xác nhận'}
+                                    {appointment.status === 'CONFIRMED' && 'Đã xác nhận'}
+                                    {appointment.status === 'COMPLETED' && 'Đã hoàn thành'}
+                                    {appointment.status === 'CANCELLED' && 'Đã hủy'}
+                                </span>
+                            </div>
+                            <div className="record-content">
+                                <div className="record-field">
+                                    <h4>Thời gian:</h4>
+                                    <p>{appointment.appointmentTime}</p>
+                                </div>
+                                <div className="record-field">
+                                    <h4>Thanh toán:</h4>
+                                    <p>{appointment.paymentStatus === 'PAID' ? 'Đã thanh toán' : 'Chưa thanh toán'}</p>
+                                </div>
+                                <div className="record-field">
+                                    <h4>Dịch vụ:</h4>
+                                    <p>{appointment.serviceId}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="no-records">
+                        Chưa có lịch sử tiêm chủng
                     </div>
-                    <span className="staff-info">{record.staff_name}</span>
-                  </div>
-                  <div className="record-content">
-                    <div className="record-field">
-                      <h4>Triệu chứng:</h4>
-                      <p>{record.symptoms}</p>
-                    </div>
-                    <div className="record-field">
-                      <h4>Ghi chú:</h4>
-                      <p>{record.notes}</p>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="no-records">
-                Chưa có lịch sử khám bệnh
-              </div>
-            )}
-          </div>
+                )}
+            </div>
         )}
       </div>
     </div>
