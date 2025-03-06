@@ -2486,5 +2486,55 @@ html {
     }
 }
 
+.child-profile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
 
+.profile-select:disabled {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+
+.no-children-message {
+    color: #666;
+    font-size: 0.9em;
+    margin: 4px 0;
+}
+
+.time-field select option[disabled] {
+    color: #999;
+    background-color: #f5f5f5;
+}
+
+.checking-message {
+    color: #666;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+
+.time-field select:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+}
+
+.time-field select.error {
+    border-color: #dc3545;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+.checking-message {
+    color: #666;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
 

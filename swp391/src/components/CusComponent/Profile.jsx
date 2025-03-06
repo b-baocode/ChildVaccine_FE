@@ -49,7 +49,7 @@ const Profile = () => {
         setLoading(true);
         const sessionData = await sessionService.checkSession();
         if (sessionData) {
-          const profileData = await customerService.getCustomerProfile(sessionData.cusId);
+          const profileData = await customerService.getCustomerProfile(sessionData.body.cusId);
           setUserInfo({
             name: profileData.fullName,
             id: profileData.cusId,
@@ -61,12 +61,12 @@ const Profile = () => {
           });
 
           // Fetch children data
-          const childrenData = await customerService.getCustomerChildren(sessionData.cusId);
+          const childrenData = await customerService.getCustomerChildren(sessionData.body.cusId);
           setChildren(childrenData);
 
           // Fetch appointments
           setLoadingAppointments(true);
-          const appointmentsData = await appointmentService.getAppointmentsByCustomerId(sessionData.cusId);
+          const appointmentsData = await appointmentService.getAppointmentsByCustomerId(sessionData.body.cusId);
           setAppointments(appointmentsData);
         }
       } catch (err) {

@@ -20,17 +20,18 @@ const VaccinationReactionForm = () => {
   const [error, setError] = useState(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [submittedReaction, setSubmittedReaction] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch children when component mounts
   useEffect(() => {
     const fetchChildren = async () => {
       try {
         const sessionData = await sessionService.checkSession();
-        if (!sessionData || !sessionData.cusId) {
+        if (!sessionData || !sessionData.body.cusId) {
           throw new Error('No valid session found');
         }
 
-        const childrenData = await childService.getCustomerChildren(sessionData.cusId);
+        const childrenData = await childService.getCustomerChildren(sessionData.body.cusId);
         setChildren(childrenData);
       } catch (err) {
         console.error('Error fetching children:', err);
@@ -64,58 +65,55 @@ const VaccinationReactionForm = () => {
   }, [selectedChild]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (!selectedChild || !selectedAppointment || !description.trim() || !severity) {
-        setError('Vui lòng điền đầy đủ thông tin');
-        return;
+      e.preventDefault();
+      setIsSubmitting(true);
+      setError('');
+      
+      try {
+          // Validation
+          if (!selectedChild || !selectedAppointment || !description.trim() || !severity) {
+              setError('Vui lòng điền đầy đủ thông tin');
+              setIsSubmitting(false);
+              return;
+          }
+  
+          // Format the data to match exactly what the API expects
+          const reactionData = {
+              childId: selectedChild,
+              appointmentId: selectedAppointment,
+              symptoms: description.trim(),
+              severity: severity, // Make sure this is one of: MILD, MODERATE, SEVERE
+              reactionDate: new Date().toISOString()
+          };
+  
+          console.log('📝 Submitting reaction data:', reactionData);
+  
+          const result = await reactionService.createReaction(reactionData);
+          
+          console.log('✅ Reaction submitted successfully:', result);
+          
+          // Reset form
+          setSelectedChild('');
+          setSelectedAppointment('');
+          setDescription('');
+          setSeverity('');
+          setSubmittedReaction(result);
+          setShowSuccessMessage(true);
+          
+          setTimeout(() => {
+              setShowSuccessMessage(false);
+          }, 5000);
+          
+      } catch (err) {
+          console.error('❌ Error details:', {
+              message: err.message,
+              error: err
+          });
+          setError('Không thể gửi báo cáo. Vui lòng thử lại sau.');
+      } finally {
+          setIsSubmitting(false);
       }
-
-      const reactionData = {
-        childId: selectedChild,
-        appointmentId: selectedAppointment,
-        symptoms: description.trim(),
-        severity: severity, // Already in correct format (MILD, MODERATE, SEVERE)
-        reactionDate: new Date().toISOString()
-      };
-
-        // Debug logs
-        console.log('📝 Form Data:', {
-            selectedChild,
-            selectedAppointment,
-            description: description.trim(),
-            severity: severity.toUpperCase()
-        });
-        
-        console.log('📦 Reaction Data being sent:', reactionData);
-        setLoading(true);
-        
-        const response = await reactionService.createReaction(reactionData);
-        console.log('✅ Response from server:', response);
-        
-        setShowSuccessMessage(true);
-        setError(null);
-        
-        // Reset form
-        setSelectedChild('');
-        setSelectedAppointment('');
-        setDescription('');
-        setSeverity('');
-        
-        setTimeout(() => {
-            setShowSuccessMessage(false);
-            navigate('/');
-        }, 2000);
-    } catch (err) {
-        console.error('❌ Error details:', {
-            message: err.message,
-            error: err
-        });
-        setError('Không thể gửi báo cáo phản ứng. Vui lòng thử lại sau.');
-    } finally {
-        setLoading(false);
-    }
-};
+  };
 
   if (loading) {
     return <div className="loading">Đang tải...</div>;
@@ -146,8 +144,8 @@ const VaccinationReactionForm = () => {
           <p><strong>Triệu chứng:</strong> {submittedReaction.symptoms}</p>
           <p><strong>Mức độ:</strong> {
             submittedReaction.severity === 'MILD' ? 'Nhẹ' :
-            submittedReaction.severity === 'MODERATE' ? 'Vừa' :
-            submittedReaction.severity === 'SEVERE' ? 'Nặng' : 
+            submittedReaction.severity === 'SEVERE' ? 'Vừa' :
+            submittedReaction.severity === 'EMERGENCY' ? 'Nặng' : 
             submittedReaction.severity
           }</p>
         </div>
@@ -209,22 +207,28 @@ const VaccinationReactionForm = () => {
             </button>
             <button
               type="button"
-              className={`severity-btn moderate ${severity === 'MODERATE' ? 'active' : ''}`}
-              onClick={() => setSeverity('MODERATE')}
+              className={`severity-btn severe ${severity === 'SEVERE' ? 'active' : ''}`}
+              onClick={() => setSeverity('SEVERE')}
             >
               Vừa
             </button>
             <button
               type="button"
-              className={`severity-btn severe ${severity === 'SEVERE' ? 'active' : ''}`}
-              onClick={() => setSeverity('SEVERE')}
+              className={`severity-btn emergency ${severity === 'EMERGENCY' ? 'active' : ''}`}
+              onClick={() => setSeverity('EMERGENCY')}
             >
               Nặng
             </button>
           </div>
         </div>
 
-        <button type="submit" className="submit-btn">Gửi Báo Cáo</button>
+        <button 
+          type="submit" 
+          className="submit-btn" 
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Đang gửi...' : 'Gửi Báo Cáo'}
+        </button>
       </form>
     </div>
   );

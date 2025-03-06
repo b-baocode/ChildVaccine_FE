@@ -49,19 +49,22 @@ const reactionService = {
 
     createReaction: async (reactionData) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             if (!token) {
                 throw new Error('No authentication token found');
             }
-
-            // Format the date to match the expected format
+    
+            // Format the data exactly as the API expects
             const formattedData = {
-                ...reactionData,
-                reactionDate: new Date().toISOString()
+                childId: reactionData.childId,
+                appointmentId: reactionData.appointmentId,
+                symptoms: reactionData.symptoms,
+                severity: reactionData.severity,
+                reactionDate: new Date().toISOString() // Ensure proper ISO format
             };
-
-            console.log('Sending reaction data:', formattedData);
-
+    
+            console.log('📤 Sending reaction data:', formattedData);
+    
             const response = await fetch(`${API_BASE_URL}/api/reactions`, {
                 method: 'POST',
                 headers: {
@@ -70,23 +73,49 @@ const reactionService = {
                 },
                 body: JSON.stringify(formattedData)
             });
-
+    
+            // Get response text first for better debugging
+            const responseText = await response.text();
+            console.log('📥 Raw server response:', responseText);
+    
             if (!response.ok) {
-                const errorData = await response.text();
-                console.error('Server response:', errorData);
-                throw new Error('Failed to create reaction');
+                // Try to parse as JSON if possible
+                try {
+                    const errorData = JSON.parse(responseText);
+                    console.error('Server error details:', errorData);
+                    
+                    // Check for validation errors
+                    if (errorData.errors) {
+                        const validationErrors = errorData.errors.map(e => e.defaultMessage).join(', ');
+                        throw new Error(`Validation failed: ${validationErrors}`);
+                    }
+                } catch (e) {
+                    console.error('Non-JSON error response:', responseText);
+                }
+                
+                throw new Error(`Failed to create reaction (Status: ${response.status})`);
             }
-
-            return await response.json();
+    
+            // Try to parse success response
+            let result;
+            try {
+                result = responseText ? JSON.parse(responseText) : {};
+            } catch (e) {
+                console.warn('Invalid JSON response, using empty object');
+                result = { success: true };
+            }
+    
+            console.log('✅ Reaction created successfully:', result);
+            return result;
         } catch (error) {
-            console.error('Error in createReaction:', error);
+            console.error('❌ Error in createReaction:', error);
             throw error;
         }
     },
     
     getAllReactions: async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             const response = await fetch(`${API_BASE_URL}/api/reactions`, {
                 method: 'GET',
                 headers: {

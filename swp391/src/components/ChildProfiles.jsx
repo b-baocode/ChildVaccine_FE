@@ -44,7 +44,7 @@ function ChildProfiles() {
         const sessionData = await sessionService.checkSession();
         
         if (sessionData) {
-          const children = await customerService.getCustomerChildren(sessionData.cusId);
+          const children = await customerService.getCustomerChildren(sessionData.body.cusId);
           if (children && children.length > 0) {
             const transformedChildren = children.map(child => ({
               id: child.childId,

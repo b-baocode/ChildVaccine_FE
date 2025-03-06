@@ -25,7 +25,7 @@ const AddChildForm = () => {
     const fetchSession = async () => {
       try {
         const sessionData = await sessionService.checkSession();
-        if (!sessionData || !sessionData.cusId) {
+        if (!sessionData || !sessionData.body.cusId) {
           setError('Không thể tìm thấy thông tin khách hàng. Vui lòng đăng nhập lại.');
         }
       } catch (err) {
@@ -39,7 +39,7 @@ const AddChildForm = () => {
     e.preventDefault();
     try {
       const sessionData = await sessionService.checkSession();
-      const cusId = sessionData.cusId;
+      const cusId = sessionData.body.cusId;
 
       if (!cusId) {
         setError('Không thể tìm thấy ID khách hàng. Vui lòng đăng nhập lại.');

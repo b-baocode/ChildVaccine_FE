@@ -3,7 +3,7 @@ const API_BASE_URL = 'http://localhost:8080/vaccinatecenter';
 const appointmentService = {
     registerVaccination: async (registrationData) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             console.log('🚀 Sending Registration Data:', {
                 ...registrationData,
                 token: token ? 'Bearer Token exists' : 'No token found'
@@ -50,7 +50,7 @@ const appointmentService = {
 
     getAllAppointments: async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             const response = await fetch(`${API_BASE_URL}/appointment/all`, {
                 method: 'GET',
                 headers: {
@@ -84,7 +84,7 @@ const appointmentService = {
 
     getAppointmentsByChildId: async (childId) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             const response = await fetch(`${API_BASE_URL}/appointment/byChild/${childId}`, {
                 method: 'GET',
                 headers: {
@@ -121,7 +121,7 @@ const appointmentService = {
 
     updateAppointmentStatus: async (appId, status) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             const response = await fetch(`${API_BASE_URL}/appointment/update-status/${appId}`, {
                 method: 'PUT',
                 headers: {
@@ -157,7 +157,7 @@ const appointmentService = {
     // Cập nhật để lấy danh sách từ server thay vì localStorage
     getPendingFeedbackAppointment: async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             if (!token) {
                 console.warn('No token found, user might not be logged in.');
                 return [];
@@ -220,7 +220,7 @@ const appointmentService = {
 
     getAppointmentsByCustomerId: async (customerId) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             console.log('📡 Fetching appointments for customer:', customerId);
 
             const response = await fetch(`${API_BASE_URL}/appointment/byCustomer/${customerId}`, {
@@ -242,7 +242,43 @@ const appointmentService = {
             console.error('❌ Error fetching customer appointments:', error);
             throw error;
         }
+    },
+
+    checkSlotAvailability: async (date, timeSlot) => {
+        try {
+            const formattedTime = `${timeSlot.substring(0, 2)}:${timeSlot.substring(2)}:00`;
+            const token = localStorage.getItem('authToken');
+            
+            console.log('📡 Checking slot availability:', { date, timeSlot: formattedTime });
+            
+            const response = await fetch(
+                `${API_BASE_URL}/appointment/availability?date=${date}&timeSlot=${formattedTime}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('slot is full');
+            }
+
+            const data = await response.json();
+            console.log('✅ Slot availability response:', data);
+            
+            return {
+                ...data,
+                isFull: data.currentCount >= data.maxAllowed,
+                remainingSlots: Math.max(0, data.maxAllowed - data.currentCount)
+            };
+        } catch (error) {
+            console.error('❌ Error checking slot availability:', error);
+            throw error;
+        }
     }
+
 };
 
 export default appointmentService;

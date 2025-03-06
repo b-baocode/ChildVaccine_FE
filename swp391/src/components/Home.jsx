@@ -1,8 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Navigate } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import authService from '../service/AuthenService';
+import sessionService from '../service/sessionService';
+
 import {
     FaCalendarAlt,
     FaBook,
@@ -25,7 +28,7 @@ import appointmentService from '../service/appointmentService';
 
 
 const Home = () => {
-    const { user, logout, pendingFeedback } = useAuth();
+    const { user, logout, login } = useAuth();
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
     const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -51,12 +54,43 @@ const Home = () => {
     );
 
     useEffect(() => {
-        console.log('Pending Appointments updated in Home:', pendingAppointments); // Log để debug
+        //console.log('Pending Appointments updated in Home:', pendingAppointments); // Log để debug
         setShowNotification(pendingAppointments.length > 0);
     }, [pendingAppointments])
 
+
+
+
+
+    const checkSession = async () => {
+        const token = authService.getToken();
+        const storedUser = authService.getUser();
+    
+        console.log("🔵 Home.jsx - Token from localStorage:", token);
+        console.log("🟠 Home.jsx - Stored user:", storedUser);
+    
+        if (token && !user) {
+            console.log("🔵 Restoring session...");
+            try {
+                const sessionData = await sessionService.checkSession();
+                console.log("🔍 Session response:", sessionData);
+    
+                if (sessionData && sessionData.body?.user) {
+                    login(sessionData);
+                } else {
+                    console.warn("🔴 Session invalid, logging out...");
+                    logout();
+                }
+            } catch (error) {
+                console.error("🔴 Error checking session:", error);
+                logout();
+            }
+        }
+    };
+    
+
     console.log('User in Home:', user); // Log để debug user.cusId
-    console.log('Pending Appointments in Home:', pendingAppointments); // Log để debug
+    // console.log('Pending Appointments in Home:', pendingAppointments); // Log để debug
 
     const handleFeedbackClick = () => {
         if (pendingAppointments.length > 0) {
@@ -182,17 +216,6 @@ const Home = () => {
                         <div className="sub-text">Mở cửa 7h30 - 17h00 / T2 - CN xuyên trưa*</div>
                     </div>
                     {/* Add auth buttons in header */}
-                    {!user ? (
-                        <div className="auth-buttons">
-                            <button className="login-btn" onClick={() => navigate('/login')}>Đăng nhập</button>
-                            <button className="register-btn" onClick={() => navigate('/register')}>Đăng ký</button>
-                        </div>
-                    ) : (
-                        <div className="user-welcome">
-                            <span>Xin chào, {user.fullName}</span>
-                            {/* Add any customer-specific quick actions here */}
-                        </div>
-                    )}
                 </div>
             </div>
 
@@ -329,6 +352,3 @@ const Home = () => {
 
 
 export default Home;
-
-
-

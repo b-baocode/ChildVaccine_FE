@@ -3,12 +3,10 @@ const API_BASE_URL = 'http://localhost:8080/vaccinatecenter/api/auth';
 const authService = {
     login: async (credentials) => {
         try {
-            console.log('Sending login request:', credentials); // Add this to debug
+            console.log('🔵 Sending login request:', credentials);
             const response = await fetch(`${API_BASE_URL}/login`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(credentials),
                 credentials: 'include'
             });
@@ -19,13 +17,38 @@ const authService = {
             }
 
             const data = await response.json();
-            console.log('Login response data:', data); // Add this to debug
+            console.log('🟢 Login response data:', data);
+
+            if (data.body?.token && data.body?.user) {
+                // Lưu token & user vào localStorage
+                localStorage.setItem('authToken', data.body.token);
+                localStorage.setItem('loggedInCustomer', JSON.stringify(data.body.user));
+
+                // Kiểm tra lại xem có lưu thành công không
+                console.log("🔴 Token saved in localStorage:", localStorage.getItem("authToken"));
+                console.log("🟠 User saved in localStorage:", localStorage.getItem("loggedInCustomer"));
+
+                // Cập nhật trạng thái trên các tab
+                window.dispatchEvent(new Event("storage"));
+            }
+
             return data;
         } catch (error) {
-            console.error('Login error:', error);
+            console.error('🔴 Login error:', error);
             throw error;
         }
     },
+
+    getToken: () => localStorage.getItem('authToken'),
+    getUser: () => JSON.parse(localStorage.getItem('loggedInCustomer')),
+  
+    logout: () => {
+        console.log("🚨 logout() đã được gọi! Xóa token và user khỏi localStorage.");
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('loggedInCustomer');
+        window.dispatchEvent(new Event("storage"));
+    },
+    
 
     register: async (registerData) => {
         try {
@@ -48,32 +71,6 @@ const authService = {
             return data;
         } catch (error) {
             console.error('Register error:', error);
-            throw error;
-        }
-    },
-
-    logout: async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${API_BASE_URL}/logout`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include'
-            });
-
-            if (!response.ok) {
-                throw new Error('Logout failed');
-            }
-
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-
-            return await response.text();
-        } catch (error) {
-            console.error('Logout error:', error);
             throw error;
         }
     },

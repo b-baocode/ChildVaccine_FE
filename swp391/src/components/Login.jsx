@@ -5,6 +5,7 @@ import '../styles/Login.css';
 import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
 import authService from '../service/AuthenService';
 import appointmentService from '../service/appointmentService';
+import sessionService from '../service/sessionService'; // Add this import
 
 const Login = () => {
     const navigate = useNavigate();
@@ -26,44 +27,36 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        
+    
         try {
-        const response = await authService.login(formData);
-        console.log('Login response:', response);
-
-        if (!response || !response.body || !response.body.user) {
-            throw new Error('Invalid response structure');
-        }
-
-        const { user } = response.body;
-        await login(response);
-
-        // 🔍 Kiểm tra danh sách appointment chưa feedback
-        if (user.role === 'CUSTOMER') {
-            const pendingFeedbackAppointments = await appointmentService.getPendingFeedbackAppointment();
-            console.log("Raw API response:", pendingFeedbackAppointments);
-
-            // 🔥 Chuyển đổi và kiểm tra dữ liệu từ API
-            let appointmentsArray = [];
-            if (Array.isArray(pendingFeedbackAppointments)) {
-                appointmentsArray = pendingFeedbackAppointments;
-            } else if (pendingFeedbackAppointments && typeof pendingFeedbackAppointments === 'object') {
-                // Nếu API trả về một đối tượng đơn lẻ, chuyển thành mảng
-                appointmentsArray = [pendingFeedbackAppointments];
-            } else {
-                appointmentsArray = [];
+            const response = await authService.login(formData);
+            console.log('Login response:', response);
+    
+            if (!response || !response.body || !response.body.user) {
+                setError("Lỗi đăng nhập. Vui lòng thử lại.");
+                return;
             }
-
-            console.log("Converted appointmentsArray:", appointmentsArray);
-
-            // 👉 Lưu thông tin lịch hẹn chưa feedback vào context hoặc state để truyền đến trang home
-            if (appointmentsArray.length > 0) {
-                // Giả sử useAuth hoặc context có phương thức để lưu thông tin
-                login({ ...response, pendingFeedback: appointmentsArray[0] });
-            }
+    
+            // 🔥 Gọi login từ AuthContext để cập nhật user
+            await login(response);
+    
+            // 🔥 Kiểm tra lại localStorage
+            console.log("Final check - Token in localStorage:", localStorage.getItem("authToken"));
+    
+            // Điều hướng trang chính
+            const { role } = response.body.user;
+            if (role === 'ADMIN') navigate('/admin');
+            else if (role === 'STAFF') navigate('/staff');
+            else navigate('/', { replace: true });
+        } catch (err) {
+            console.error('Login error:', err);
+            setError('Email hoặc mật khẩu không chính xác!');
         }
-
-        // Show success modal and navigate
+    };
+    
+    
+    
+    const showSuccessModal = (user) => {
         const modal = document.createElement('div');
         modal.className = 'success-modal';
         modal.innerHTML = `
@@ -73,26 +66,16 @@ const Login = () => {
             </div>
         `;
         document.body.appendChild(modal);
-
+    
         setTimeout(() => {
             modal.style.opacity = '0';
-            modal.style.transition = 'opacity 0.3s ease';
             setTimeout(() => {
                 document.body.removeChild(modal);
-                // Navigate based on user role and stored redirectUrl
-                if (user.role === 'ADMIN') {
-                    navigate('/admin');
-                } else if (user.role === 'STAFF') {
-                    navigate('/staff');
-                } else {
-                    navigate('/', { replace: true });
-                }
+                if (user.role === 'ADMIN') navigate('/admin');
+                else if (user.role === 'STAFF') navigate('/staff');
+                else navigate('/', { replace: true });
             }, 300);
         }, 1700);
-    } catch (err) {
-        console.error('Login error:', err);
-        setError('Email hoặc mật khẩu không chính xác!');
-    }
     };
 
     const toggleForm = () => {

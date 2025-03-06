@@ -3,7 +3,7 @@ const API_BASE_URL = 'http://localhost:8080/vaccinatecenter';
 const recordService = {
     createRecord: async (recordData) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             console.log('📝 Sending record data:', recordData);
 
             const response = await fetch(`${API_BASE_URL}/api/records`, {
@@ -30,7 +30,7 @@ const recordService = {
     },
     getRecordsByChildId: async (childId) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             console.log('🔍 Fetching vaccination records for child:', childId);
 
             const response = await fetch(`${API_BASE_URL}/api/records/${childId}`, {

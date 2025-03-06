@@ -20,6 +20,13 @@ const VaccineRegistration = () => {
         appointmentId: '' // Add this
     });
 
+    const [formErrors, setFormErrors] = useState({
+        childProfile: '',
+        appointmentDate: '',
+        timeSlot: '',
+        selectedItem: ''
+    });
+
     // State cho dữ liệu chính
     const [vaccines, setVaccines] = useState([]); // Danh sách vaccine từ API
     const [packages, setPackages] = useState([]); // Danh sách gói vaccine từ API
@@ -40,6 +47,9 @@ const VaccineRegistration = () => {
     const [showConfirmModal, setShowConfirmModal] = useState(false); // Hiển thị modal xác nhận
     const [showSuccessModal, setShowSuccessModal] = useState(false); // Hiển thị modal thành công
     const [selectedItemName, setSelectedItemName] = useState('');
+    const [slotAvailability, setSlotAvailability] = useState({});
+    const [checking, setChecking] = useState(false);
+    const [slotError, setSlotError] = useState('');
 
     // Fetch data khi component mount
     useEffect(() => {
@@ -56,17 +66,18 @@ const VaccineRegistration = () => {
     
                 // Set customer info from session
                 const userInfo = {
-                    cusId: sessionData.cusId,
-                    fullName: sessionData.user.fullName,
-                    phone: sessionData.user.phone,
-                    address: sessionData.address
+                    cusId: sessionData.body.cusId, // Dữ liệu nằm trong body
+                    fullName: sessionData.body.user.fullName, // Truy cập user bên trong body
+                    phone: sessionData.body.user.phone,
+                    address: sessionData.body.address
                 };
                 
                 setCustomerInfo(userInfo);
                 setGuardianInfo(userInfo);
     
                 // Fetch children using session cusId
-                const children = await customerService.getCustomerChildren(sessionData.cusId);
+                const children = await customerService.getCustomerChildren(sessionData.body.cusId);
+                console.log('🔑 ChildChild Data:', children);
                 setChildProfiles(children);
     
                 // Fetch vaccines and packages
@@ -91,28 +102,59 @@ const VaccineRegistration = () => {
             navigate('/login');
         }
     }, [user, navigate]);
-    const handleInputChange = (e) => {
+
+    const handleInputChange = async (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
             ...prevState,
             [name]: value
         }));
+    
+        if (name === 'appointmentDate') {
+            // Reset time slot when date changes
+            setFormData(prevState => ({
+                ...prevState,
+                timeSlot: ''
+            }));
+            setSlotError('');
+        }
+    
+        if (name === 'timeSlot' && value && formData.appointmentDate) {
+            await checkSlotAvailability(formData.appointmentDate, value);
+        }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         
+        const currentSlot = slotAvailability[`${formData.appointmentDate}-${formData.timeSlot}`];
+    
         // Add date validation
         const selectedDate = new Date(formData.appointmentDate);
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         tomorrow.setHours(0, 0, 0, 0);
     
-        if (selectedDate < tomorrow) {
-            setError('Vui lòng chọn ngày từ ngày mai trở đi');
-            return;
+        // Clear previous error
+        setError('');
+        
+        // Validate time slot
+        if (!currentSlot) {
+            setSlotError('Vui lòng chọn khung giờ hợp lệ');
+            return false;
+        }
+        
+        if (currentSlot.isFull) {
+            setSlotError('Khung giờ này đã đầy. Vui lòng chọn khung giờ khác.');
+            return false;
         }
     
+        if (selectedDate < tomorrow) {
+            setError('Vui lòng chọn ngày từ ngày mai trở đi');
+            return false;
+        }
+    
+        // If all validations pass, show confirmation modal
         setShowConfirmModal(true);
     };
 
@@ -124,12 +166,37 @@ const VaccineRegistration = () => {
                 const minute = timeSlot.substring(2);
                 return `${hour}:${minute}:00`;
             };
-    
-            // Validate required fields
-            if (!formData.childProfile || !formData.appointmentDate || !formData.timeSlot || !formData.selectedItem) {
-                throw new Error('Vui lòng điền đầy đủ thông tin');
+
+            // Reset previous errors
+            setFormErrors({
+                childProfile: '',
+                appointmentDate: '',
+                timeSlot: '',
+                selectedItem: ''
+            });
+            
+            // Validate all required fields
+            const newErrors = {};
+            if (!formData.childProfile) {
+                newErrors.childProfile = 'Vui lòng chọn hồ sơ trẻ';
             }
-    
+            if (!formData.appointmentDate) {
+                newErrors.appointmentDate = 'Vui lòng chọn ngày hẹn';
+            }
+            if (!formData.timeSlot) {
+                newErrors.timeSlot = 'Vui lòng chọn khung giờ';
+            }
+            if (!formData.selectedItem) {
+                newErrors.selectedItem = 'Vui lòng chọn vắc xin/gói vắc xin';
+            }
+
+            // If there are any errors, show them and return
+            if (Object.keys(newErrors).length > 0) {
+                setFormErrors(newErrors);
+                setShowConfirmModal(false);
+                return;
+            }
+
             // Prepare registration data
             const registrationData = {
                 customerId: guardianInfo.cusId,
@@ -139,19 +206,17 @@ const VaccineRegistration = () => {
                 appointmentDate: formData.appointmentDate,
                 appointmentTime: formatTimeSlot(formData.timeSlot)
             };
-    
-            console.log('Sending registration data:', registrationData); // Debug log
-    
-            // Send registration data to backend
+
+            console.log('Sending registration data:', registrationData);
+
             const result = await appointmentService.registerVaccination(registrationData);
         
             if (result.ok) {
                 setShowConfirmModal(false);
                 setShowSuccessModal(true);
-                // Optionally store appointment ID for display
                 setFormData(prev => ({
                     ...prev,
-                    appointmentId: result.appointment.appId // Add this to state if needed
+                    appointmentId: result.appointment.appId
                 }));
                 setTimeout(() => {
                     setFormData({
@@ -160,17 +225,18 @@ const VaccineRegistration = () => {
                         timeSlot: '',
                         vaccineType: '',
                         selectedItem: null,
-                        appointmentId: '' // Reset if added
+                        appointmentId: ''
                     });
                     setShowSuccessModal(false);
                     navigate('/');
                 }, 2000);
             } else {
-                throw new Error(result.error || 'Registration failed');
+                setError(result.error || 'Đăng ký thất bại. Vui lòng thử lại.');
+                setShowConfirmModal(false);
             }
         } catch (err) {
             console.error('Registration failed:', err);
-            setError(err.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+            setError('Có lỗi xảy ra trong quá trình đăng ký. Vui lòng thử lại.');
             setShowConfirmModal(false);
         }
     };
@@ -184,6 +250,29 @@ const VaccineRegistration = () => {
             vaccineType: ''
         });
         setSelectedType(''); // Updated from setSelectedVaccineType
+    };
+
+    const checkSlotAvailability = async (date, timeSlot) => {
+        if (!date || !timeSlot) return;
+        
+        setChecking(true);
+        setSlotError('');
+        
+        try {
+            const availability = await appointmentService.checkSlotAvailability(date, timeSlot);
+            setSlotAvailability(prev => ({
+                ...prev,
+                [`${date}-${timeSlot}`]: availability
+            }));
+            
+            if (availability.isFull) {
+                setSlotError('Khung giờ này đã đạt giới hạn đặt lịch. Vui lòng chọn khung giờ khác.');
+            }
+        } catch (error) {
+            setSlotError('Không thể kiểm tra tình trạng khung giờ. Vui lòng thử lại.');
+        } finally {
+            setChecking(false);
+        }
     };
 
     // Xử lý khi chọn loại vaccine
@@ -348,49 +437,128 @@ const VaccineRegistration = () => {
     };
 
     // Cập nhật phần render child profiles
-    const renderChildProfiles = () => {
-        return (
-            <select
-                name="childProfile"
-                value={formData.childProfile}
-                onChange={handleInputChange}
-                required
-                className="profile-select"
-            >
-                <option key="default" value="">-- Chọn hồ sơ trẻ --</option>
-                {childProfiles.map(child => (
-                    <option key={child.childId} value={child.childId}>
-                        {child.childId} - {child.fullName}
-                    </option>
-                ))}
-            </select>
-        );
-    };
+    const renderChildProfiles = () => (
+        <select
+            name="childProfile"
+            value={formData.childProfile}
+            onChange={handleInputChange}
+            required
+            className="profile-select"
+        >
+            <option value="">
+                {childProfiles.length === 0 ? '-- Không có hồ sơ trẻ --' : '-- Chọn hồ sơ trẻ --'}
+            </option>
+            {childProfiles.map(child => (
+                <option key={child.childId} value={child.childId}>
+                    {child.childId} - {child.fullName}
+                </option>
+            ))}
+        </select>
+    );
 
     // Phần JSX hiển thị danh sách
     const renderItemList = () => {
         const items = selectedType === 'single' ? vaccines : packages;
         
+        console.log('🎯 Rendering items:', {
+            selectedType,
+            itemsCount: items.length,
+            items: items.map(item => ({
+                id: selectedType === 'single' ? item.vaccineId : item.packageId,
+                name: item.name,
+                price: item.price,
+                shots: selectedType === 'single' ? item.shot : 'N/A',
+                isSelected: formData.selectedItem === (selectedType === 'single' ? item.vaccineId : item.packageId)
+            }))
+        });
+        
         return (
             <div className="item-grid">
-                {items.map(item => (
-                    <div 
-                    key={selectedType === 'single' ? item.vaccineId : item.packageId}
-                    className={`item-card ${formData.selectedItem === (selectedType === 'single' ? item.vaccineId : item.packageId) ? 'selected' : ''}`}
-                    onClick={() => handleSelectItem(item)}
-                    >
-                        <h4>{item.name}</h4>
-                        <p>{item.description}</p>
-                        <div className="item-details">
-                            <span className="price">
-                                {Number(item.price).toLocaleString('vi-VN')} VND
-                            </span>
-                            {selectedType === 'single' && (
-                                <span className="shots">Số mũi: {item.shot}</span>
-                            )}
+                {items.map(item => {
+                    const itemId = selectedType === 'single' ? item.vaccineId : item.packageId;
+                    console.log(`📦 Rendering item: ${item.name}`, {
+                        id: itemId,
+                        description: item.description,
+                        price: item.price,
+                        shots: selectedType === 'single' ? item.shot : 'N/A'
+                    });
+    
+                    return (
+                        <div 
+                            key={itemId}
+                            className={`item-card ${formData.selectedItem === itemId ? 'selected' : ''}`}
+                            onClick={() => handleSelectItem(item)}
+                        >
+                            <h4>{item.name}</h4>
+                            <p>{item.description}</p>
+                            <div className="item-details">
+                                <span className="price">
+                                    {Number(item.price).toLocaleString('vi-VN')} VND
+                                </span>
+                                {selectedType === 'single' && (
+                                    <span className="shots">Số mũi: {item.shot}</span>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
+            </div>
+        );
+    };
+
+    // Update the time slot render function
+    const renderTimeSlots = () => {
+        const timeSlots = [
+            { value: "0730", label: "07:30 - 08:00" },
+            { value: "0800", label: "08:00 - 08:30" },
+            { value: "0830", label: "08:30 - 09:00" },
+            { value: "0900", label: "09:00 - 09:30" },
+            { value: "0930", label: "09:30 - 10:00" },
+            { value: "1000", label: "10:00 - 10:30" },
+            { value: "1030", label: "10:30 - 11:00" },
+            { value: "1100", label: "11:00 - 11:30" },
+            { value: "1130", label: "11:30 - 12:00" },
+            { value: "1330", label: "13:30 - 14:00" },
+            { value: "1400", label: "14:00 - 14:30" },
+            { value: "1430", label: "14:30 - 15:00" },
+            { value: "1500", label: "15:00 - 15:30" },
+            { value: "1530", label: "15:30 - 16:00" },
+            { value: "1600", label: "16:00 - 16:30" },
+            { value: "1630", label: "16:30 - 17:00" }
+        ];
+
+        return (
+            <div className="time-field">
+                <label>Chọn khung giờ</label>
+                <select
+                    name="timeSlot"
+                    value={formData.timeSlot}
+                    onChange={handleInputChange}
+                    required
+                    disabled={!formData.appointmentDate || checking}
+                    className={slotError ? 'error' : ''}
+                >
+                    <option value="">-- Chọn giờ --</option>
+                    {timeSlots.map(slot => {
+                        const availability = formData.appointmentDate ? 
+                            slotAvailability[`${formData.appointmentDate}-${slot.value}`] : null;
+                        const isFull = availability && availability.currentCount >= availability.maxAllowed;
+                        
+                        return (
+                            <option 
+                                key={slot.value} 
+                                value={slot.value}
+                                disabled={isFull}
+                            >
+                                {slot.label}
+                                {availability && ` (${availability.maxAllowed - availability.currentCount} slot còn trống)`}
+                                {isFull && ' - ĐÃ KÍN LỊCH'}
+                            </option>
+                        );
+                    })}
+                </select>
+                {checking && <div className="checking-message">Đang kiểm tra slot...</div>}
+                {slotError && <div className="error-message">{slotError}</div>}
             </div>
         );
     };
@@ -413,17 +581,17 @@ const VaccineRegistration = () => {
                             <label>Chọn Hồ Sơ Trẻ:</label>
                             <div className="profile-selection">
                                 {renderChildProfiles()}
-                                <button
-                                    type="button"
-                                    className="add-profile-btn"
-                                    onClick={() => navigate('/add-child', { state: { from: '/vaccine-registration' } })}
-                                >
-                                    + Thêm Hồ Sơ Trẻ
-                                </button>
+                                {formErrors.childProfile && (
+                                    <div className="error-message">{formErrors.childProfile}</div>
+                                )}
+                                {/* ...existing buttons... */}
                             </div>
                         </div>
     
                         <div className="service-info">
+                            {formErrors.selectedItem && (
+                                <div className="error-message">{formErrors.selectedItem}</div>
+                            )}
                             <h3>THÔNG TIN DỊCH VỤ</h3>
                             <div className="vaccine-type">
                                 <label>Loại vắc xin muốn đăng ký:</label>
@@ -454,45 +622,28 @@ const VaccineRegistration = () => {
     
                             <div className="appointment-time">
                                 <div className="time-field">
+                                {formErrors.appointmentDate && (
+                                    <div className="error-message">{formErrors.appointmentDate}</div>
+                                )}
                                     <label>Chọn ngày hẹn tiêm</label>
                                     <input
                                         type="date"
                                         name="appointmentDate"
                                         value={formData.appointmentDate}
                                         onChange={handleInputChange}
-                                        min={getTomorrowDate()} // This sets the minimum date to tomorrow
+                                        min={getTomorrowDate()}
                                         required
                                     />
                                 </div>
-                                <div className="time-field">
-                                    <label>Chọn khung giờ</label>
-                                    <select
-                                        name="timeSlot"
-                                        value={formData.timeSlot}
-                                        onChange={handleInputChange}
-                                        required
-                                    >
-                                        <option value="">-- Chọn giờ --</option>
-                                        <option value="0730">07:30 - 08:00</option>
-                                        <option value="0800">08:00 - 08:30</option>
-                                        <option value="0830">08:30 - 09:00</option>
-                                        <option value="0900">09:00 - 09:30</option>
-                                        <option value="0930">09:30 - 10:00</option>
-                                        <option value="1000">10:00 - 10:30</option>
-                                        <option value="1030">10:30 - 11:00</option>
-                                        <option value="1100">11:00 - 11:30</option>
-                                        <option value="1130">11:30 - 12:00</option>
-                                        <option value="1330">13:30 - 14:00</option>
-                                        <option value="1400">14:00 - 14:30</option>
-                                        <option value="1430">14:30 - 15:00</option>
-                                        <option value="1500">15:00 - 15:30</option>
-                                        <option value="1530">15:30 - 16:00</option>
-                                        <option value="1600">16:00 - 16:30</option>
-                                    </select>
-                                </div>
+                                {formErrors.timeSlot && (
+                                    <div className="error-message">{formErrors.timeSlot}</div>
+                                )}                               
+                                {renderTimeSlots()}
                             </div>
                         </div>
     
+                        {error && <div className="error-message general-error">{error}</div>}
+
                         <button type="submit" className="submit-btn">
                             XÁC NHẬN ĐĂNG KÝ
                         </button>

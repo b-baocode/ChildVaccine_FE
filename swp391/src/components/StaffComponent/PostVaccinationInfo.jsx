@@ -30,10 +30,10 @@ const PostVaccineInfo = () => {
     switch (severity) {
       case 'MILD':
         return 'severity-mild';
-      case 'MODERATE':
-        return 'severity-moderate';
       case 'SEVERE':
         return 'severity-severe';
+      case 'EMERGENCY':
+        return 'severity-emergency';
       default:
         return '';
     }
@@ -68,8 +68,8 @@ const PostVaccineInfo = () => {
           >
             <option value="all">Tất cả</option>
             <option value="MILD">Nhẹ</option>
-            <option value="MODERATE">Trung bình</option>
-            <option value="SEVERE">Nặng</option>
+            <option value="SEVERE">Trung bình</option>
+            <option value="EMERGENCY">Nặng</option>
           </select>
         </div>
       </div>
@@ -81,8 +81,8 @@ const PostVaccineInfo = () => {
               <div className="severity-badge">
                 <FaExclamationTriangle />
                 {reaction.severity === 'MILD' && 'Nhẹ'}
-                {reaction.severity === 'MODERATE' && 'Trung bình'}
-                {reaction.severity === 'SEVERE' && 'Nặng'}
+                {reaction.severity === 'SEVERE' && 'Trung bình'}
+                {reaction.severity === 'EMERGENCY' && 'Nặng'}
               </div>
               <div className="datetime">
                 <FaClock />

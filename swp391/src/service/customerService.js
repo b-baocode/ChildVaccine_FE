@@ -3,7 +3,7 @@ const API_BASE_URL = 'http://localhost:8080/vaccinatecenter';
 const customerService = {
     getCustomerProfile: async (userId) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             const response = await fetch(`${API_BASE_URL}/customers/${userId}/profile`, {
                 method: 'GET',
                 headers: {
@@ -27,26 +27,30 @@ const customerService = {
     
     getCustomerChildren: async (cusId) => {
         try {
-            const token = localStorage.getItem('token');
-            console.log('🔍 Fetching children for customer:', cusId);
-            
+            const token = localStorage.getItem('authToken');
+            if (!token) return [];
+    
             const response = await fetch(`${API_BASE_URL}/childrens/getByCusID/${cusId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch children profiles');
+    
+            // Return empty array for any non-successful response
+            if (!response.ok) return [];
+    
+            const text = await response.text();
+            if (!text) return [];
+    
+            try {
+                const data = JSON.parse(text);
+                return Array.isArray(data) ? data : [];
+            } catch (error) {
+                return [];
             }
-
-            const data = await response.json();
-            console.log('👶 Children Data Response:', data);
-            return data;
         } catch (error) {
-            console.error('❌ Error fetching children:', error);
-            throw error;
+            return [];
         }
     }
 };

@@ -3,7 +3,7 @@ const API_BASE_URL = 'http://localhost:8080/vaccinatecenter/api';
 const feedbackService = {
     submitFeedback: async (feedbackData) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             if (!token) {
                 throw new Error('No authentication token found');
             }
@@ -50,7 +50,7 @@ const feedbackService = {
 
     getPendingFeedback: async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             if (!token) {
                 throw new Error('No authentication token found');
             }

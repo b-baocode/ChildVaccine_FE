@@ -5,14 +5,14 @@ const API_BASE_URL = 'http://localhost:8080/vaccinatecenter'; // Port của Spri
 const childService = {
     addChildProfile: async (childData) => {
         try {
-          const token = localStorage.getItem('token');
+          const token = localStorage.getItem('authToken');
           const sessionData = await sessionService.checkSession();
     
-          if (!sessionData || !sessionData.cusId) {
+          if (!sessionData || !sessionData.body.cusId) {
             throw new Error('Invalid session data');
           }
     
-          const cusId = sessionData.cusId;
+          const cusId = sessionData.body.cusId;
     
           const response = await fetch(`${API_BASE_URL}/childrens/${cusId}/add`, { // Use "children" (not "childrens") unless backend specifies otherwise
             method: 'POST',
@@ -48,7 +48,7 @@ const childService = {
 
       getCustomerChildren: async (cusId) => {
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('authToken');
             console.log('🔍 Fetching children for customer:', cusId);
             
             const response = await fetch(`${API_BASE_URL}/childrens/getByCusID/${cusId}`, {
@@ -78,7 +78,7 @@ const childService = {
 
   getChildProfile: async (childId) => {
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('authToken');
         const response = await fetch(`${API_BASE_URL}/childrens/${childId}`, {
             method: 'GET',
             headers: {
@@ -100,7 +100,7 @@ const childService = {
 
   getAllChildren: async () => {
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('authToken');
         const response = await fetch(`${API_BASE_URL}/childrens/all`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -121,7 +121,7 @@ const childService = {
 
     updateChildProfile: async (childId, childData) => {
         try {
-          const token = localStorage.getItem('token');
+          const token = localStorage.getItem('authToken');
           const sessionData = await sessionService.checkSession();
     
           if (!sessionData || !sessionData.cusId) {

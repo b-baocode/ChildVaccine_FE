@@ -13,92 +13,8 @@ import {
     FaSyringe,
     FaShieldAlt
 } from 'react-icons/fa';
+import vaccineService from '../service/vaccineService';
 
-
-const vaccineCategories = [
-    {
-        id: 1,
-        name: "Vắc xin cho trẻ sơ sinh",
-        vaccines: [
-            {
-                id: "V1",
-                name: "Vắc xin 6 trong 1 (Infanrix Hexa)",
-                manufacturer: "GSK",
-                origin: "Bỉ",
-                price: "829.000",
-                description: "Phòng bệnh Bạch hầu, Ho gà, Uốn ván, Bại liệt, Viêm gan B, Hib"
-            },
-            {
-                id: "V2",
-                name: "Vắc xin 5 trong 1 (Pentaxim)",
-                manufacturer: "Sanofi",
-                origin: "Pháp",
-                price: "759.000",
-                description: "Phòng bệnh Bạch hầu, Ho gà, Uốn ván, Bại liệt, Hib"
-            },
-            {
-                id: "V3",
-                name: "Vắc xin Rotarix",
-                manufacturer: "GSK",
-                origin: "Bỉ",
-                price: "899.000",
-                description: "Phòng bệnh Tiêu chảy do Rota virus"
-            }
-        ]
-    },
-    {
-        id: 2,
-        name: "Vắc xin cho trẻ nhỏ",
-        vaccines: [
-            {
-                id: "V4",
-                name: "Vắc xin MMR",
-                manufacturer: "MSD",
-                origin: "Mỹ",
-                price: "499.000",
-                description: "Phòng bệnh Sởi, Quai bị, Rubella"
-            },
-            {
-                id: "V5",
-                name: "Vắc xin Varicella",
-                manufacturer: "MSD",
-                origin: "Mỹ",
-                price: "849.000",
-                description: "Phòng bệnh Thủy đậu"
-            },
-            {
-                id: "V6",
-                name: "Vắc xin Synflorix",
-                manufacturer: "GSK",
-                origin: "Bỉ",
-                price: "989.000",
-                description: "Phòng bệnh do phế cầu khuẩn"
-            }
-        ]
-    },
-    {
-        id: 3,
-        name: "Vắc xin phòng viêm gan",
-        vaccines: [
-            {
-                id: "V7",
-                name: "Vắc xin Euvax B",
-                manufacturer: "LG",
-                origin: "Hàn Quốc",
-                price: "159.000",
-                description: "Phòng bệnh Viêm gan B"
-            },
-            {
-                id: "V8",
-                name: "Vắc xin Havax",
-                manufacturer: "Berna Biotech",
-                origin: "Hàn Quốc",
-                price: "469.000",
-                description: "Phòng bệnh Viêm gan A"
-            }
-        ]
-    }
-];
 
 
 const PriceList = () => {
@@ -108,7 +24,80 @@ const PriceList = () => {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const dropdownRef = useRef(null);
+    const [vaccines, setVaccines] = useState([]);
+    const [packages, setPackages] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                console.log('🔄 Starting data fetch...');
+                setLoading(true);
+    
+                const [vaccinesData, packagesData] = await Promise.all([
+                    vaccineService.getVaccines(),
+                    vaccineService.getVaccinePackages()
+                ]);
+    
+                console.log('💉 Vaccines data:', {
+                    selectedType: 'single',
+                    itemsCount: vaccinesData.length,
+                    items: vaccinesData.map(vaccine => ({
+                        id: vaccine.vaccineId,
+                        name: vaccine.name,
+                        price: vaccine.price,
+                        shots: vaccine.shot,
+                        manufacturer: vaccine.manufacturer,
+                        description: vaccine.description
+                    }))
+                });
+    
+                console.log('📦 Packages data:', {
+                    selectedType: 'package',
+                    itemsCount: packagesData.length,
+                    items: packagesData.map(pkg => ({
+                        id: pkg.packageId,
+                        name: pkg.name,
+                        price: pkg.price,
+                        description: pkg.description
+                    }))
+                });
+    
+                setVaccines(vaccinesData);
+                setPackages(packagesData);
+                setError(null);
+    
+                console.log('✅ Data fetch completed successfully');
+            } catch (err) {
+                console.error('❌ Error fetching data:', {
+                    message: err.message,
+                    error: err
+                });
+                setError('Failed to fetch data');
+            } finally {
+                setLoading(false);
+                console.log('🏁 Loading state finished');
+            }
+        };
+    
+        fetchData();
+    }, []);
+
+    const categories = [
+        {
+            id: 'all',
+            name: 'Tất cả'
+        },
+        {
+            id: 'vaccines',
+            name: 'Vắc xin lẻ'
+        },
+        {
+            id: 'packages',
+            name: 'Gói vắc xin'
+        }
+    ];
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -178,10 +167,81 @@ const PriceList = () => {
         }
     };
 
-
-    const filteredCategories = vaccineCategories.filter(category =>
-        selectedCategory === 'all' || category.id === parseInt(selectedCategory)
-    );
+    const renderContent = (category = selectedCategory) => {
+        if (loading) {
+            return <div className="loading">Đang tải dữ liệu...</div>;
+        }
+    
+        if (error) {
+            return <div className="error">{error}</div>;
+        }
+    
+        const renderVaccines = () => (
+            <div className="vaccines-grid">
+                {vaccines
+                    .filter(vaccine =>
+                        vaccine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        vaccine.description.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .map(vaccine => (
+                        <div key={vaccine.vaccineId} className="vaccine-card">
+                            <div className="vaccine-header">
+                                <FaShieldAlt className="vaccine-icon" />
+                                <h3>{vaccine.name}</h3>
+                            </div>
+                            <div className="vaccine-info">
+                                <p><strong>Nhà sản xuất:</strong> {vaccine.manufacturer}</p>
+                                <p><strong>Số mũi:</strong> {vaccine.shot}</p>
+                                <p className="vaccine-description">{vaccine.description}</p>
+                                <div className="vaccine-price">
+                                    {Number(vaccine.price).toLocaleString('vi-VN')}<span>đ</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+            </div>
+        );
+    
+        const renderPackages = () => (
+            <div className="vaccines-grid">
+                {packages
+                    .filter(pkg =>
+                        pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        pkg.description.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .map(pkg => (
+                        <div key={pkg.packageId} className="vaccine-card package-card">
+                            <div className="vaccine-header">
+                                <FaSyringe className="vaccine-icon" />
+                                <h3>{pkg.name}</h3>
+                            </div>
+                            <div className="vaccine-info">
+                                <p className="vaccine-description">{pkg.description}</p>
+                                <div className="vaccine-price">
+                                    {Number(pkg.price).toLocaleString('vi-VN')}<span>đ</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+            </div>
+        );
+    
+        switch (category) {
+            case 'vaccines':
+                return renderVaccines();
+            case 'packages':
+                return renderPackages();
+            default:
+                return (
+                    <>
+                        <h2 className="category-title">Vắc xin lẻ</h2>
+                        {renderVaccines()}
+                        <h2 className="category-title">Gói vắc xin</h2>
+                        {renderPackages()}
+                    </>
+                );
+        }
+    };
 
 
     return (
@@ -293,16 +353,9 @@ const PriceList = () => {
             {/* Price List Content */}
             <div className="price-list-container">
                 <h1 className="price-list-title">Bảng Giá Vắc Xin</h1>
-               
-                {/* Category Filter */}
+                
                 <div className="category-filter">
-                    <button
-                        className={`filter-btn ${selectedCategory === 'all' ? 'active' : ''}`}
-                        onClick={() => setSelectedCategory('all')}
-                    >
-                        Tất cả
-                    </button>
-                    {vaccineCategories.map(category => (
+                    {categories.map(category => (
                         <button
                             key={category.id}
                             className={`filter-btn ${selectedCategory === category.id ? 'active' : ''}`}
@@ -313,41 +366,7 @@ const PriceList = () => {
                     ))}
                 </div>
 
-
-                {/* Vaccine List */}
-                <div className="vaccine-categories">
-                    {filteredCategories.map(category => (
-                        <div key={category.id} className="category-section">
-                            <h2 className="category-title">
-                                <FaSyringe className="category-icon" />
-                                {category.name}
-                            </h2>
-                            <div className="vaccines-grid">
-                                {category.vaccines
-                                    .filter(vaccine =>
-                                        vaccine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                        vaccine.description.toLowerCase().includes(searchTerm.toLowerCase())
-                                    )
-                                    .map(vaccine => (
-                                        <div key={vaccine.id} className="vaccine-card">
-                                            <div className="vaccine-header">
-                                                <FaShieldAlt className="vaccine-icon" />
-                                                <h3>{vaccine.name}</h3>
-                                            </div>
-                                            <div className="vaccine-info">
-                                                <p><strong>Nhà sản xuất:</strong> {vaccine.manufacturer}</p>
-                                                <p><strong>Xuất xứ:</strong> {vaccine.origin}</p>
-                                                <p className="vaccine-description">{vaccine.description}</p>
-                                                <div className="vaccine-price">
-                                                    {vaccine.price}<span>đ</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                {renderContent()}
             </div>
         </div>
     );
