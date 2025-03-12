@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation  } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
 import '../styles/VaccineRegistration.css';
 import vaccineService from '../service/vaccineService';
@@ -10,6 +10,7 @@ import sessionService from '../service/sessionService';
 
 const VaccineRegistration = () => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [formData, setFormData] = useState({
         childProfile: '',
@@ -47,6 +48,7 @@ const VaccineRegistration = () => {
     const [showConfirmModal, setShowConfirmModal] = useState(false); // Hiển thị modal xác nhận
     const [showSuccessModal, setShowSuccessModal] = useState(false); // Hiển thị modal thành công
     const [selectedItemName, setSelectedItemName] = useState('');
+    const [selectedItemPrice, setSelectedItemPrice] = useState(0);
     const [slotAvailability, setSlotAvailability] = useState({});
     const [checking, setChecking] = useState(false);
     const [slotError, setSlotError] = useState('');
@@ -102,6 +104,31 @@ const VaccineRegistration = () => {
             navigate('/login');
         }
     }, [user, navigate]);
+
+    // In VaccineRegistration.jsx
+    useEffect(() => {
+        if (location.state && location.state.selectedItem) {
+            const { selectedItem, selectedType } = location.state;
+            
+            console.log('📦 Pre-selected item from navigation:', {
+                item: selectedItem,
+                type: selectedType
+            });
+            
+            setSelectedType(selectedType);
+            
+            // Update formData to include the selected item
+            setFormData(prev => ({
+                ...prev,
+                vaccineType: selectedType,
+                selectedItem: selectedType === 'single' ? selectedItem.vaccineId : selectedItem.packageId
+            }));
+            
+            // Set the selected item name for display
+            setSelectedItemName(selectedItem.name);
+            setSelectedItemPrice(selectedItem.price);
+        }
+    }, [location.state]);
 
     const handleInputChange = async (e) => {
         const { name, value } = e.target;
@@ -304,6 +331,7 @@ const VaccineRegistration = () => {
             selectedItem: prev.selectedItem === itemId ? null : itemId
         }));
         setSelectedItemName(item.name);
+        setSelectedItemPrice(item.price);
     };
 
     const ConfirmationModal = () => (
@@ -343,6 +371,12 @@ const VaccineRegistration = () => {
                         <div key="selected-item" className="info-item">
                             <span className="label">Vắc xin đã chọn:</span>
                             <span className="value">{selectedItemName}</span>
+                        </div>
+                        <div key="selected-price" className="info-item">
+                            <span className="label">Giá tiền:</span>
+                            <span className="value price-value">
+                                {Number(selectedItemPrice).toLocaleString('vi-VN')}đ
+                            </span>
                         </div>
                         <div key="appointment-date" className="info-item">
                             <span className="label">Ngày hẹn:</span>

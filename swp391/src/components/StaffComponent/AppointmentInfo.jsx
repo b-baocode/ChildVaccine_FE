@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import appointmentService from '../../service/appointmentService'; // Điều chỉnh đường dẫn nếu cần
 import '../../styles/StaffStyles/Appointments.css';
 import recordService from '../../service/recordService';
+import paymentService from '../../service/paymentService'; // Import paymentService
 
 
 const StaffAppointment = () => {
@@ -15,6 +16,10 @@ const StaffAppointment = () => {
   const [warningMessage, setWarningMessage] = useState(''); // Lưu thông báo lỗi
   const [pendingStatusChange, setPendingStatusChange] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false);
+  const [processingPaymentId, setProcessingPaymentId] = useState(null);
+  const [records, setRecords] = useState([]);
+  const [isViewOnly, setIsViewOnly] = useState(false);
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -39,6 +44,27 @@ const StaffAppointment = () => {
     return () => document.removeEventListener('keydown', handleEscKey);
   }, [showUpdateModal]);
 
+  useEffect(() => {
+    const fetchRecords = async () => {
+      try {
+        const recordsData = await recordService.getAllRecords();
+        setRecords(recordsData);
+      } catch (error) {
+        console.error('Error fetching records:', error);
+      }
+    };
+  
+    fetchRecords();
+  }, []);
+  
+  const hasRecord = (appointmentId) => {
+    return records.some(record => record.appointmentId === appointmentId);
+  };
+
+  const getRecordForAppointment = (appointmentId) => {
+    return records.find(record => record.appointmentId === appointmentId) || {};
+  };
+
   const handleOverlayClick = (event) => {
     if (event.target.className === 'update-modal-overlay') {
       handleCloseModal();
@@ -47,48 +73,61 @@ const StaffAppointment = () => {
 
   const handleUpdateClick = (appointment) => {
     setSelectedAppointmentId(appointment.appId);
-    setSymptoms(appointment.symptoms || '');
-    setNotes('');
+    
+    const record = getRecordForAppointment(appointment.appId);
+    
+    if (record.id) {
+      // Record exists - set values from record and mark as view-only
+      setSymptoms(record.symptoms || '');
+      setNotes(record.notes || '');
+      setIsViewOnly(true); // New state variable
+    } else {
+      // No record - allow creation
+      setSymptoms('');
+      setNotes('');
+      setIsViewOnly(false);
+    }
+    
     setStatus(appointment.status);
     setShowUpdateModal(true);
   };
 
  
-const handleSaveClick = async (appointmentId) => {
-  try {
-      // Create record data
-      const recordData = {
-          appointmentId: appointmentId,
-          staffId: 'S001', // Replace with actual staff ID from session/context
-          symptoms: symptoms,
-          notes: notes,
-          appointmentDate: new Date().toISOString().split('T')[0]
-      };
+  const handleSaveClick = async (appointmentId) => {
+    try {
+        // Create record data
+        const recordData = {
+            appointmentId: appointmentId,
+            staffId: 'S001', // Replace with actual staff ID from session/context
+            symptoms: symptoms,
+            notes: notes,
+            appointmentDate: new Date().toISOString().split('T')[0]
+        };
 
-      // Save record
-      await recordService.createRecord(recordData);
+        // Save record
+        await recordService.createRecord(recordData);
 
-      // Update local state
-      const updatedAppointments = appointments.map((appointment) =>
-          appointment.appId === appointmentId
-              ? { ...appointment, symptoms, notes }
-              : appointment
-      );
-      setAppointments(updatedAppointments);
+        // Update local state
+        const updatedAppointments = appointments.map((appointment) =>
+            appointment.appId === appointmentId
+                ? { ...appointment, symptoms, notes }
+                : appointment
+        );
+        setAppointments(updatedAppointments);
 
-      // Show success message
-      alert('Cập nhật thông tin thành công!');
+        // Show success message
+        alert('Cập nhật thông tin thành công!');
 
-      // Close modal and reset form
-      setShowUpdateModal(false);
-      setSelectedAppointmentId(null);
-      setSymptoms('');
-      setNotes('');
-  } catch (error) {
-      console.error('Error saving record:', error);
-      alert(error.message || 'Có lỗi xảy ra khi lưu thông tin. Vui lòng thử lại!');
-  }
-};
+        // Close modal and reset form
+        setShowUpdateModal(false);
+        setSelectedAppointmentId(null);
+        setSymptoms('');
+        setNotes('');
+    } catch (error) {
+        console.error('Error saving record:', error);
+        alert(error.message || 'Có lỗi xảy ra khi lưu thông tin. Vui lòng thử lại!');
+    }
+  };
 
   const handleStatusChange = (appointmentId, newStatus) => {
     const currentAppointment = appointments.find((appt) => appt.appId === appointmentId);
@@ -164,6 +203,40 @@ const handleSaveClick = async (appointmentId) => {
     }
     return "N/A";
   };
+    // Add this function after the other handler functions
+  const handlePayment = async (appointment) => {
+    try {
+      setProcessingPayment(true);
+      setProcessingPaymentId(appointment.appId);
+      
+      // Import paymentService at the top of the file
+      // import paymentService from '../../service/paymentService';
+      
+      // Get payment URL from API
+      const paymentUrl = await paymentService.createPayment(appointment.appId);
+      
+      // Open VNPay payment page in a new tab
+      const newTab = window.open(paymentUrl, '_blank');
+      
+      // Check if popup was blocked
+      if (!newTab || newTab.closed || typeof newTab.closed === 'undefined') {
+        alert('Trình duyệt đã chặn cửa sổ thanh toán. Vui lòng cho phép popup và thử lại.');
+      }
+      
+      // Reset processing state after a short delay
+      setTimeout(() => {
+        setProcessingPayment(false);
+        setProcessingPaymentId(null);
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Error initiating payment:', error);
+      alert('Không thể khởi tạo thanh toán. Vui lòng thử lại sau.');
+      setProcessingPayment(false);
+      setProcessingPaymentId(null);
+    }
+  };
+
   return (
     <div className="appointment-page">
       <h1>Appointments</h1>
@@ -179,43 +252,59 @@ const handleSaveClick = async (appointmentId) => {
             <th>Status</th>
             <th>Payment Status</th>
             <th>Notes</th>
-            <th>Actions</th>
+            <th colSpan="2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {appointments.map((appointment) => (
-            <tr key={appointment.appId}>
-              <td>{appointment.appId}</td>
-              <td>{appointment.customer?.cusId || "N/A"}</td>
-              <td>{appointment.child?.childId || "N/A"}</td>
-              <td>{appointment.vaccineId?.name || appointment.packageId?.name || "N/A"}</td>
-              <td>{new Date(appointment.appointmentDate).toLocaleDateString()}</td>
-              <td>{appointment.appointmentTime}</td>
-              <td>
-                <select
-                  value={appointment.status}
-                  onChange={(e) => handleStatusChange(appointment.appId, e.target.value)}
-                  className={`status-select ${appointment.status.toLowerCase()}`}
-                >
-                  <option value="CONFIRMED">CONFIRMED</option>
-                  <option value="COMPLETED">COMPLETED</option>
-                  <option value="CANCELLED">CANCELLED</option>
-                </select>
-              </td>
-              <td className={`payment-status ${appointment.paymentStatus.toLowerCase()}`}>
-                {appointment.paymentStatus}
-              </td>
-              <td>{appointment.notes || ''}</td>
-              <td>
-                <button 
-                  className="update-btn"
-                  onClick={() => handleUpdateClick(appointment)}
-                >
-                  Update
-                </button>
-              </td>
-            </tr>
-          ))}
+          {appointments.map((appointment) => {
+            const appointmentRecord = getRecordForAppointment(appointment.appId);
+            const hasExistingRecord = Boolean(appointmentRecord.id);
+            
+            return (
+              <tr key={appointment.appId}>
+                <td>{appointment.appId}</td>
+                <td>{appointment.customer?.cusId || "N/A"}</td>
+                <td>{appointment.child?.childId || "N/A"}</td>
+                <td>{appointment.vaccineId?.name || appointment.packageId?.name || "N/A"}</td>
+                <td>{new Date(appointment.appointmentDate).toLocaleDateString()}</td>
+                <td>{appointment.appointmentTime}</td>
+                <td>
+                  <select
+                    value={appointment.status}
+                    onChange={(e) => handleStatusChange(appointment.appId, e.target.value)}
+                    className={`status-select ${appointment.status.toLowerCase()}`}
+                  >
+                    <option value="CONFIRMED">CONFIRMED</option>
+                    <option value="COMPLETED">COMPLETED</option>
+                    <option value="CANCELLED">CANCELLED</option>
+                  </select>
+                </td>
+                <td className={`payment-status ${appointment.paymentStatus.toLowerCase()}`}>
+                  {appointment.paymentStatus}
+                </td>
+                <td>{hasExistingRecord ? appointmentRecord.notes : (appointment.notes || '')}</td>
+                <td>
+                  <button 
+                    className={hasExistingRecord ? "view-btn" : "update-btn"}
+                    onClick={() => handleUpdateClick(appointment)}
+                  >
+                    {hasExistingRecord ? "View" : "Update"}
+                  </button>
+                </td>
+                <td>
+                  {appointment.status === 'COMPLETED' && appointment.paymentStatus !== 'PAID' && (
+                    <button 
+                      className="payment-btn"
+                      onClick={() => handlePayment(appointment)}
+                      disabled={processingPayment && processingPaymentId === appointment.appId}
+                    >
+                      {processingPayment && processingPaymentId === appointment.appId ? 'Đang xử lý...' : 'Thanh toán'}
+                    </button>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 
@@ -253,11 +342,14 @@ const handleSaveClick = async (appointmentId) => {
       )}
 
       {/* Update Modal */}
+      {/* Update Modal */}
       {showUpdateModal && (
         <div className="update-modal-overlay" onClick={handleOverlayClick}>
           <div className="update-modal">
             <div className="update-modal-header">
-              <h2 className="update-modal-title">Cập nhật thông tin</h2>
+              <h2 className="update-modal-title">
+                {isViewOnly ? "Xem thông tin" : "Cập nhật thông tin"}
+              </h2>
               <button className="close-button" onClick={handleCloseModal}>×</button>
             </div>
             <div className="modal-info">
@@ -267,34 +359,58 @@ const handleSaveClick = async (appointmentId) => {
               </div>
               <div className="info-item">
                 <span className="info-label">Staff ID:</span>
-                <span className="info-value">ST001</span>
+                <span className="info-value">
+                  {isViewOnly 
+                    ? (getRecordForAppointment(selectedAppointmentId).staffName || "N/A") 
+                    : "ST001"}
+                </span>
               </div>
+              {isViewOnly && (
+                <div className="info-item">
+                  <span className="info-label">Ngày ghi nhận:</span>
+                  <span className="info-value">
+                    {getRecordForAppointment(selectedAppointmentId).appointmentDate || "N/A"}
+                  </span>
+                </div>
+              )}
             </div>
             <div className="update-form">
               <div className="form-group">
                 <label>Triệu chứng</label>
                 <textarea
                   value={symptoms}
-                  onChange={(e) => setSymptoms(e.target.value)}
+                  onChange={(e) => !isViewOnly && setSymptoms(e.target.value)}
                   placeholder="Nhập triệu chứng"
+                  readOnly={isViewOnly}
+                  className={isViewOnly ? "readonly" : ""}
                 />
               </div>
               <div className="form-group">
                 <label>Ghi chú</label>
                 <textarea
                   value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
+                  onChange={(e) => !isViewOnly && setNotes(e.target.value)}
                   placeholder="Nhập ghi chú"
+                  readOnly={isViewOnly}
+                  className={isViewOnly ? "readonly" : ""}
                 />
               </div>
             </div>
             <div className="modal-footer">
-              <button className="save-button" onClick={() => handleSaveClick(selectedAppointmentId)}>
-                Lưu
-              </button>
-              <button className="cancel-button" onClick={handleCloseModal}>
-                Hủy bỏ
-              </button>
+              {!isViewOnly ? (
+                <>
+                  <button className="save-button" onClick={() => handleSaveClick(selectedAppointmentId)}>
+                    Lưu
+                  </button>
+                  <button className="cancel-button" onClick={handleCloseModal}>
+                    Hủy bỏ
+                  </button>
+                </>
+              ) : (
+                <button className="close-button-full" onClick={handleCloseModal}>
+                  Đóng
+                </button>
+              )}
             </div>
           </div>
         </div>

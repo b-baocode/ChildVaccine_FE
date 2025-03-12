@@ -35,6 +35,8 @@ const Home = () => {
     const [pendingAppointments, setPendingAppointments] = useState([]);
     const [showNotification, setShowNotification] = useState(false);
     const dropdownRef = useRef(null);
+    const [upcomingAppointment, setUpcomingAppointment] = useState(null);
+    const [isSessionValid, setIsSessionValid] = useState(true);
 
     const TopBanner = () => (
         <div className="top-banner">
@@ -43,8 +45,11 @@ const Home = () => {
                 <a href="#" className="banner-link">Xem chi tiết</a>
             </div>
             <div className="banner-actions">
-                <a href="#" className="banner-action">
-                    <FaMobileAlt /> Tải ứng dụng
+                <a href="https://play.google.com/store/apps/details?id=com.eco.eplus&hl=vi" 
+                    className="banner-action"
+                    target="_blank" 
+                    rel="noopener noreferrer">
+                        <FaMobileAlt /> Tải ứng dụng
                 </a>
                 <a href="tel:18006928" className="banner-action">
                     <FaPhone /> Tư vấn ngay: 1800 6928
@@ -59,8 +64,129 @@ const Home = () => {
     }, [pendingAppointments])
 
 
+    useEffect(() => {
+        // If no user, nothing to do with role-based routing
+        if (!user) return;
+        
+        console.log('🔑 Role-based redirection check:', user.role);
+        
+        const validateSession = async () => {
+            try {
+                // Verify the session is valid
+                const sessionData = await sessionService.checkSession();
+                
+                // If session check passed, handle role-based routing
+                if (user.role === 'STAFF') {
+                    console.log('👨‍⚕️ Staff user detected, redirecting to staff page');
+                    navigate('/staff');
+                    return;
+                }
+                
+                if (user.role === 'ADMIN') {
+                    console.log('👨‍💼 Admin user detected, redirecting to admin page');
+                    navigate('/admin');
+                    return;
+                }
+                
+                console.log('👤 Customer user, staying on home page');
+                
+            } catch (error) {
+                console.error('❌ Session validation failed:', error);
+                setIsSessionValid(false);
+                logout(); // Logout if session check fails
+            }
+        };
+        
+        validateSession();
+    }, [user, navigate, logout]);
 
+    useEffect(() => {
+        const fetchUpcomingAppointments = async () => {
+            if (!user || user.role !== 'CUSTOMER' || !isSessionValid) {
+                setUpcomingAppointment(null);
+                return;
+            }
 
+            try {
+                const sessionData = await sessionService.checkSession();
+                if (!sessionData || !sessionData.body) {
+                    console.log("Session expired, logging out");
+                    logout();
+                    return;
+                }
+
+                // Get all appointments for this customer
+                const appointments = await appointmentService.getAppointmentsByCustomerId(sessionData.body.cusId);
+                
+                if (appointments && appointments.length > 0) {
+                    // Get current date and time
+                    const now = new Date();
+                    const today = new Date(now);
+                    today.setHours(0, 0, 0, 0);
+                    
+                    // Get date 2 days from now (instead of 3)
+                    const twoDaysLater = new Date(today);
+                    twoDaysLater.setDate(twoDaysLater.getDate() + 2);
+                    
+                    // Filter appointments:
+                    // 1. Only appointments that have not been completed
+                    // 2. Only within next 2 days
+                    const filteredAppointments = appointments.filter(app => {
+                        const appDate = new Date(app.appointmentDate);
+                        appDate.setHours(0, 0, 0, 0);
+                        
+                        return app.status !== 'COMPLETED' && 
+                               app.stauts !== 'CANCELLED' &&
+                               appDate >= today && 
+                               appDate <= twoDaysLater;
+                    });
+                    
+                    // Sort by date and then by time slot to get the closest appointment
+                    filteredAppointments.sort((a, b) => {
+                        // First sort by date
+                        const dateA = new Date(a.appointmentDate);
+                        const dateB = new Date(b.appointmentDate);
+                        
+                        if (dateA.getTime() !== dateB.getTime()) {
+                            return dateA - dateB;
+                        }
+                        
+                        // If dates are equal, sort by time slot
+                        // Convert time slots to minutes for easier comparison
+                        const getMinutes = (timeSlot) => {
+                            const hour = parseInt(timeSlot.substring(0, 2));
+                            const minute = parseInt(timeSlot.substring(2, 4));
+                            return hour * 60 + minute;
+                        };
+                        
+                        return getMinutes(a.timeSlot) - getMinutes(b.timeSlot);
+                    });
+                    
+                    // Get the closest upcoming appointment
+                    if (filteredAppointments.length > 0) {
+                        setUpcomingAppointment(filteredAppointments[0]);
+                    } else {
+                        setUpcomingAppointment(null);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching upcoming appointments:', error);
+            
+                if (error.message && error.message.includes('authentication')) {
+                    logout();
+                }
+            }
+        };
+        
+        fetchUpcomingAppointments();
+    }, [user, isSessionValid, logout]);
+
+    useEffect(() => {
+        if (!user) {
+            setUpcomingAppointment(null);
+            setPendingAppointments([]);
+        }
+    }, [user]);
 
     const checkSession = async () => {
         const token = authService.getToken();
@@ -238,14 +364,31 @@ const Home = () => {
             </nav>
 
             <div className="search-container">
-                <input
-                    type="text"
-                    placeholder="Tìm tên thuốc, bệnh lý, thực phẩm chức năng..."
-                    className="search-input"
-                />
-                <button className="search-button">
-                    <FaSearch />
-                </button>
+                <div className="upcoming-vaccinations">
+                    {/* Only show appointment info if user exists */}
+                    {user ? (
+                        <>
+                            <div className="notification-icon">
+                                <FaCalendar />
+                            </div>
+                            <div className="notification-content">
+                                <span className="notification-title">Thông báo lịch tiêm</span>
+                                {upcomingAppointment ? (
+                                    <span className="notification-text">
+                                        Bạn có buổi hẹn sắp tới vào {new Date(upcomingAppointment.appointmentDate).toLocaleDateString('vi-VN')} vào lúc {upcomingAppointment.appointmentTime}
+                                    </span>
+                                ) : (
+                                    <span className="notification-text">Không có lịch tiêm sắp tới</span>
+                                )}
+                            </div>
+                        </>
+                    ) : (
+                        <div className="notification-content">
+                            <span className="notification-title">Đăng nhập để xem lịch tiêm</span>
+                        </div>
+                    )}
+                </div>
+                
                 {user ? (
                     <div className="user-dropdown" ref={dropdownRef}>
                         <button

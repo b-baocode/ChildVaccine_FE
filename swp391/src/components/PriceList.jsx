@@ -113,6 +113,59 @@ const PriceList = () => {
         };
     }, []);
 
+    const handleVaccineSelect = (item, type) => {
+        if (!user) {
+            // Show login modal if user is not logged in
+            showLoginRequiredModal();
+        } else {
+            // Navigate to registration page with the selected item
+            navigate('/register-vaccination', { 
+                state: { 
+                    selectedItem: item,
+                    selectedType: type // 'single' or 'package'
+                } 
+            });
+        }
+    };
+
+    // Show login required modal
+    const showLoginRequiredModal = () => {
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'login-required-modal';
+        modalOverlay.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-icon">
+                    <i class="fas fa-user-lock"></i>
+                </div>
+                <h3>Yêu cầu đăng nhập</h3>
+                <p>Vui lòng đăng nhập để đăng ký tiêm chủng</p>
+                <div class="modal-buttons">
+                    <button class="login-btn">Đăng nhập ngay</button>
+                    <button class="cancel-btn">Đóng</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modalOverlay);
+
+        const loginBtn = modalOverlay.querySelector('.login-btn');
+        const cancelBtn = modalOverlay.querySelector('.cancel-btn');
+        
+        loginBtn.addEventListener('click', () => {
+            document.body.removeChild(modalOverlay);
+            navigate('/login');
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            document.body.removeChild(modalOverlay);
+        });
+
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                document.body.removeChild(modalOverlay);
+            }
+        });
+    };
 
     const handleLoginClick = () => {
         navigate('/login');
@@ -176,55 +229,71 @@ const PriceList = () => {
             return <div className="error">{error}</div>;
         }
     
-        const renderVaccines = () => (
-            <div className="vaccines-grid">
-                {vaccines
-                    .filter(vaccine =>
-                        vaccine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        vaccine.description.toLowerCase().includes(searchTerm.toLowerCase())
-                    )
-                    .map(vaccine => (
-                        <div key={vaccine.vaccineId} className="vaccine-card">
-                            <div className="vaccine-header">
-                                <FaShieldAlt className="vaccine-icon" />
-                                <h3>{vaccine.name}</h3>
-                            </div>
-                            <div className="vaccine-info">
-                                <p><strong>Nhà sản xuất:</strong> {vaccine.manufacturer}</p>
-                                <p><strong>Số mũi:</strong> {vaccine.shot}</p>
-                                <p className="vaccine-description">{vaccine.description}</p>
-                                <div className="vaccine-price">
-                                    {Number(vaccine.price).toLocaleString('vi-VN')}<span>đ</span>
-                                </div>
+    // Update the renderVaccines function:
+    const renderVaccines = () => (
+        <div className="vaccines-grid">
+            {vaccines
+                .filter(vaccine =>
+                    vaccine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    vaccine.description.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map(vaccine => (
+                    <div 
+                        key={vaccine.vaccineId} 
+                        className="vaccine-card clickable"
+                        onClick={() => handleVaccineSelect(vaccine, 'single')}
+                    >
+                        <div className="vaccine-header">
+                            <FaShieldAlt className="vaccine-icon" />
+                            <h3>{vaccine.name}</h3>
+                        </div>
+                        <div className="vaccine-info">
+                            <p><strong>Nhà sản xuất:</strong> {vaccine.manufacturer}</p>
+                            <p><strong>Số mũi:</strong> {vaccine.shot}</p>
+                        </div>
+                        <div className="vaccine-details">
+                            <p className="vaccine-description">
+                                <strong>Mô tả:</strong> {vaccine.description}
+                            </p>
+                            <div className="vaccine-price">
+                                <strong>Giá:</strong> {Number(vaccine.price).toLocaleString('vi-VN')}<span>đ</span>
                             </div>
                         </div>
-                    ))}
-            </div>
-        );
+                    </div>
+                ))}
+        </div>
+    );
     
-        const renderPackages = () => (
-            <div className="vaccines-grid">
-                {packages
-                    .filter(pkg =>
-                        pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        pkg.description.toLowerCase().includes(searchTerm.toLowerCase())
-                    )
-                    .map(pkg => (
-                        <div key={pkg.packageId} className="vaccine-card package-card">
-                            <div className="vaccine-header">
-                                <FaSyringe className="vaccine-icon" />
-                                <h3>{pkg.name}</h3>
-                            </div>
-                            <div className="vaccine-info">
-                                <p className="vaccine-description">{pkg.description}</p>
-                                <div className="vaccine-price">
-                                    {Number(pkg.price).toLocaleString('vi-VN')}<span>đ</span>
-                                </div>
+    // Similarly update the renderPackages function:
+    const renderPackages = () => (
+        <div className="vaccines-grid">
+            {packages
+                .filter(pkg =>
+                    pkg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    pkg.description.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map(pkg => (
+                    <div 
+                        key={pkg.packageId} 
+                        className="vaccine-card package-card clickable"
+                        onClick={() => handleVaccineSelect(pkg, 'package')}
+                    >
+                        <div className="vaccine-header">
+                            <FaSyringe className="vaccine-icon" />
+                            <h3>{pkg.name}</h3>
+                        </div>
+                        <div className="vaccine-details">
+                            <p className="vaccine-description">
+                                <strong>Mô tả:</strong> {pkg.description}
+                            </p>
+                            <div className="vaccine-price">
+                                <strong>Giá:</strong> {Number(pkg.price).toLocaleString('vi-VN')}<span>đ</span>
                             </div>
                         </div>
-                    ))}
-            </div>
-        );
+                    </div>
+                ))}
+        </div>
+    );
     
         switch (category) {
             case 'vaccines':

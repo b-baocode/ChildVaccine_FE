@@ -325,3 +325,135 @@
         max-width: 100%;
     }
 } 
+
+
+/* Add to PriceList.css */
+.vaccine-card.clickable {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.vaccine-card.clickable:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-color: #007bff;
+}
+
+.package-card.clickable:hover {
+    border-color: #28a745;
+}
+
+.click-indicator {
+    text-align: center;
+    margin-top: 15px;
+    padding: 8px;
+    background-color: rgba(0, 123, 255, 0.1);
+    border-radius: 4px;
+    font-size: 14px;
+    color: #007bff;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.package-card .click-indicator {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.vaccine-card.clickable:hover .click-indicator {
+    background-color: rgba(0, 123, 255, 0.2);
+}
+
+.package-card.clickable:hover .click-indicator {
+    background-color: rgba(40, 167, 69, 0.2);
+}
+
+/* Add to PriceList.css */
+.vaccine-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: white;
+    transition: all 0.2s ease;
+    height: 100%;
+    padding-bottom: 12px;
+}
+
+.vaccine-card.clickable:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-color: #007bff;
+}
+
+.vaccine-header {
+    padding: 12px 15px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+}
+
+.vaccine-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #333;
+    flex-grow: 1;
+    margin-left: 10px;
+}
+
+.vaccine-icon {
+    color: #007bff;
+    font-size: 1.2rem;
+}
+
+.vaccine-info {
+    padding: 12px 15px 0;
+}
+
+.vaccine-info p {
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.vaccine-details {
+    padding: 5px 15px 10px;
+    margin-top: 5px;
+    position: relative;
+}
+
+.vaccine-description {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.4;
+    margin-bottom: 15px;
+    border-top: 1px solid #f1f1f1;
+    padding-top: 10px;
+}
+
+.vaccine-price {
+    font-size: 1rem;
+    color: #2e4ae9;
+    text-align: left;
+    padding-top: 10px;
+    border-top: 1px solid #f1f1f1;
+    font-weight: normal;
+}
+
+.vaccine-price span {
+    margin-left: 2px;
+}
+
+.package-card .vaccine-icon {
+    color: #28a745;
+}
+
+.package-card.clickable:hover {
+    border-color: #28a745;
+}

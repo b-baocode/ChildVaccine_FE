@@ -9,6 +9,7 @@ const AddChildForm = () => {
   const navigate = useNavigate();
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState({});
   const [childInfo, setChildInfo] = useState({
     fullName: '',
     dateOfBirth: '',
@@ -37,6 +38,12 @@ const AddChildForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       const sessionData = await sessionService.checkSession();
       const cusId = sessionData.body.cusId;
@@ -71,6 +78,30 @@ const AddChildForm = () => {
       setError(err.message || 'Có lỗi xảy ra khi thêm hồ sơ trẻ');
       console.error('Error adding child:', err);
     }
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    
+    // Height validation
+    if (parseFloat(childInfo.height) > 200) {
+      errors.height = 'Chiều cao không được quá 200 cm';
+    }
+    
+    // Weight validation
+    if (parseFloat(childInfo.weight) > 100) {
+      errors.weight = 'Cân nặng không được quá 100 kg';
+    }
+    
+    // Date of birth validation
+    const birthDate = new Date(childInfo.dateOfBirth);
+    const year2000 = new Date('2000-12-31');
+    if (birthDate <= year2000) {
+      errors.dateOfBirth = 'Ngày sinh phải sau năm 2000';
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleChange = (e) => {
@@ -125,7 +156,12 @@ const AddChildForm = () => {
                 value={childInfo.dateOfBirth}
                 onChange={handleChange}
                 required
+                max="2025-03-11" // Today's date to prevent future dates
+                className={validationErrors.dateOfBirth ? 'input-error' : ''}
               />
+              {validationErrors.dateOfBirth && (
+                <span className="error-text">{validationErrors.dateOfBirth}</span>
+              )}
             </div>
             <div className="form-group">
               <label>Giới tính</label>
@@ -164,8 +200,14 @@ const AddChildForm = () => {
                 name="height"
                 value={childInfo.height}
                 onChange={handleChange}
+                min="1"
+                max="200"
                 required
+                className={validationErrors.height ? 'input-error' : ''}
               />
+              {validationErrors.height && (
+                <span className="error-text">{validationErrors.height}</span>
+              )}
             </div>
             <div className="form-group">
               <label>Cân nặng (kg)</label>
@@ -174,8 +216,14 @@ const AddChildForm = () => {
                 name="weight"
                 value={childInfo.weight}
                 onChange={handleChange}
+                min="0.1"
+                max="100"
                 required
+                className={validationErrors.weight ? 'input-error' : ''}
               />
+              {validationErrors.weight && (
+                <span className="error-text">{validationErrors.weight}</span>
+              )}
             </div>
           </div>
         </div>

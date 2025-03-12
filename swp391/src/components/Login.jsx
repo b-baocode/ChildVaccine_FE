@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Login.css';
-import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
+import { FaUser, FaLock, FaEnvelope, FaArrowLeft } from 'react-icons/fa';
 import authService from '../service/AuthenService';
 import appointmentService from '../service/appointmentService';
 import sessionService from '../service/sessionService'; // Add this import
@@ -84,6 +84,13 @@ const Login = () => {
 
     return (
         <div className="login-container">
+            <button 
+                className="back-to-home-btn" 
+                onClick={() => navigate('/')}
+            >
+                <FaArrowLeft /> Quay về trang chủ
+            </button>
+
             <div className="login-box">
                 <div className="login-header">
                     <h2>Chào Mừng Trở Lại</h2>

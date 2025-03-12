@@ -52,6 +52,29 @@ const recordService = {
             console.error('❌ Error fetching vaccination records:', error);
             throw error;
         }
+    },
+        // In recordService.js
+    getAllRecords: async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        
+        const response = await fetch(`${API_BASE_URL}/api/records`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to fetch records');
+        }
+    
+        return await response.json();
+      } catch (error) {
+        console.error('Error fetching records:', error);
+        throw error;
+      }
     }
 };
 

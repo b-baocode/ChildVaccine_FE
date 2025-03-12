@@ -32,10 +32,12 @@ class SessionService {
             const token = localStorage.getItem('authToken');
             if (!token) {
                 console.warn("No token found, user might not be logged in.");
+                // Auto logout if no token found
+                this.syncLogout();
                 throw new Error("No authentication token found");
             }
     
-            console.log("Checking session with token:", token.substring(0, 10) + "..."); // Log partial token for security
+            console.log("Checking session with token:", token.substring(0, 10) + "...");
     
             const response = await fetch(`${API_BASE_URL}/auth/session-info`, {
                 method: 'GET',
@@ -43,31 +45,37 @@ class SessionService {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                credentials: 'include' // Giữ lại nếu backend sử dụng session
+                credentials: 'include'
             });
     
             if (!response.ok) {
-                const errorText = await response.text();
                 const errorStatus = response.status;
+                const errorText = await response.text();
+                
                 console.error("Session check failed:", {
                     status: errorStatus,
                     message: errorText || `Session invalid (Status: ${errorStatus})`
                 });
+                
+                // Handle unauthorized (401), forbidden (403) or any other error by logging out
+                console.log("🚨 Session invalid or expired! Logging out automatically...");
+                this.syncLogout();
+                
                 throw new Error(errorText || "Failed to fetch session info");
             }
     
             const sessionData = await response.json();
     
-            // Định dạng lại dữ liệu để giống login response
+            // Format the data to match login response
             const formattedSession = {
                 headers: {},
                 body: {
-                    user: sessionData.user, // Đối tượng user
-                    token: token, // Giữ lại token
-                    cusId: sessionData.cusId, // ID khách hàng
-                    address: sessionData.address, // Địa chỉ khách hàng
-                    dateOfBirth: sessionData.dateOfBirth, // Ngày sinh
-                    gender: sessionData.gender // Giới tính
+                    user: sessionData.user,
+                    token: token,
+                    cusId: sessionData.cusId,
+                    address: sessionData.address,
+                    dateOfBirth: sessionData.dateOfBirth,
+                    gender: sessionData.gender
                 },
                 statusCode: "OK",
                 statusCodeValue: 200
@@ -80,9 +88,17 @@ class SessionService {
                 message: error.message,
                 stack: error.stack
             });
+            
+            // If we haven't already logged out from a specific error case above,
+            // do it here as a fallback for any other error
+            if (error.message !== "No authentication token found") {
+                console.log("🚨 Session check failed with unexpected error! Logging out...");
+                this.syncLogout();
+            }
+            
             throw error;
         }
-    };
+    }
     
     
     saveSession(sessionData) {
@@ -109,9 +125,10 @@ class SessionService {
     }
 
     clearSession() {
-        console.log("🚨 clearSession() đã được gọi! Xóa token và sessionData khỏi localStorage.");
+        console.log("🚨 clearSession() đã được gọi! Xóa token, user và sessionData khỏi localStorage.");
         localStorage.removeItem('authToken');
         localStorage.removeItem('sessionData');
+        localStorage.removeItem('user'); // Add this line to remove user data
         this.broadcastSessionUpdate(null);
     }
     
@@ -156,7 +173,8 @@ class SessionService {
     syncLogout() {
         localStorage.removeItem('authToken');
         localStorage.removeItem('sessionData');
-        window.location.href = '/login';
+        localStorage.removeItem('user');
+        window.location.href = '/';
     }
 
     broadcastSessionStatus() {

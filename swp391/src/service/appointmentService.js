@@ -82,6 +82,29 @@ const appointmentService = {
         }
     },
 
+    getAppointmentById: async (appointmentId) => {
+        try {
+          const token = localStorage.getItem('authToken');
+          
+          const response = await fetch(`${API_BASE_URL}/api/appointments/${appointmentId}`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Failed to fetch appointment: ${response.status}`);
+          }
+          
+          return await response.json();
+        } catch (error) {
+          console.error('Error fetching appointment details:', error);
+          throw error;
+        }
+    },    
+
     getAppointmentsByChildId: async (childId) => {
         try {
             const token = localStorage.getItem('authToken');
@@ -251,8 +274,9 @@ const appointmentService = {
             
             console.log('📡 Checking slot availability:', { date, timeSlot: formattedTime });
             
+            // Add excludeStatuses parameter to the API request
             const response = await fetch(
-                `${API_BASE_URL}/appointment/availability?date=${date}&timeSlot=${formattedTime}`,
+                `${API_BASE_URL}/appointment/availability?date=${date}&timeSlot=${formattedTime}&excludeCompleted=true&excludeCancelled=true`,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -260,16 +284,28 @@ const appointmentService = {
                     }
                 }
             );
-
+    
             if (!response.ok) {
-                throw new Error('slot is full');
+                const errorData = await response.json().catch(() => ({}));
+                if (response.status === 409) {
+                    return {
+                        available: false,
+                        isFull: true,
+                        maxAllowed: 0,
+                        currentCount: 0,
+                        remainingSlots: 0,
+                        message: errorData.message || 'Slot is already full'
+                    };
+                }
+                throw new Error(errorData.message || 'Failed to check slot availability');
             }
-
+    
             const data = await response.json();
             console.log('✅ Slot availability response:', data);
             
             return {
                 ...data,
+                available: data.currentCount < data.maxAllowed,
                 isFull: data.currentCount >= data.maxAllowed,
                 remainingSlots: Math.max(0, data.maxAllowed - data.currentCount)
             };

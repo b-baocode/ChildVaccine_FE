@@ -34,6 +34,7 @@ import AddChildForm from './components/CusComponent/AddChildForm';
 import ChildProfiles from './components/ChildProfiles';
 import PaymentReview from './components/PaymentReview';
 import ProtectedRoute from './components/ProtectedRoute';
+import PaymentResult from './components/CusComponent/PaymentResult';
 
 const AppWrapper = () => {
   return (
@@ -51,7 +52,9 @@ const AppWrapper = () => {
             <Route path="/disease" element={<Disease />} />
             <Route path="/news" element={<News />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-
+            <Route path="/success" element={<PaymentResult />} />
+            <Route path="/failed" element={<PaymentResult />} />
+            
             {/* Customer Protected routes */}
             <Route path="/register-vaccination" element={
               <ProtectedRoute roles={['CUSTOMER']}>

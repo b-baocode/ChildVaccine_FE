@@ -19,6 +19,7 @@ import sessionService from '../../service/sessionService';
 import appointmentService from '../../service/appointmentService';
 import { FaStar } from 'react-icons/fa';
 import feedbackService from '../../service/feedbackService';
+import paymentService from '../../service/paymentService';
 
 
 const Profile = () => {
@@ -42,6 +43,8 @@ const Profile = () => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false);
+  const [loadingAppointmentId, setLoadingAppointmentId] = useState(null);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -123,6 +126,8 @@ const Profile = () => {
     }
   };
 
+
+
   const handleCloseFeedback = () => {
     setShowFeedbackModal(false);
     setSelectedAppointment(null);
@@ -151,6 +156,67 @@ const Profile = () => {
     } catch (error) {
       console.error('Error updating profile:', error);
       setError('Không thể cập nhật thông tin');
+    }
+  };
+
+  const handleCancelAppointment = async (appointment) => {
+    if (!window.confirm(`Bạn có chắc chắn muốn hủy cuộc hẹn này không?`)) {
+      return;
+    }
+    
+    try {
+      // Show loading state
+      setLoadingAppointmentId(appointment.appId);
+      
+      // Call API to update status to CANCELLED
+      const updatedAppointment = await appointmentService.updateAppointmentStatus(
+        appointment.appId, 
+        'CANCELLED'
+      );
+      
+      // Update the local state with the cancelled appointment
+      setAppointments(appointments.map(app => 
+        app.appId === appointment.appId ? {...app, status: 'CANCELLED'} : app
+      ));
+      
+      // Use alert instead of toast
+      alert('Đã hủy cuộc hẹn thành công');
+    } catch (error) {
+      console.error('Error cancelling appointment:', error);
+      alert('Không thể hủy cuộc hẹn. Vui lòng thử lại sau.');
+    } finally {
+      setLoadingAppointmentId(null);
+    }
+  };
+
+  const handlePayment = async (appointment) => {
+    try {
+      setProcessingPayment(true);
+      
+      // Get payment URL from API
+      const paymentUrl = await paymentService.createPayment(appointment.appId);
+      console.log('Payment URL:', paymentUrl);
+      
+      // Save appointment ID to localStorage to check status after return
+      localStorage.setItem('pendingPaymentAppId', appointment.appId);
+      
+      // Open VNPay payment page in a new tab instead of redirecting
+      const newTab = window.open(paymentUrl, '_blank');
+      
+      // Check if popup was blocked
+      if (!newTab || newTab.closed || typeof newTab.closed === 'undefined') {
+        alert('Trình duyệt đã chặn cửa sổ thanh toán. Vui lòng cho phép popup và thử lại.');
+      }
+      
+      // Reset processing state after a short delay
+      setTimeout(() => {
+        setProcessingPayment(false);
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Error initiating payment:', error);
+      alert('Không thể khởi tạo thanh toán. Vui lòng thử lại sau.');
+      setProcessingPayment(false);
     }
   };
 
@@ -349,6 +415,28 @@ const Profile = () => {
                           <span className="feedback-submitted-text">
                             <FaStar className="info-icon" style={{ color: '#ffc107' }} /> Đã đánh giá
                           </span>
+                        </div>
+                      )}
+                      {appointment.status === 'COMPLETED' && appointment.paymentStatus !== 'PAID' && (
+                        <div className="info-row payment">
+                          <button 
+                            className="payment-btn"
+                            onClick={() => handlePayment(appointment)}
+                            disabled={processingPayment}
+                          >
+                            {processingPayment ? 'Đang xử lý...' : 'Thanh toán'}
+                          </button>
+                        </div>
+                      )}
+                      {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && (
+                        <div className="info-row cancel">
+                          <button 
+                            className="cancel-appointment-btn"
+                            onClick={() => handleCancelAppointment(appointment)}
+                            disabled={loadingAppointmentId === appointment.appId}
+                          >
+                            {loadingAppointmentId === appointment.appId ? 'Đang xử lý...' : 'Hủy lịch hẹn'}
+                          </button>
                         </div>
                       )}
                     </div>

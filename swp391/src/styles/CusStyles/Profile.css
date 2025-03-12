@@ -442,3 +442,24 @@
 .feedback-submitted .info-icon {
   margin-right: 4px;
 }
+
+.cancel-appointment-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  margin-right: 10px;
+}
+
+.cancel-appointment-btn:hover {
+  background-color: #c82333;
+}
+
+.cancel-appointment-btn:disabled {
+  background-color: #e3858d;
+  cursor: not-allowed;
+}

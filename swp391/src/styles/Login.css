@@ -419,3 +419,30 @@
     font-size: 1.1rem;
     transition: all 0.3s ease;
 } 
+
+.back-to-home-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: white;
+    color: #0056b3;
+    border: 1px solid #0056b3;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.back-to-home-btn:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.back-to-home-btn svg {
+    font-size: 14px;
+}

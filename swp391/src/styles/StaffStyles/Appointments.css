@@ -704,5 +704,58 @@ button:hover {
   background-color: #0056b3;
 }
 
+/* Add this to your Appointments.css file */
+.payment-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
 
+.payment-btn:hover {
+  background-color: #218838;
+}
 
+.payment-btn:disabled {
+  background-color: #8fd19e;
+  cursor: not-allowed;
+}
+
+.view-btn {
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.view-btn:hover {
+  background-color: #138496;
+}
+
+textarea.readonly {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+  border: 1px solid #ced4da;
+}
+
+.close-button-full {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  width: 100%;
+}
+
+.close-button-full:hover {
+  background-color: #5a6268;
+}
