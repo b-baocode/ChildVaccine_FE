@@ -1,0 +1,601 @@
+/* Import Home styles */
+@import './Home.css';
+
+
+/* Wrapper for the entire page */
+.about-page {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    font-family: 'Roboto', sans-serif;
+    background: #f8f9fa;
+}
+
+
+/* Hero Section */
+.about-hero {
+    height: 400px;
+    background: linear-gradient(rgba(49, 73, 139, 0.9), rgba(49, 73, 139, 0.9)),
+                url('https://vnvc.vn/wp-content/uploads/2024/08/vnvc-tron-8-tuoi.jpg') center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding: 2rem;
+}
+
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+
+.hero-content p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+
+/* Introduction Section */
+.about-section {
+    padding: 4rem 2rem;
+    text-align: center;
+    background: white;
+}
+
+
+.about-section h2 {
+    color: #31498B;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+
+.about-section p {
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    line-height: 1.8;
+    color: #555;
+    font-size: 1.1rem;
+}
+
+
+/* Introduction Images */
+.intro-images {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+
+.intro-image-item {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+
+.intro-image-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+
+.intro-image-item img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    transition: all 0.5s ease;
+}
+
+
+.intro-image-item:hover img {
+    transform: scale(1.1);
+}
+
+
+.image-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+
+/* Statistics Section */
+.stats-section {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    padding: 4rem 2rem;
+    background: #f8f9fa;
+}
+
+
+.stat-item {
+    text-align: center;
+}
+
+
+.stat-item h3 {
+    font-size: 3rem;
+    color: #31498B;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+
+.stat-item p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+
+/* Features Section */
+.features-section {
+    padding: 4rem 2rem;
+    background: white;
+}
+
+
+.features-section h2 {
+    text-align: center;
+    color: #31498B;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    font-weight: 700;
+}
+
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+.feature-item {
+    text-align: center;
+    padding: 2rem;
+    border-radius: 12px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+
+.feature-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+
+.feature-icon {
+    font-size: 2.5rem;
+    color: #31498B;
+    margin-bottom: 1.5rem;
+}
+
+
+.feature-item h3 {
+    color: #31498B;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+
+.feature-item p {
+    color: #666;
+    line-height: 1.6;
+}
+
+
+/* Mission Section */
+.mission-section {
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #31498B 0%, #1a2b5c 100%);
+    color: white;
+}
+
+
+.mission-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+
+.mission-content h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    font-weight: 700;
+}
+
+
+.mission-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+
+.mission-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255,255,255,0.1);
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+
+.check-icon {
+    font-size: 1.5rem;
+    color: #4CAF50;
+}
+
+
+/* Partners Section */
+.partners-section {
+    padding: 6rem 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+
+.partners-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #31498B, #1a2b5c);
+}
+
+
+.partners-section h2 {
+    color: #31498B;
+    font-size: 2.5rem;
+    margin-bottom: 4rem;
+    font-weight: 700;
+    position: relative;
+    display: inline-block;
+}
+
+
+.partners-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #31498B, #1a2b5c);
+    border-radius: 2px;
+}
+
+
+.partner-logos {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+
+.partner-logos img {
+    width: 100%;
+    height: 80px;
+    object-fit: contain;
+    filter: grayscale(100%);
+    opacity: 0.7;
+    transition: all 0.4s ease;
+    padding: 1.2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    margin: 0;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.partner-logos img:hover {
+    filter: grayscale(0);
+    opacity: 1;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+
+/* Animation for partner logos */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.partner-logos img {
+    animation: fadeInUp 0.6s ease-out forwards;
+    animation-delay: calc(var(--i) * 0.1s);
+}
+
+
+/* Responsive adjustments for partners section */
+@media (max-width: 1200px) {
+    .partner-logos {
+        gap: 1.5rem;
+        padding: 1.5rem;
+        max-width: 900px;
+    }
+   
+    .partner-logos img {
+        height: 70px;
+        padding: 1rem;
+    }
+}
+
+
+@media (max-width: 992px) {
+    .partner-logos {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 500px;
+        gap: 1.5rem;
+    }
+   
+    .partner-logos img {
+        height: 60px;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .partner-logos {
+        grid-template-columns: 1fr;
+        max-width: 250px;
+        gap: 1rem;
+    }
+   
+    .partner-logos img {
+        height: 50px;
+    }
+}
+
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .features-grid,
+    .stats-section {
+        grid-template-columns: repeat(2, 1fr);
+    }
+   
+    .partner-logos {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+   
+    .about-section h2,
+    .features-section h2,
+    .mission-content h2,
+    .partners-section h2 {
+        font-size: 2rem;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .features-grid,
+    .stats-section,
+    .partner-logos {
+        grid-template-columns: 1fr;
+    }
+   
+    .stat-item h3 {
+        font-size: 2.5rem;
+    }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .intro-images {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+@media (max-width: 768px) {
+    .intro-images {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+    }
+
+
+    .intro-image-item img {
+        height: 250px;
+    }
+}
+
+
+/* Modal yêu cầu đăng nhập */
+.login-required-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+
+.login-required-modal .modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    animation: slideIn 0.4s ease;
+}
+
+
+.modal-icon {
+    width: 60px;
+    height: 60px;
+    background: #e3f2fd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+}
+
+
+.modal-icon i {
+    font-size: 28px;
+    color: #1e88e5;
+}
+
+
+.modal-content h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+
+.modal-content p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+
+.modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+
+.modal-buttons button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+
+.modal-buttons .login-btn {
+    background: #1e88e5;
+    color: white;
+    flex: 1;
+    max-width: 150px;
+}
+
+
+.modal-buttons .login-btn:hover {
+    background: #1976d2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 136, 229, 0.2);
+}
+
+
+.modal-buttons .cancel-btn {
+    background: #f5f5f5;
+    color: #666;
+    flex: 1;
+    max-width: 150px;
+}
+
+
+.modal-buttons .cancel-btn:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+@media (max-width: 480px) {
+    .modal-content {
+        margin: 0 1rem;
+        padding: 1.5rem;
+    }
+
+    .modal-buttons {
+        flex-direction: column;
+    }
+
+    .modal-buttons button {
+        max-width: 100%;
+    }
+}
+
+
+
+
+
