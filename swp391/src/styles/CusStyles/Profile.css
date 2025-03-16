@@ -463,3 +463,70 @@
   background-color: #e3858d;
   cursor: not-allowed;
 }
+
+/* CSS cho modal hủy lịch hẹn */
+.cancel-modal {
+  background-color: white;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+  padding: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.reason-section {
+  margin-top: 20px;
+}
+
+.reason-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.reason-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reason-option input[type="radio"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.reason-option label {
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.other-reason {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.confirm-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.confirm-btn:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.confirm-btn:disabled {
+  background-color: #e9a7ad;
+  cursor: not-allowed;
+}

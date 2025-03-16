@@ -59,11 +59,11 @@
   border-left: 4px solid #4caf50;
 }
 
-.severity-moderate {
+.severity-severe {
   border-left: 4px solid #ff9800;
 }
 
-.severity-severe {
+.severity-emergency {
   border-left: 4px solid #f44336;
 }
 
@@ -89,12 +89,12 @@
   color: #2e7d32;
 }
 
-.severity-moderate .severity-badge {
+.severity-severe .severity-badge {
   background: #fff3e0;
   color: #ef6c00;
 }
 
-.severity-severe .severity-badge {
+.severity-emergency .severity-badge {
   background: #ffebee;
   color: #c62828;
 }

@@ -304,12 +304,6 @@ function ChildProfiles() {
                           >
                             Xem chi tiết
                           </button>
-                          <button
-                            className="delete-profile-btn"
-                            onClick={() => handleDelete(profile.id)}
-                          >
-                            <FaTrash /> Xóa
-                          </button>
                         </div>
                       </td>
                     </tr>
@@ -419,26 +413,6 @@ function ChildProfiles() {
                   </div>
               </div>
           </div>
-      )}
-
-      {showDeleteConfirm && (
-        <div className="delete-confirm-overlay">
-          <div className="delete-confirm-modal">
-            <h3>Xác nhận xóa hồ sơ</h3>
-            <p>
-              Bạn có chắc chắn muốn xóa hồ sơ này không?<br />
-              Hành động này không thể hoàn tác.
-            </p>
-            <div className="confirm-actions">
-              <button className="confirm-delete-btn" onClick={handleConfirmDelete}>
-                <FaTrash /> Xóa hồ sơ
-              </button>
-              <button className="cancel-delete-btn" onClick={handleCancelDelete}>
-                <FaTimes /> Hủy
-              </button>
-            </div>
-          </div>
-        </div>
       )}
 
       {/* Medical Record Modal */}

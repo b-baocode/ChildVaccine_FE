@@ -140,7 +140,15 @@ const VaccinationReactionForm = () => {
           <p><strong>Mã báo cáo:</strong> {submittedReaction.id}</p>
           <p><strong>Trẻ:</strong> {submittedReaction.child.fullName}</p>
           <p><strong>Ngày tiêm:</strong> {new Date(submittedReaction.appointment.appointmentDate).toLocaleDateString()}</p>
-          <p><strong>Vắc-xin:</strong> {submittedReaction.appointment.vaccineId.name}</p>
+          <p>
+            <strong>{submittedReaction.appointment.packageId ? 'Gói vaccine:' : 'Vaccine:'}</strong> {
+              submittedReaction.appointment.packageId 
+                ? submittedReaction.appointment.packageId.name
+                : (submittedReaction.appointment.vaccineId 
+                    ? submittedReaction.appointment.vaccineId.name
+                    : 'Không có thông tin')
+            }
+          </p>
           <p><strong>Triệu chứng:</strong> {submittedReaction.symptoms}</p>
           <p><strong>Mức độ:</strong> {
             submittedReaction.severity === 'MILD' ? 'Nhẹ' :

@@ -216,7 +216,8 @@ const AddChildForm = () => {
                 name="weight"
                 value={childInfo.weight}
                 onChange={handleChange}
-                min="0.1"
+                min="1"
+                step="any"
                 max="100"
                 required
                 className={validationErrors.weight ? 'input-error' : ''}

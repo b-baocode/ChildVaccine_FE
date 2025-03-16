@@ -116,8 +116,18 @@ const Home = () => {
                 }
 
                 // Get all appointments for this customer
-                const appointments = await appointmentService.getAppointmentsByCustomerId(sessionData.body.cusId);
-                
+                let appointments = [];
+                try {
+                    const response = await appointmentService.getAppointmentsByCustomerId(sessionData.body.cusId);
+                    appointments = Array.isArray(response) ? response : [];
+                    console.log('Fetched appointments:', appointments.length > 0 
+                        ? `${appointments.length} appointments found` 
+                        : 'Không tìm thấy lịch hẹn nào cho khách hàng này');
+                } catch (err) {
+                    console.error('Error fetching appointments:', err);
+                    appointments = [];
+                }
+
                 if (appointments && appointments.length > 0) {
                     // Get current date and time
                     const now = new Date();
@@ -168,6 +178,8 @@ const Home = () => {
                     } else {
                         setUpcomingAppointment(null);
                     }
+                } else {
+                    setUpcomingAppointment(null);
                 }
             } catch (error) {
                 console.error('Error fetching upcoming appointments:', error);
@@ -384,7 +396,6 @@ const Home = () => {
                         </>
                     ) : (
                         <div className="notification-content">
-                            <span className="notification-title">Đăng nhập để xem lịch tiêm</span>
                         </div>
                     )}
                 </div>

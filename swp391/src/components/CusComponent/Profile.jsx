@@ -45,6 +45,11 @@ const Profile = () => {
   const [submitting, setSubmitting] = useState(false);
   const [processingPayment, setProcessingPayment] = useState(false);
   const [loadingAppointmentId, setLoadingAppointmentId] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [appointmentToCancel, setAppointmentToCancel] = useState(null);
+
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -159,27 +164,32 @@ const Profile = () => {
     }
   };
 
-  const handleCancelAppointment = async (appointment) => {
-    if (!window.confirm(`Bạn có chắc chắn muốn hủy cuộc hẹn này không?`)) {
-      return;
-    }
+  const handleOpenCancelModal = (appointment) => {
+    setAppointmentToCancel(appointment);
+    setShowCancelModal(true);
+    setCancelReason(""); // Reset lý do mỗi lần mở modal
+  };
+
+  const handleCancelAppointment = async () => {
+    if (!appointmentToCancel || !cancelReason) return;
     
     try {
       // Show loading state
-      setLoadingAppointmentId(appointment.appId);
+      setLoadingAppointmentId(appointmentToCancel.appId);
       
       // Call API to update status to CANCELLED
       const updatedAppointment = await appointmentService.updateAppointmentStatus(
-        appointment.appId, 
+        appointmentToCancel.appId, 
         'CANCELLED'
       );
       
       // Update the local state with the cancelled appointment
       setAppointments(appointments.map(app => 
-        app.appId === appointment.appId ? {...app, status: 'CANCELLED'} : app
+        app.appId === appointmentToCancel.appId ? {...app, status: 'CANCELLED'} : app
       ));
       
-      // Use alert instead of toast
+      // Đóng modal và hiển thị thông báo
+      setShowCancelModal(false);
       alert('Đã hủy cuộc hẹn thành công');
     } catch (error) {
       console.error('Error cancelling appointment:', error);
@@ -372,76 +382,126 @@ const Profile = () => {
             </>
           ) : (
             <div className="vaccine-history">
+              <div className="filter-section">
+                <h4>Lọc theo trạng thái:</h4>
+                <div className="filter-buttons">
+                  <button 
+                    className={`filter-btn ${statusFilter === 'ALL' ? 'active' : ''}`}
+                    onClick={() => setStatusFilter('ALL')}
+                  >
+                    Tất cả
+                  </button>
+                  <button 
+                    className={`filter-btn ${statusFilter === 'CONFIRMED' ? 'active' : ''}`}
+                    onClick={() => setStatusFilter('CONFIRMED')}
+                  >
+                    Đã xác nhận
+                  </button>
+                  <button 
+                    className={`filter-btn ${statusFilter === 'COMPLETED' ? 'active' : ''}`}
+                    onClick={() => setStatusFilter('COMPLETED')}
+                  >
+                    Đã hoàn thành
+                  </button>
+                  <button 
+                    className={`filter-btn ${statusFilter === 'CANCELLED' ? 'active' : ''}`}
+                    onClick={() => setStatusFilter('CANCELLED')}
+                  >
+                    Đã hủy
+                  </button>
+                </div>
+              </div>
               {loadingAppointments ? (
                 <div className="loading">Đang tải lịch sử tiêm chủng...</div>
               ) : appointments.length > 0 ? (
-                appointments.map((appointment) => (
-                  <div key={appointment.appId} className="history-card">
-                    <div className="history-header">
-                    <h3>{appointment.child?.fullName || 'Không có tên'}</h3>
-                      <span className={`status ${appointment.status.toLowerCase()}`}>
-                        {appointment.status === 'PENDING' && 'Chờ xác nhận'}
-                        {appointment.status === 'CONFIRMED' && 'Đã xác nhận'}
-                        {appointment.status === 'COMPLETED' && 'Đã hoàn thành'}
-                        {appointment.status === 'CANCELLED' && 'Đã hủy'}
-                      </span>
-                    </div>
-                    <div className="history-info">
-                      <div className="info-row">
-                        <span><FaIdCard className="info-icon" /> Mã cuộc hẹn: {appointment.appId}</span>
-                        <span><FaCalendar className="info-icon" /> Ngày: {new Date(appointment.appointmentDate).toLocaleDateString()}</span>
-                      </div>
-                      <div className="info-row">
-                        <span>Thời gian: {appointment.appointmentTime}</span>
-                        <span>Thanh toán: {appointment.paymentStatus === 'PAID' ? 'Đã thanh toán' : 'Chưa thanh toán'}</span>
-                      </div>
-                      {appointment.notes && (
-                        <div className="info-row notes">
-                          <span>Ghi chú: {appointment.notes}</span>
-                        </div>
-                      )}
-                      {appointment.status === 'COMPLETED' && !appointment.hasFeedback && (
-                        <div className="info-row feedback">
-                          <button 
-                            className="feedback-btn"
-                            onClick={() => handleFeedback(appointment)}
-                          >
-                            Đánh giá
-                          </button>
-                        </div>
-                      )}
-                      {appointment.status === 'COMPLETED' && appointment.hasFeedback && (
-                        <div className="info-row feedback-submitted">
-                          <span className="feedback-submitted-text">
-                            <FaStar className="info-icon" style={{ color: '#ffc107' }} /> Đã đánh giá
+                <>
+                  {/* Lọc và hiển thị appointments theo statusFilter */}
+                  {appointments
+                    .filter(appointment => statusFilter === 'ALL' || appointment.status === statusFilter)
+                    // Sắp xếp theo số trong mã ID "APPxxx" từ cao đến thấp
+                    .sort((a, b) => {
+                      // Trích xuất phần số từ ID có định dạng "APPxxx"
+                      const numA = parseInt(a.appId.substring(3), 10) || 0;
+                      const numB = parseInt(b.appId.substring(3), 10) || 0;
+                      // Sắp xếp giảm dần (mới nhất trên cùng)
+                      return numB - numA;
+                    })                  
+                    .map((appointment) => (
+                      <div key={appointment.appId} className="history-card">
+                        <div className="history-header">
+                          <h3>{appointment.child?.fullName || 'Không có tên'}</h3>
+                          <span className={`status ${appointment.status.toLowerCase()}`}>
+                            {appointment.status === 'PENDING' && 'Chờ xác nhận'}
+                            {appointment.status === 'CONFIRMED' && 'Đã xác nhận'}
+                            {appointment.status === 'COMPLETED' && 'Đã hoàn thành'}
+                            {appointment.status === 'CANCELLED' && 'Đã hủy'}
                           </span>
                         </div>
-                      )}
-                      {appointment.status === 'COMPLETED' && appointment.paymentStatus !== 'PAID' && (
-                        <div className="info-row payment">
-                          <button 
-                            className="payment-btn"
-                            onClick={() => handlePayment(appointment)}
-                            disabled={processingPayment}
-                          >
-                            {processingPayment ? 'Đang xử lý...' : 'Thanh toán'}
-                          </button>
+                        <div className="history-info">
+                          {/* Nội dung history-info giữ nguyên */}
+                          <div className="info-row">
+                            <span><FaIdCard className="info-icon" /> Mã cuộc hẹn: {appointment.appId}</span>
+                            <span><FaCalendar className="info-icon" /> Ngày: {new Date(appointment.appointmentDate).toLocaleDateString()}</span>
+                          </div>
+                          <div className="info-row">
+                            <span>Thời gian: {appointment.appointmentTime}</span>
+                            <span>Thanh toán: {appointment.paymentStatus === 'PAID' ? 'Đã thanh toán' : 'Chưa thanh toán'}</span>
+                          </div>
+                          {appointment.notes && (
+                            <div className="info-row notes">
+                              <span>Ghi chú: {appointment.notes}</span>
+                            </div>
+                          )}
+                          {appointment.status === 'COMPLETED' && !appointment.hasFeedback && (
+                            <div className="info-row feedback">
+                              <button 
+                                className="feedback-btn"
+                                onClick={() => handleFeedback(appointment)}
+                              >
+                                Đánh giá
+                              </button>
+                            </div>
+                          )}
+                          {appointment.status === 'COMPLETED' && appointment.hasFeedback && (
+                            <div className="info-row feedback-submitted">
+                              <span className="feedback-submitted-text">
+                                <FaStar className="info-icon" style={{ color: '#ffc107' }} /> Đã đánh giá
+                              </span>
+                            </div>
+                          )}
+                          {appointment.status === 'COMPLETED' && appointment.paymentStatus !== 'PAID' && (
+                            <div className="info-row payment">
+                              <button 
+                                className="payment-btn"
+                                onClick={() => handlePayment(appointment)}
+                                disabled={processingPayment}
+                              >
+                                {processingPayment ? 'Đang xử lý...' : 'Thanh toán'}
+                              </button>
+                            </div>
+                          )}
+                          {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && (
+                            <div className="info-row cancel">
+                              <button 
+                                className="cancel-appointment-btn"
+                                onClick={() => handleOpenCancelModal(appointment)}
+                                disabled={loadingAppointmentId === appointment.appId}
+                              >
+                                {loadingAppointmentId === appointment.appId ? 'Đang xử lý...' : 'Hủy lịch hẹn'}
+                              </button>
+                            </div>
+                          )}
                         </div>
-                      )}
-                      {appointment.status !== 'COMPLETED' && appointment.status !== 'CANCELLED' && (
-                        <div className="info-row cancel">
-                          <button 
-                            className="cancel-appointment-btn"
-                            onClick={() => handleCancelAppointment(appointment)}
-                            disabled={loadingAppointmentId === appointment.appId}
-                          >
-                            {loadingAppointmentId === appointment.appId ? 'Đang xử lý...' : 'Hủy lịch hẹn'}
-                          </button>
-                        </div>
-                      )}
+                      </div>
+                    ))}
+                  
+                  {/* Thông báo khi không có kết quả sau khi lọc */}
+                  {appointments.filter(app => statusFilter === 'ALL' || app.status === statusFilter).length === 0 && (
+                    <div className="no-filtered-results">
+                      <p>Không có lịch hẹn nào khớp với bộ lọc đã chọn.</p>
                     </div>
-                  </div>
-                ))
+                  )}
+                </>
               ) : (
                 <div className="no-history">
                   <p>Chưa có lịch sử tiêm chủng nào.</p>
@@ -501,6 +561,96 @@ const Profile = () => {
                 disabled={submitting || rating === 0}
               >
                 {submitting ? 'Đang gửi...' : 'Gửi đánh giá'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showCancelModal && appointmentToCancel && (
+        <div className="modal-overlay">
+          <div className="cancel-modal">
+            <div className="modal-header">
+              <h3>Hủy lịch hẹn</h3>
+              <button className="close-btn" onClick={() => setShowCancelModal(false)}>×</button>
+            </div>
+            <div className="modal-content">
+              <div className="appointment-info">
+                <p><strong>Mã cuộc hẹn:</strong> {appointmentToCancel.appId}</p>
+                <p><strong>Trẻ:</strong> {appointmentToCancel.child?.fullName}</p>
+                <p><strong>Ngày hẹn:</strong> {new Date(appointmentToCancel.appointmentDate).toLocaleDateString()}</p>
+                <p><strong>Dịch vụ:</strong> {appointmentToCancel.vaccineId?.name || appointmentToCancel.packageId?.name || "N/A"}</p>
+              </div>
+              <div className="reason-section">
+                <p>Vui lòng chọn lý do hủy lịch hẹn:</p>
+                <div className="reason-options">
+                  <div className="reason-option">
+                    <input 
+                      type="radio" 
+                      id="reschedule" 
+                      name="cancelReason" 
+                      value="Mong muốn dời lịch" 
+                      checked={cancelReason === "Mong muốn dời lịch"}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                    />
+                    <label htmlFor="reschedule">Mong muốn dời lịch</label>
+                  </div>
+                  <div className="reason-option">
+                    <input 
+                      type="radio" 
+                      id="wrongService" 
+                      name="cancelReason" 
+                      value="Đặt nhầm dịch vụ" 
+                      checked={cancelReason === "Đặt nhầm dịch vụ"}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                    />
+                    <label htmlFor="wrongService">Đặt nhầm dịch vụ</label>
+                  </div>
+                  <div className="reason-option">
+                    <input 
+                      type="radio" 
+                      id="wrongChild" 
+                      name="cancelReason" 
+                      value="Chọn nhầm trẻ đi tiêm" 
+                      checked={cancelReason === "Chọn nhầm trẻ đi tiêm"}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                    />
+                    <label htmlFor="wrongChild">Chọn nhầm trẻ đi tiêm</label>
+                  </div>
+                  <div className="reason-option">
+                    <input 
+                      type="radio" 
+                      id="other" 
+                      name="cancelReason" 
+                      value="Khác" 
+                      checked={cancelReason === "Khác"}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                    />
+                    <label htmlFor="other">Khác</label>
+                  </div>
+                  {cancelReason === "Khác" && (
+                    <textarea
+                      className="other-reason"
+                      placeholder="Vui lòng nhập lý do hủy lịch hẹn..."
+                      rows="3"
+                      onChange={(e) => setCancelReason(`Khác: ${e.target.value}`)}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="cancel-btn"
+                onClick={() => setShowCancelModal(false)}
+              >
+                Đóng
+              </button>
+              <button 
+                className="confirm-btn"
+                onClick={handleCancelAppointment}
+                disabled={!cancelReason || loadingAppointmentId === appointmentToCancel.appId}
+              >
+                {loadingAppointmentId === appointmentToCancel.appId ? 'Đang xử lý...' : 'Xác nhận hủy'}
               </button>
             </div>
           </div>

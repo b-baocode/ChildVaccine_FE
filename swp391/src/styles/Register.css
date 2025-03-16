@@ -77,12 +77,26 @@
 }
 
 /* Thêm style cho placeholder của input date */
-.form-group input[type="date"]::-webkit-datetime-edit-text,
-.form-group input[type="date"]::-webkit-datetime-edit-month-field,
-.form-group input[type="date"]::-webkit-datetime-edit-day-field,
-.form-group input[type="date"]::-webkit-datetime-edit-year-field {
+.form-group input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-text,
+.form-group input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-month-field,
+.form-group input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-day-field,
+.form-group 
+input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     color: transparent;
 }
+
+
+.form-group input[type="date"]:focus::-webkit-datetime-edit-text,
+.form-group input[type="date"]:focus::-webkit-datetime-edit-month-field,
+.form-group input[type="date"]:focus::-webkit-datetime-edit-day-field,
+.form-group input[type="date"]:focus::-webkit-datetime-edit-year-field,
+.form-group input[type="date"]:valid::-webkit-datetime-edit-text,
+.form-group input[type="date"]:valid::-webkit-datetime-edit-month-field,
+.form-group input[type="date"]:valid::-webkit-datetime-edit-day-field,
+.form-group input[type="date"]:valid::-webkit-datetime-edit-year-field {
+    color: #495057;
+}
+
 
 .form-group input[type="date"]::before {
     content: "Ngày sinh";

@@ -401,10 +401,10 @@
   background-color: #4caf50;
 }
 
-.severity-btn.moderate {
+.severity-btn.severe {
   background-color: #ff9800;
 }
 
-.severity-btn.severe {
+.severity-btn.emergency {
   background-color: #f44336;
 }

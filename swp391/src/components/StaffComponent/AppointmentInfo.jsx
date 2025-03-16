@@ -3,6 +3,7 @@ import appointmentService from '../../service/appointmentService'; // Điều ch
 import '../../styles/StaffStyles/Appointments.css';
 import recordService from '../../service/recordService';
 import paymentService from '../../service/paymentService'; // Import paymentService
+import sessionService from '../../service/sessionService';
 
 
 const StaffAppointment = () => {
@@ -20,6 +21,11 @@ const StaffAppointment = () => {
   const [processingPaymentId, setProcessingPaymentId] = useState(null);
   const [records, setRecords] = useState([]);
   const [isViewOnly, setIsViewOnly] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [error, setError] = useState('');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -55,10 +61,17 @@ const StaffAppointment = () => {
     };
   
     fetchRecords();
-  }, []);
+  }, [refreshTrigger]);
   
   const hasRecord = (appointmentId) => {
-    return records.some(record => record.appointmentId === appointmentId);
+    // Kiểm tra xem appointment này có record chưa
+    const existingRecord = records.some(record => record.appointmentId === appointmentId);
+    
+    // Nếu đang xem record của appointment này (isViewOnly=true và selectedAppointmentId=appointmentId)
+    // thì nghĩa là appointment này có record
+    const isCurrentlyViewingThisRecord = isViewOnly && selectedAppointmentId === appointmentId;
+    
+    return existingRecord || isCurrentlyViewingThisRecord;
   };
 
   const getRecordForAppointment = (appointmentId) => {
@@ -93,39 +106,97 @@ const StaffAppointment = () => {
   };
 
  
+  // const handleSaveClick = async (appointmentId) => {
+  //   try {
+  //       // Create record data
+  //       const recordData = {
+  //           appointmentId: appointmentId,
+  //           staffId: 'S001', // Replace with actual staff ID from session/context
+  //           symptoms: symptoms,
+  //           notes: notes,
+  //           appointmentDate: new Date().toISOString().split('T')[0]
+  //       };
+
+  //       // Save record
+  //       await recordService.createRecord(recordData);
+
+  //       // Update local state
+  //       const updatedAppointments = appointments.map((appointment) =>
+  //           appointment.appId === appointmentId
+  //               ? { ...appointment, symptoms, notes }
+  //               : appointment
+  //       );
+  //       setAppointments(updatedAppointments);
+
+  //       // Show success message
+  //       alert('Cập nhật thông tin thành công!');
+
+  //       // Close modal and reset form
+  //       setShowUpdateModal(false);
+  //       setSelectedAppointmentId(null);
+  //       setSymptoms('');
+  //       setNotes('');
+  //   } catch (error) {
+  //       console.error('Error saving record:', error);
+  //       alert(error.message || 'Có lỗi xảy ra khi lưu thông tin. Vui lòng thử lại!');
+  //   }
+  // };
+
   const handleSaveClick = async (appointmentId) => {
     try {
-        // Create record data
-        const recordData = {
-            appointmentId: appointmentId,
-            staffId: 'S001', // Replace with actual staff ID from session/context
-            symptoms: symptoms,
-            notes: notes,
-            appointmentDate: new Date().toISOString().split('T')[0]
-        };
-
-        // Save record
-        await recordService.createRecord(recordData);
-
-        // Update local state
-        const updatedAppointments = appointments.map((appointment) =>
+      setIsSaving(true);
+      
+      // Tạo đối tượng record mới
+      const recordData = {
+        appointmentId: appointmentId,
+        staffId: 'S001',
+        symptoms: symptoms,
+        notes: notes,
+        appointmentDate: new Date().toISOString().split('T')[0]
+      };
+      
+      // Gọi API để lưu record
+      const savedRecord = await recordService.createRecord(recordData);
+      
+      if (savedRecord && savedRecord.id) {
+        // Cập nhật state records
+        const newRecords = [...records, savedRecord];
+        setRecords(newRecords);
+        
+        // Cập nhật state appointments
+        setAppointments(prevAppointments =>
+          prevAppointments.map(appointment =>
             appointment.appId === appointmentId
-                ? { ...appointment, symptoms, notes }
-                : appointment
+              ? { ...appointment, notes: notes }
+              : appointment
+          )
         );
-        setAppointments(updatedAppointments);
+        
+        // QUAN TRỌNG: Thêm một chút trễ trước khi đóng modal
+        // Để đảm bảo state đã được cập nhật trước khi re-render
+        setTimeout(() => {
+          // Hiển thị thông báo thành công
+          setShowSuccessMessage(true);
+          
+          // Đóng modal
+          setShowUpdateModal(false);
+          
+          // Ẩn thông báo sau một khoảng thời gian
+          setTimeout(() => setShowSuccessMessage(false), 3000);
+        }, 100); // Đợi 100ms để đảm bảo state đã được cập nhật
 
-        // Show success message
-        alert('Cập nhật thông tin thành công!');
-
-        // Close modal and reset form
-        setShowUpdateModal(false);
-        setSelectedAppointmentId(null);
-        setSymptoms('');
-        setNotes('');
+        if (savedRecord && savedRecord.id) {
+          setRecords(prevRecords => [...prevRecords, savedRecord]);          
+          setRefreshTrigger(prev => prev + 1);
+        }
+      } else {
+        setError('Lưu record không thành công. Dữ liệu trả về không hợp lệ.');
+      }
     } catch (error) {
-        console.error('Error saving record:', error);
-        alert(error.message || 'Có lỗi xảy ra khi lưu thông tin. Vui lòng thử lại!');
+      console.error('Error saving record:', error);
+      setError(error.message || 'Không thể lưu dữ liệu. Vui lòng thử lại sau.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -187,6 +258,7 @@ const StaffAppointment = () => {
     setSymptoms('');
     setNotes('');
     setStatus('CONFIRMED');
+    setIsViewOnly(false); 
   };
 
   const handleCloseWarningModal = () => {
@@ -211,6 +283,7 @@ const StaffAppointment = () => {
       
       // Import paymentService at the top of the file
       // import paymentService from '../../service/paymentService';
+      sessionStorage.setItem('currentPaymentAppId', appointment.appId);
       
       // Get payment URL from API
       const paymentUrl = await paymentService.createPayment(appointment.appId);
@@ -221,12 +294,23 @@ const StaffAppointment = () => {
       // Check if popup was blocked
       if (!newTab || newTab.closed || typeof newTab.closed === 'undefined') {
         alert('Trình duyệt đã chặn cửa sổ thanh toán. Vui lòng cho phép popup và thử lại.');
-      }
-      
-      // Reset processing state after a short delay
-      setTimeout(() => {
         setProcessingPayment(false);
         setProcessingPaymentId(null);
+        return;
+      }
+
+      // Thiết lập một interval để kiểm tra xem cửa sổ thanh toán đã đóng chưa
+      const checkPaymentCompletionInterval = setInterval(() => {
+        if (newTab.closed) {
+          clearInterval(checkPaymentCompletionInterval);
+          
+          // Kiểm tra kết quả thanh toán thông qua API
+          checkPaymentStatus(appointment.appId);
+          
+          // Reset processing state
+          setProcessingPayment(false);
+          setProcessingPaymentId(null);
+        }
       }, 1000);
       
     } catch (error) {
@@ -236,10 +320,51 @@ const StaffAppointment = () => {
       setProcessingPaymentId(null);
     }
   };
+  
+  // Hàm mới để kiểm tra trạng thái thanh toán
+  const checkPaymentStatus = async (appointmentId) => {
+    try {
+      // Lấy thông tin appointment mới nhất để kiểm tra trạng thái
+      const updatedAppointment = await appointmentService.getAppointmentById(appointmentId);
+      
+      // Nếu trạng thái thanh toán đã chuyển thành PAID, reload trang
+      if (updatedAppointment && updatedAppointment.paymentStatus === 'PAID') {
+        console.log('Thanh toán thành công, đang làm mới trang...');
+        
+        // Hiển thị thông báo thành công
+        setShowSuccessMessage(true);
+        setTimeout(() => {
+          window.location.reload(); // Reload trang
+        }, 1500); // Đợi 1.5 giây để người dùng thấy thông báo
+      } else {
+        // Nếu chưa thành công, hiển thị thông báo tương ứng
+        console.log('Trạng thái thanh toán chưa được cập nhật hoặc không thành công');
+        
+        // Cập nhật lại danh sách appointments để hiển thị trạng thái mới nhất
+        setAppointments(prevAppointments =>
+          prevAppointments.map(app =>
+            app.appId === appointmentId ? updatedAppointment : app
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error checking payment status:', error);
+    }
+  };
 
   return (
     <div className="appointment-page">
       <h1>Appointments</h1>
+      {showSuccessMessage && (
+        <div className="success-message">
+          Cập nhật thông tin thành công!
+        </div>
+      )}
+      {error && (
+        <div className="error-message">
+          {error}
+        </div>
+      )}
       <table className="appointment-table">
         <thead>
           <tr>
@@ -256,9 +381,15 @@ const StaffAppointment = () => {
           </tr>
         </thead>
         <tbody>
-          {appointments.map((appointment) => {
+        {appointments
+          .sort((a, b) => {
+            const numA = parseInt(a.appId.substring(3), 10) || 0;
+            const numB = parseInt(b.appId.substring(3), 10) || 0;
+            return numB - numA;
+          })
+          .map((appointment) => {
             const appointmentRecord = getRecordForAppointment(appointment.appId);
-            const hasExistingRecord = Boolean(appointmentRecord.id);
+            const hasExistingRecord = hasRecord(appointment.appId);
             
             return (
               <tr key={appointment.appId}>
@@ -284,12 +415,41 @@ const StaffAppointment = () => {
                 </td>
                 <td>{hasExistingRecord ? appointmentRecord.notes : (appointment.notes || '')}</td>
                 <td>
-                  <button 
-                    className={hasExistingRecord ? "view-btn" : "update-btn"}
-                    onClick={() => handleUpdateClick(appointment)}
-                  >
-                    {hasExistingRecord ? "View" : "Update"}
-                  </button>
+                  {hasExistingRecord ? (
+                    // Nếu đã có record, luôn hiển thị nút View
+                    <button 
+                      className="view-btn"
+                      onClick={() => handleUpdateClick(appointment)}
+                    >
+                      View
+                    </button>
+                  ) : appointment.status === 'CANCELLED' ? (
+                    // Nếu đã hủy và chưa có record, hiển thị nút Update bị vô hiệu hóa
+                    <button 
+                      className="update-btn disabled"
+                      disabled={true}
+                      title="Không thể cập nhật lịch hẹn đã hủy"
+                    >
+                      Update
+                    </button>
+                  ) : appointment.status === 'COMPLETED' ? (
+                    // Nếu đã hoàn thành và chưa có record, hiển thị nút Update bình thường
+                    <button 
+                      className="update-btn"
+                      onClick={() => handleUpdateClick(appointment)}
+                    >
+                      Update
+                    </button>
+                  ) : (
+                    // Trạng thái khác (như CONFIRMED) - hiển thị nút Update bị vô hiệu hóa
+                    <button 
+                      className="update-btn disabled"
+                      disabled={true}
+                      title="Chỉ có thể cập nhật sau khi hoàn thành"
+                    >
+                      Update
+                    </button>
+                  )}
                 </td>
                 <td>
                   {appointment.status === 'COMPLETED' && appointment.paymentStatus !== 'PAID' && (

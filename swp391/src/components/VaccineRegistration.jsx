@@ -363,7 +363,7 @@ const VaccineRegistration = () => {
                     <h3>Thông tin đăng ký tiêm</h3>
                     <div className="info-grid">
                         <div key="child-profile" className="info-item">
-                            <span className="label">Hồ sơ trẻ:</span>
+                            <span className="label">Tên trẻ:</span>
                             <span className="value">
                                 {formData.childProfile} - {getSelectedChildName()}
                             </span>
@@ -560,7 +560,16 @@ const VaccineRegistration = () => {
             { value: "1600", label: "16:00 - 16:30" },
             { value: "1630", label: "16:30 - 17:00" }
         ];
-
+    
+        // Lọc các khung giờ để chỉ hiển thị các khung giờ còn trống
+        const availableTimeSlots = formData.appointmentDate 
+            ? timeSlots.filter(slot => {
+                const availability = slotAvailability[`${formData.appointmentDate}-${slot.value}`];
+                // Nếu chưa kiểm tra availability hoặc slot còn trống thì hiển thị
+                return !availability || (availability && availability.currentCount < availability.maxAllowed);
+            })
+            : timeSlots;
+        
         return (
             <div className="time-field">
                 <label>Chọn khung giờ</label>
@@ -573,26 +582,26 @@ const VaccineRegistration = () => {
                     className={slotError ? 'error' : ''}
                 >
                     <option value="">-- Chọn giờ --</option>
-                    {timeSlots.map(slot => {
+                    {availableTimeSlots.map(slot => {
                         const availability = formData.appointmentDate ? 
                             slotAvailability[`${formData.appointmentDate}-${slot.value}`] : null;
-                        const isFull = availability && availability.currentCount >= availability.maxAllowed;
                         
                         return (
                             <option 
                                 key={slot.value} 
                                 value={slot.value}
-                                disabled={isFull}
                             >
                                 {slot.label}
                                 {availability && ` (${availability.maxAllowed - availability.currentCount} slot còn trống)`}
-                                {isFull && ' - ĐÃ KÍN LỊCH'}
                             </option>
                         );
                     })}
                 </select>
                 {checking && <div className="checking-message">Đang kiểm tra slot...</div>}
                 {slotError && <div className="error-message">{slotError}</div>}
+                {formData.appointmentDate && availableTimeSlots.length === 0 && (
+                    <div className="no-slots-message">Không có khung giờ trống cho ngày đã chọn</div>
+                )}
             </div>
         );
     };

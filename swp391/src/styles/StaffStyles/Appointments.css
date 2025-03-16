@@ -759,3 +759,32 @@ textarea.readonly {
 .close-button-full:hover {
   background-color: #5a6268;
 }
+
+.update-btn.disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.update-btn.disabled:hover {
+  background-color: #cccccc;
+}
+
+/* Thêm vào file CSS của bạn */
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  border: 1px solid #c3e6cb;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  border: 1px solid #f5c6cb;
+}

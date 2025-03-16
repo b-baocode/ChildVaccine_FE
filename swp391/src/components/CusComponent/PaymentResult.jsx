@@ -9,6 +9,7 @@ const PaymentResult = () => {
   const navigate = useNavigate();
   const [appointmentDetails, setAppointmentDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [countdown, setCountdown] = useState(3);
   
   // Check if success or failure based on URL path
   const isSuccess = location.pathname.includes('/success');
@@ -36,13 +37,26 @@ const PaymentResult = () => {
     fetchAppointmentDetails();
   }, []);
   
-  // const handleBackToProfile = () => {
-  //   navigate('/profile');
-  // };
-  
-  // const handleBackHome = () => {
-  //   navigate('/');
-  // };
+  // Countdown timer and redirect
+  useEffect(() => {
+    // Only start countdown when loading is complete
+    if (!loading) {
+      const timer = setInterval(() => {
+        setCountdown((prevCount) => {
+          if (prevCount <= 1) {
+            clearInterval(timer);
+            // Redirect to home page
+            navigate('/');
+            return 0;
+          }
+          return prevCount - 1;
+        });
+      }, 1000);
+      
+      // Cleanup timer on component unmount
+      return () => clearInterval(timer);
+    }
+  }, [loading, navigate]);
   
   if (loading) {
     return <div className="payment-result loading">Đang tải thông tin...</div>;
@@ -50,12 +64,6 @@ const PaymentResult = () => {
   
   return (
     <div className="payment-result-container">
-      {/* <div className="profile-header">
-        <button onClick={handleBackHome} className="back-home-btn">
-          <FaHome /> Quay lại trang chủ
-        </button>
-      </div> */}
-      
       <div className={`payment-result ${isSuccess ? 'success' : 'error'}`}>
         {isSuccess ? (
           <>
@@ -94,10 +102,10 @@ const PaymentResult = () => {
             </div>
           </div>
         )}
-{/*         
-        <button className="back-btn" onClick={handleBackToProfile}>
-          <FaArrowLeft /> Quay lại hồ sơ
-        </button> */}
+        
+        <div className="redirect-notice">
+          Tự động chuyển về trang chủ sau <span className="countdown">{countdown}</span> giây...
+        </div>
       </div>
     </div>
   );
