@@ -4,6 +4,7 @@ import '../../styles/AdminStyles/Dashboard.css';
 import adminService from '../../service/adminService';
 
 const Dashboard = () => {
+  const [loading, setLoading] = useState(true);
   const [staffCount, setStaffCount] = useState(0);
   const [todayAppointments, setTodayAppointments] = useState(0);
   const [revenue, setRevenue] = useState(0);
@@ -11,29 +12,46 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      try {
-        setError(null);
-        const [staffCountData, appointmentsData, revenue] = await Promise.all([
-          adminService.getStaffCount(),
-          adminService.getTodayAppointmentsCount(),
-          adminService.getRevenue()
-        ]);
-        
-        setStaffCount(staffCountData);
-        setTodayAppointments(appointmentsData);
-        setRevenue(revenue);
-      } catch (error) {
-        console.error('Dashboard Error:', error);
-        setError(error.response?.data?.message || 'Failed to load dashboard data');
-      }
+        try {
+            setLoading(true);
+            setError(null);
+            console.log('Starting dashboard data fetch...');
+            
+            const [staffCountData, appointmentsData, revenueData] = await Promise.all([
+                adminService.getStaffCount(),
+                adminService.getTodayAppointmentsCount(),
+            ]);
+            
+            console.log('Received data:', {
+                staffCount: staffCountData,
+                appointments: appointmentsData,
+            });
+            
+            setStaffCount(staffCountData);
+            setTodayAppointments(appointmentsData);
+        } catch (error) {
+            console.error('Dashboard Error:', {
+                message: error.message,
+                response: error.response,
+                status: error.response?.status
+            });
+            setError(
+                error.response?.data?.message || 
+                error.message || 
+                'Failed to load dashboard data'
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
     fetchDashboardData();
-  }, []);
+}, []);
 
-  // if (error) {
-  //   return <div className="error-message">{error}</div>;
-  // }
+
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
 
 
   return (
@@ -73,7 +91,7 @@ const Dashboard = () => {
         <div className="card">
           <div className="card-content">
             <h3>Tổng doanh thu</h3>
-            <div className="card-value">{revenue} VND</div>
+            <div className="card-value"> VND</div>
             <div className="card-date">
               <span className="trend-down"></span>
             </div>
@@ -97,7 +115,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Rest of your dashboard content */}
     </div>
   );
 };

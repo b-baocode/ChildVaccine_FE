@@ -161,7 +161,6 @@ const VaccinationHistory = () => {
               <th>Giá tiền</th>
               <th>Trạng thái tiêm</th>
               <th>Trạng thái thanh toán</th>
-              <th>Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -183,12 +182,6 @@ const VaccinationHistory = () => {
                   <span className={`status-badge ${getPaymentStatusColor(appointment.paymentStatus)}`}>
                     {appointment.paymentStatus}
                   </span>
-                </td>
-                <td>
-                  <div className="action-buttons">
-                    <button className="btn-view">Xem</button>
-                    <button className="btn-edit">Sửa</button>
-                  </div>
                 </td>
               </tr>
             ))}
