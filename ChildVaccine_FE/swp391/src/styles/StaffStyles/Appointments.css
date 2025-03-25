@@ -1,0 +1,790 @@
+.appointment-page {
+  padding: 30px;
+  overflow-y: auto;
+  max-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+
+.appointment-page h1 {
+  margin-bottom: 30px;
+  color: #2c3e50;
+  font-size: 2.2rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+
+.appointment-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+
+.appointment-table th,
+.appointment-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+
+.appointment-table th {
+  background-color: #3498db;
+  color: white;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+
+.appointment-table th:first-child {
+  border-top-left-radius: 10px;
+}
+
+
+.appointment-table th:last-child {
+  border-top-right-radius: 10px;
+}
+
+
+.appointment-table tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+
+
+.appointment-table tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
+}
+
+
+.appointment-table tr:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.3s ease;
+}
+
+
+/* Style cho status select */
+.status-select {
+  padding: 8px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: white;
+  width: 100%;
+  min-width: 140px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+
+.status-select:hover {
+  border-color: #3498db;
+}
+
+
+.status-select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+
+/* Style cho nút Update */
+button {
+  padding: 8px 16px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+
+button:hover {
+  background-color: #2980b9;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Style cho update section */
+.update-section {
+  padding: 25px;
+  background-color: white;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+}
+
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #2c3e50;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+
+/* Style cho modal xác nhận */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: modalFadeIn 0.3s ease;
+}
+
+
+.modal-content h2 {
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+
+.modal-content p {
+  color: #666;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+
+.confirm-button,
+.cancel-button {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+}
+
+
+.confirm-button {
+  background: #2ecc71;
+  color: white;
+}
+
+
+.confirm-button:hover {
+  background: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+}
+
+
+.cancel-button {
+  background: #e74c3c;
+  color: white;
+}
+
+
+.cancel-button:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2);
+}
+
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+
+  .modal-buttons {
+    flex-direction: column;
+  }
+
+
+  .confirm-button,
+  .cancel-button {
+    width: 100%;
+  }
+}
+
+
+/* Style cho các trạng thái khác nhau */
+.status-PENDING {
+  color: #f39c12;
+  font-weight: 500;
+}
+
+
+.status-CONFIRMED {
+  color: #2ecc71;
+  font-weight: 500;
+}
+
+
+.status-COMPLETED {
+  color: #3498db;
+  font-weight: 500;
+}
+
+
+.status-CANCELLED {
+  color: #e74c3c;
+  font-weight: 500;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .appointment-page {
+    padding: 20px;
+  }
+ 
+  .appointment-table {
+    font-size: 0.9rem;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .appointment-table {
+    font-size: 0.8rem;
+  }
+ 
+  .appointment-table th,
+  .appointment-table td {
+    padding: 10px;
+  }
+}
+
+
+/* Style cho modal update form */
+.update-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+
+.update-modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 1000px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideIn 0.4s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+
+.update-modal-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #dee2e6;
+  background: #fff3e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.update-modal-title {
+  color: #f57c00;
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  padding: 5px;
+  transition: all 0.3s ease;
+}
+
+
+.close-button:hover {
+  color: #e74c3c;
+  transform: scale(1.1);
+}
+
+
+.update-form {
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 50%;
+  margin: 0 auto;
+}
+
+
+.form-group {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+
+.form-group label {
+  display: block;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  height: 40px;
+  transition: all 0.3s ease;
+}
+
+
+.form-group.symptoms,
+.form-group.notes {
+  grid-column: span 1;
+}
+
+
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #f57c00;
+  box-shadow: 0 0 0 3px rgba(245, 124, 0, 0.1);
+}
+
+
+.form-group textarea {
+  min-height: 80px;
+  max-height: 150px;
+  resize: vertical;
+}
+
+
+.modal-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+
+.save-button,
+.cancel-button {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+
+.save-button {
+  background: #4CAF50;
+  color: white;
+}
+
+
+.save-button:hover {
+  background: #43a047;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+
+.cancel-button {
+  background: #f44336;
+  color: white;
+}
+
+
+.cancel-button:hover {
+  background: #e53935;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
+}
+
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .update-modal {
+    width: 95%;
+    margin: 1rem;
+  }
+
+
+  .update-form {
+    width: 100%;
+    padding: 1rem;
+  }
+
+
+  .form-group.symptoms,
+  .form-group.notes {
+    grid-column: 1;
+  }
+
+
+  .modal-footer {
+    padding: 1rem;
+    flex-direction: column;
+  }
+
+
+  .save-button,
+  .cancel-button {
+    width: 100%;
+  }
+}
+
+
+/* Style cho phần thông tin IDs */
+.modal-info {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 12px;
+}
+
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+.info-item .info-label {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+
+.info-item .info-value {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+
+/* Điều chỉnh responsive */
+@media (max-width: 768px) {
+  .modal-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+
+/* Style cho modal thông báo */
+.notification-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+
+.notification-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  animation: slideIn 0.4s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+
+.notification-modal h3 {
+  color: #4CAF50;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+
+.notification-modal p {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+
+.notification-icon {
+  color: #4CAF50;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+
+.form-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.status-select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  width: 100%;
+}
+
+.status-select.confirmed {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.status-select.completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-select.cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.payment-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-align: center;
+  display: inline-block;
+}
+
+.payment-status.paid {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.payment-status.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.update-btn {
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.update-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Add this to your Appointments.css file */
+.payment-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.payment-btn:hover {
+  background-color: #218838;
+}
+
+.payment-btn:disabled {
+  background-color: #8fd19e;
+  cursor: not-allowed;
+}
+
+.view-btn {
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.view-btn:hover {
+  background-color: #138496;
+}
+
+textarea.readonly {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+  border: 1px solid #ced4da;
+}
+
+.close-button-full {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  width: 100%;
+}
+
+.close-button-full:hover {
+  background-color: #5a6268;
+}
+
+.update-btn.disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.update-btn.disabled:hover {
+  background-color: #cccccc;
+}
+
+/* Thêm vào file CSS của bạn */
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  border: 1px solid #c3e6cb;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  border: 1px solid #f5c6cb;
+}

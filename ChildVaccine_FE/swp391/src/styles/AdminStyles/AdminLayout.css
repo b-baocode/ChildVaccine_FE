@@ -1,0 +1,87 @@
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .main-content {
+    flex: 1;
+    background: #f8f9fa;
+    max-height: 100vh; /* Giới hạn chiều cao tối đa */
+    overflow: hidden; /* Ngăn scroll cho main-content */
+  }
+  
+  .content-wrapper {
+    padding-bottom: 24px; /* Thêm padding bottom để tránh nội dung bị che khuất */
+  } 
+  
+  .main-header {
+    background: #ffffff;
+    padding: 16px 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  
+  .header-title h1 {
+    font-size: 24px;
+    color: #2c3e50;
+    margin: 0;
+  }
+  
+  .header-title p {
+    color: #95a5a6;
+    margin: 4px 0 0 0;
+    font-size: 14px;
+  }
+  
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .notification, .messages {
+    position: relative;
+    cursor: pointer;
+    color: #6c757d;
+  }
+  
+  .notification::after,
+  .messages::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: #e74c3c;
+    border-radius: 50%;
+  }
+  
+  .avatar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  
+  .avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .avatar span {
+    font-weight: 500;
+    color: #2c3e50;
+  }
+  
+  .content-wrapper {
+    padding: 24px;
+    margin-top: 20px;
+  }
