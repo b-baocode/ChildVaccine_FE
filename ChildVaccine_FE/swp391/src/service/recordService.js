@@ -90,7 +90,7 @@ const recordService = {
             });
         
             const data = await response.json();
-            
+            console.log('🔍 Fetching record for appointment:', data);
             if (!response.ok) {
                 // Nếu server trả về lỗi
                 throw new Error(data.message || 'Không thể lấy thông tin record');

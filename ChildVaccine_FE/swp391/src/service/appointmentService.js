@@ -170,7 +170,7 @@ const appointmentService = {
     },
 
     // Cập nhật để lấy danh sách từ server thay vì localStorage
-    getPendingFeedbackAppointment: async () => {
+    getPendingFeedbackAppointment: async (cusId) => {
         try {
             const token = localStorage.getItem('authToken');
             if (!token) {
@@ -180,7 +180,7 @@ const appointmentService = {
 
             console.log('Fetching pending feedback with token:', token.substring(0, 10) + '...'); // Log để debug
 
-            const response = await fetch(`${API_BASE_URL}/appointment/completed-without-feedback`, {
+            const response = await fetch(`${API_BASE_URL}/appointment/completed-without-feedback/${cusId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -229,8 +229,8 @@ const appointmentService = {
         localStorage.removeItem('pendingFeedback');
     },
 
-    getCompletedAppointmentsWithoutFeedback: async () => {
-        return await appointmentService.getPendingFeedbackAppointment();
+    getCompletedAppointmentsWithoutFeedback: async (cusId) => {
+        return await appointmentService.getPendingFeedbackAppointment(cusId);
     },
 
     getAppointmentsByCustomerId: async (customerId) => {

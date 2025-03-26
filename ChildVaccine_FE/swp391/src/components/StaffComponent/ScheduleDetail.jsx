@@ -12,6 +12,7 @@ import {
   FaStethoscope,
   FaCalendarAlt,
   FaEdit,
+  FaCheckCircle,
 } from "react-icons/fa";
 import appointmentService from "../../service/appointmentService";
 import scheduleService from "../../service/scheduleService";
@@ -33,6 +34,8 @@ const ScheduleDetail = () => {
   const [records, setRecords] = useState([]);
   const [tempRecordData, setTempRecordData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
+  // Thêm state mới
+  const [payFull, setPayFull] = useState(false);
 
   // Các state mới
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -76,6 +79,8 @@ const ScheduleDetail = () => {
               console.log(`Kiểm tra trạng thái cho schedule ${scheduleId}`);
               const updateResult =
                 await scheduleService.updateStatusIfCompleted(scheduleId);
+
+              console.log("Kết quả cập nhật trạng thái:", updateResult);
 
               if (updateResult.ok && updateResult.updated) {
                 console.log(
@@ -193,12 +198,6 @@ const ScheduleDetail = () => {
     }
   };
 
-  const getRecordForAppointment = (appointmentId) => {
-    return (
-      records.find((record) => record.appointmentId === appointmentId) || {}
-    );
-  };
-
   // Xử lý khi nhấp vào nút thay đổi trạng thái
   const handleStatusChangeRequest = (appointmentId, newStatus) => {
     const appointment = appointments.find((app) => app.appId === appointmentId);
@@ -286,9 +285,9 @@ const ScheduleDetail = () => {
         appointmentId,
         newStatus
       );
-      console.log("Update appointment status result:", result);
+      console.log("Update appointment status result:", result.status);
 
-      if (result.ok) {
+      if ((result.status = "COMPLETED")) {
         // Cập nhật state appointments
         const updatedAppointments = appointments.map((app) =>
           app.appId === appointmentId ? { ...app, status: newStatus } : app
@@ -374,6 +373,24 @@ const ScheduleDetail = () => {
     setShowPaymentModal(true);
   };
 
+  const handlePayAllRequest = () => {
+    // Tìm appointment chưa thanh toán để làm reference
+    const unpaidAppointments = appointments.filter(
+      (app) => app.paymentStatus !== "PAID" && app.status !== "CANCELLED"
+    );
+
+    if (unpaidAppointments.length === 0) {
+      setWarningMessage("Không có lịch hẹn nào cần thanh toán.");
+      setShowWarningModal(true);
+      return;
+    }
+
+    // Sử dụng appointment đầu tiên chưa thanh toán
+    setSelectedAppointment(unpaidAppointments[0]);
+    setPayFull(true); // Đánh dấu là thanh toán toàn bộ
+    setShowPaymentModal(true);
+  };
+
   const processPayment = async () => {
     setShowPaymentModal(false);
     if (!selectedAppointment) return;
@@ -383,36 +400,76 @@ const ScheduleDetail = () => {
       setProcessingPaymentId(selectedAppointment.appId);
 
       if (manualPayment) {
-        // Thanh toán thủ công - cập nhật ngay lập tức sử dụng appointmentService
-        // Chỉ truyền vào appointmentId, không cần truyền 'PAID'
-        const result = await appointmentService.updatePaymentStatus(
-          selectedAppointment.appId
-        );
-        console.log("Manual payment result:", result);
-        if (result.ok) {
-          // Cập nhật trạng thái trong danh sách appointments
-          setAppointments(
-            appointments.map((app) =>
-              app.appId === selectedAppointment.appId
-                ? { ...app, paymentStatus: "PAID" }
-                : app
-            )
-          );
+        // THANH TOÁN THỦ CÔNG
+        try {
+          if (payFull) {
+            // Thanh toán tất cả các appointment trong schedule
+            // Lấy tất cả appointment chưa thanh toán và không bị hủy
+            const unpaidAppointments = appointments.filter(
+              (app) =>
+                app.paymentStatus !== "PAID" && app.status !== "CANCELLED"
+            );
+
+            // Cập nhật trạng thái từng appointment
+            const updatePromises = unpaidAppointments.map((app) =>
+              appointmentService.updatePaymentStatus(app.appId)
+            );
+
+            await Promise.all(updatePromises);
+
+            // Cập nhật UI: đánh dấu tất cả appointment là đã thanh toán
+            setAppointments(
+              appointments.map((app) =>
+                app.status !== "CANCELLED"
+                  ? { ...app, paymentStatus: "PAID" }
+                  : app
+              )
+            );
+          } else {
+            // Thanh toán một appointment cụ thể
+            const result = await appointmentService.updatePaymentStatus(
+              selectedAppointment.appId
+            );
+
+            if (result.ok) {
+              // Cập nhật UI cho appointment đã chọn
+              setAppointments(
+                appointments.map((app) =>
+                  app.appId === selectedAppointment.appId
+                    ? { ...app, paymentStatus: "PAID" }
+                    : app
+                )
+              );
+            } else {
+              throw new Error(
+                result.message || "Không thể cập nhật thanh toán"
+              );
+            }
+          }
+
           setShowSuccessMessage(true);
           setTimeout(() => setShowSuccessMessage(false), 3000);
-        } else {
+        } catch (err) {
           setWarningMessage(
-            `Không thể cập nhật trạng thái thanh toán: ${result.message}`
+            `Không thể cập nhật trạng thái thanh toán: ${err.message}`
           );
           setShowWarningModal(true);
         }
       } else {
-        // Thanh toán qua VNPay - chỉ mở trang VNPay, không đợi kết quả
-        const paymentUrl = await paymentService.createPayment(
-          selectedAppointment.appId
-        );
-        window.open(paymentUrl, "_blank");
-        // Không theo dõi việc đóng tab, để người dùng tự kiểm tra sau
+        // THANH TOÁN QUA VNPAY
+        try {
+          const paymentUrl = await paymentService.createPayment(
+            selectedAppointment.appId,
+            scheduleId,
+            payFull
+          );
+
+          // Mở URL thanh toán VNPay trong tab mới
+          window.open(paymentUrl, "_blank");
+        } catch (err) {
+          setWarningMessage(`Không thể tạo thanh toán VNPay: ${err.message}`);
+          setShowWarningModal(true);
+        }
       }
     } catch (error) {
       console.error("Error processing payment:", error);
@@ -422,64 +479,80 @@ const ScheduleDetail = () => {
       setProcessingPayment(false);
       setProcessingPaymentId(null);
       setManualPayment(false);
+      setPayFull(false);
       setSelectedAppointment(null);
     }
   };
 
   // Xử lý hiển thị modal record
   const handleRecordRequest = async (appointment) => {
-    // Kiểm tra status trước khi cho phép tạo record
-    if (appointment.status !== "COMPLETED") {
-      setWarningMessage("Chỉ được tạo hồ sơ y tế cho lịch hẹn đã hoàn thành.");
-      setShowWarningModal(true);
-      return;
-    }
-
-    setSelectedAppointment(appointment);
-
     try {
-      // Kiểm tra xem record đã tồn tại hay chưa
-      const result = await recordService.getRecordByAppointmentId(
+      setSelectedAppointment(appointment);
+
+      // Fetch record data for the appointment
+      const response = await recordService.getRecordByAppointmentId(
         appointment.appId
       );
-      console.log("API response for record:", result);
+      console.log("Fetching record for appointment: ", response);
 
-      // Mặc định bắt đầu ở chế độ xem nếu có dữ liệu
-      if (result.ok && result.record) {
-        setIsViewOnly(true);
-        setIsEditing(false);
+      if (response.ok) {
+        const recordData = response.record;
 
-        // Lưu record vào mảng nếu chưa có
-        const existingRecord = records.find((r) => r.id === result.record.id);
-        if (!existingRecord) {
-          setRecords((prev) => [...prev, result.record]);
+        // Kiểm tra xem kết quả là mảng hay đối tượng đơn
+        if (Array.isArray(recordData) && recordData.length > 0) {
+          // Nếu là mảng, lấy phần tử cuối cùng (thường là record mới nhất)
+          const latestRecord = recordData[recordData.length - 1];
+
+          // Hiển thị dữ liệu và đặt chế độ xem
+          setRecordData({
+            id: latestRecord.id || "",
+            symptoms: latestRecord.symptoms || "",
+            notes: latestRecord.notes || "",
+            appointmentDate:
+              latestRecord.appointmentDate ||
+              new Date().toISOString().split("T")[0],
+            staffId: latestRecord.staff?.id || "S001",
+          });
+          setIsViewOnly(true); // Bật chế độ chỉ xem
+          setShowRecordModal(true);
+        } else if (recordData && (recordData.id || recordData.appointment)) {
+          // Nếu là đối tượng đơn
+          setRecordData({
+            id: recordData.id || "",
+            symptoms: recordData.symptoms || "",
+            notes: recordData.notes || "",
+            appointmentDate:
+              recordData.appointmentDate ||
+              new Date().toISOString().split("T")[0],
+            staffId: recordData.staff?.id || "S001",
+          });
+          setIsViewOnly(true); // Bật chế độ chỉ xem
+          setShowRecordModal(true);
+        } else {
+          // Không có record, tạo mới
+          setRecordData({
+            symptoms: "",
+            notes: "",
+            appointmentDate: new Date().toISOString().split("T")[0],
+            staffId: "S001",
+          });
+          setIsViewOnly(false); // Cho phép chỉnh sửa
+          setShowRecordModal(true);
         }
       } else {
-        // Không có record - cho phép tạo mới
-        setIsViewOnly(false);
-        setIsEditing(true);
+        // API trả về lỗi hoặc không có record
+        setRecordData({
+          symptoms: "",
+          notes: "",
+          appointmentDate: new Date().toISOString().split("T")[0],
+          staffId: "S001",
+        });
+        setIsViewOnly(false); // Cho phép chỉnh sửa
+        setShowRecordModal(true);
       }
-
-      // Lấy dữ liệu hiện tại (từ tempRecordData hoặc API)
-      let currentRecordData;
-      if (tempRecordData[appointment.appId]) {
-        currentRecordData = { ...tempRecordData[appointment.appId] };
-      } else if (result.ok && result.record) {
-        currentRecordData = {
-          symptoms: result.record.symptoms || "",
-          notes: result.record.notes || "",
-        };
-      } else {
-        currentRecordData = { symptoms: "", notes: "" };
-      }
-
-      setRecordData(currentRecordData);
-      setShowRecordModal(true);
     } catch (error) {
-      console.error("Error checking record:", error);
-      setWarningMessage(
-        "Không thể kiểm tra thông tin hồ sơ y tế. Vui lòng thử lại sau."
-      );
+      console.error("Error fetching record:", error);
+      setWarningMessage("Không thể tải dữ liệu hồ sơ y tế");
       setShowWarningModal(true);
     }
   };
@@ -506,39 +579,41 @@ const ScheduleDetail = () => {
     try {
       setIsSaving(true);
 
-      // Tạo đối tượng record mới - đúng theo cấu trúc từ AppointmentInfo
-      const recordToSend = {
+      // Chuẩn bị dữ liệu gửi đi - dùng chung cấu trúc cho cả tạo mới và cập nhật
+      const recordToSave = {
+        // Nếu có id (đang cập nhật record cũ), giữ lại id
+        ...(recordData.id && { id: recordData.id }),
         appointmentId: selectedAppointment.appId,
-        staffId: "S001", // Dùng S001 giống như trong AppointmentInfo
+        staffId: recordData.staffId || "S001",
         symptoms: recordData.symptoms,
         notes: recordData.notes,
-        appointmentDate: new Date().toISOString().split("T")[0], // Format YYYY-MM-DD
+        appointmentDate:
+          recordData.appointmentDate || new Date().toISOString().split("T")[0],
       };
 
-      console.log("Dữ liệu record gửi đi:", recordToSend);
+      console.log("Saving record:", recordToSave);
 
-      // Gọi API để lưu record - sử dụng createRecord trong recordService
-      const savedRecord = await recordService.createRecord(recordToSend);
+      // Luôn dùng createRecord cho cả tạo mới và cập nhật
+      const savedRecord = await recordService.createRecord(recordToSave);
 
       console.log("Kết quả từ API:", savedRecord);
 
-      if (savedRecord && savedRecord.id) {
+      if (savedRecord) {
         // Cập nhật state records
-        setRecords((prevRecords) => [...prevRecords, savedRecord]);
+        if (recordData.id) {
+          // Nếu cập nhật record cũ
+          setRecords((prevRecords) =>
+            prevRecords.map((r) => (r.id === recordData.id ? savedRecord : r))
+          );
+        } else {
+          // Nếu tạo mới
+          setRecords((prevRecords) => [...prevRecords, savedRecord]);
+        }
 
-        // Xóa dữ liệu tạm thời vì đã lưu thành công
-        setTempRecordData((prev) => {
-          const updated = { ...prev };
-          delete updated[selectedAppointment.appId];
-          return updated;
-        });
-
-        // Thêm delay nhỏ trước khi đóng modal - giúp UX tốt hơn
-        setTimeout(() => {
-          setShowRecordModal(false);
-          setShowSuccessMessage(true);
-          setTimeout(() => setShowSuccessMessage(false), 3000);
-        }, 100);
+        // Hiển thị thông báo thành công
+        setShowRecordModal(false);
+        setShowSuccessMessage(true);
+        setTimeout(() => setShowSuccessMessage(false), 3000);
       } else {
         setWarningMessage(
           "Lưu record không thành công. Dữ liệu trả về không hợp lệ."
@@ -648,6 +723,7 @@ const ScheduleDetail = () => {
       setReschedulingAppointment(false);
     }
   };
+
   return (
     <div className="schedule-detail">
       <div className="header-section">
@@ -720,6 +796,15 @@ const ScheduleDetail = () => {
                       ? "Đã hoàn thành"
                       : "Đã hủy"}
                   </span>
+                </div>
+                <div className="summary-item full-width actions">
+                  <button
+                    className="pay-all-btn"
+                    onClick={handlePayAllRequest}
+                    disabled={!schedule || schedule.status === "CANCELLED"}
+                  >
+                    <FaMoneyBillWave /> Thanh toán tất cả
+                  </button>
                 </div>
               </div>
             </div>
@@ -800,12 +885,6 @@ const ScheduleDetail = () => {
                                 ? "Xem hồ sơ y tế"
                                 : "Tạo hồ sơ y tế"
                             }
-                            // Thêm biểu tượng khác nhau cho xem và tạo mới
-                            aria-label={
-                              hasRecord(appointment.appId)
-                                ? "Xem hồ sơ y tế"
-                                : "Tạo hồ sơ y tế"
-                            }
                           >
                             {hasRecord(appointment.appId) ? (
                               <FaEye />
@@ -814,6 +893,7 @@ const ScheduleDetail = () => {
                             )}
                           </button>
                         )}
+
                         {appointment.status === "CONFIRMED" && (
                           <button
                             className="reschedule-btn"
@@ -827,6 +907,21 @@ const ScheduleDetail = () => {
                         )}
 
                         {/* Nút thay đổi trạng thái */}
+                        {appointment.status === "CONFIRMED" &&
+                          appointment.paymentStatus === "PAID" && (
+                            <button
+                              className="complete-btn"
+                              onClick={() =>
+                                handleStatusChangeRequest(
+                                  appointment.appId,
+                                  "COMPLETED"
+                                )
+                              }
+                              title="Xác nhận hoàn thành"
+                            >
+                              <FaCheckCircle />
+                            </button>
+                          )}
                         {appointment.status !== "COMPLETED" &&
                           appointment.status !== "CANCELLED" && (
                             <>
@@ -904,7 +999,9 @@ const ScheduleDetail = () => {
             <h3>Thanh toán</h3>
             <p>
               Chọn phương thức thanh toán cho lịch hẹn #
-              {selectedAppointment.appId}
+              {payFull
+                ? "Thanh toán tất cả các lịch hẹn chưa thanh toán trong lịch tiêm này"
+                : `Thanh toán lịch hẹn #${selectedAppointment.appId}`}
             </p>
 
             <div className="payment-options">
@@ -950,14 +1047,14 @@ const ScheduleDetail = () => {
         </div>
       )}
 
-      {/* Modal record */}
+      {/* Modal Record */}
       {showRecordModal && selectedAppointment && (
         <div className="modal-overlay">
           <div className="record-modal">
             <h3>
               {isViewOnly
                 ? "Xem hồ sơ y tế"
-                : hasRecord(selectedAppointment.appId)
+                : recordData.id
                 ? "Chỉnh sửa hồ sơ y tế"
                 : "Tạo hồ sơ y tế"}
             </h3>
@@ -966,7 +1063,6 @@ const ScheduleDetail = () => {
                 <span className="info-label">Mã cuộc hẹn:</span>
                 <span className="info-value">{selectedAppointment.appId}</span>
               </div>
-              {/* Các info item khác không đổi */}
             </div>
 
             <div className="form-group">
@@ -976,19 +1072,10 @@ const ScheduleDetail = () => {
               <textarea
                 id="symptoms"
                 value={recordData.symptoms}
-                onChange={(e) => {
-                  const newValue = e.target.value;
-                  setRecordData({ ...recordData, symptoms: newValue });
-
-                  // Lưu vào dữ liệu tạm thời
-                  setTempRecordData((prev) => ({
-                    ...prev,
-                    [selectedAppointment.appId]: {
-                      ...prev[selectedAppointment.appId],
-                      symptoms: newValue,
-                    },
-                  }));
-                }}
+                onChange={(e) =>
+                  !isViewOnly &&
+                  setRecordData({ ...recordData, symptoms: e.target.value })
+                }
                 placeholder="Nhập triệu chứng sau tiêm..."
                 disabled={isViewOnly}
                 readOnly={isViewOnly}
@@ -996,35 +1083,24 @@ const ScheduleDetail = () => {
                 required
               />
             </div>
+
             <div className="form-group">
               <label htmlFor="notes">
                 <FaNotesMedical /> Ghi chú:
               </label>
               <textarea
-                id="symptoms"
+                id="notes"
                 value={recordData.notes}
-                onChange={(e) => {
-                  const newValue = e.target.value;
-                  setRecordData({ ...recordData, notes: newValue });
-
-                  // Lưu vào dữ liệu tạm thời
-                  setTempRecordData((prev) => ({
-                    ...prev,
-                    [selectedAppointment.appId]: {
-                      ...prev[selectedAppointment.appId],
-                      notes: newValue,
-                    },
-                  }));
-                }}
+                onChange={(e) =>
+                  !isViewOnly &&
+                  setRecordData({ ...recordData, notes: e.target.value })
+                }
                 placeholder="Nhập ghi chú sau tiêm..."
                 disabled={isViewOnly}
                 readOnly={isViewOnly}
                 className={isViewOnly ? "readonly" : ""}
-                required
               />
             </div>
-
-            {/* Phần notes tương tự */}
 
             <div className="modal-actions">
               {isViewOnly ? (

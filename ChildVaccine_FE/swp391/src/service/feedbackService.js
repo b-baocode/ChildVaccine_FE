@@ -48,7 +48,7 @@ const feedbackService = {
         }
     },
 
-    getPendingFeedback: async () => {
+    getPendinggFeedback: async () => {
         try {
             const token = localStorage.getItem('authToken');
             if (!token) {
@@ -85,7 +85,21 @@ const feedbackService = {
             console.error('Error fetching pending feedback:', error);
             throw error;
         }
-    }
+    },
+
+        // Thêm vào feedbackService.js
+    getFeedbacksByCustomerId: async (customerId) => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/feedback/getByCusId/${customerId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch feedback');
+        }
+        return await response.json();
+      } catch (error) {
+        console.error('Error getting feedbacks by customer ID:', error);
+        return [];
+      }
+    },
 };
 
 export default feedbackService;

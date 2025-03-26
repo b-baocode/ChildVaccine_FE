@@ -73,6 +73,10 @@ const Profile = () => {
   const [newAppointmentDate, setNewAppointmentDate] = useState("");
   const [newAppointmentTime, setNewAppointmentTime] = useState("");
   const [reschedulingAppointment, setReschedulingAppointment] = useState(false);
+  // Thêm state mới
+  const [customerFeedbacks, setCustomerFeedbacks] = useState([]);
+  const [showViewFeedbackModal, setShowViewFeedbackModal] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -95,11 +99,25 @@ const Profile = () => {
 
           // Fetch appointments
           setLoadingAppointments(true);
-          const appointmentsData =
-            await appointmentService.getAppointmentsByCustomerId(
-              sessionData.body.cusId
-            );
-          setAppointments(appointmentsData);
+          try {
+            const appointmentsData =
+              await appointmentService.getAppointmentsByCustomerId(
+                sessionData.body.cusId
+              );
+
+            // Kiểm tra dữ liệu trả về
+            if (Array.isArray(appointmentsData)) {
+              setAppointments(appointmentsData);
+            } else {
+              console.warn("Không tìm thấy lịch hẹn hoặc dữ liệu không hợp lệ");
+              setAppointments([]); // Khởi tạo mảng rỗng để tránh lỗi
+            }
+          } catch (error) {
+            console.error("Error fetching appointments:", error);
+            setAppointments([]); // Khởi tạo mảng rỗng nếu có lỗi
+          } finally {
+            setLoadingAppointments(false);
+          }
 
           // Fetch schedules
           setLoadingSchedules(true);
@@ -127,24 +145,42 @@ const Profile = () => {
   useEffect(() => {
     const fetchFeedbackData = async () => {
       try {
-        // Lấy danh sách các lịch hẹn đang chờ đánh giá
-        const pendingData =
-          await feedbackService.getPendingFeedbackAppointments();
-        setPendingFeedbackAppointments(pendingData || []);
+        const sessionData = await sessionService.checkSession();
 
-        // Lấy thông tin đánh giá cho các lịch hẹn đã hoàn thành
-        const feedbacksMap = {};
-        for (const app of appointments.filter(
-          (a) => a.status === "COMPLETED"
-        )) {
-          const feedback = await feedbackService.getFeedbackByAppointmentId(
-            app.appId
+        // Lấy danh sách các lịch hẹn đã COMPLETED nhưng chưa có đánh giá
+        const pendingData =
+          await appointmentService.getCompletedAppointmentsWithoutFeedback(
+            sessionData.body.cusId
           );
-          if (feedback) {
-            feedbacksMap[app.appId] = feedback;
-          }
+        setPendingFeedbackAppointments(pendingData || []);
+        console.log("Pending feedback appointments:", pendingData);
+
+        // Lấy danh sách các đánh giá đã có cho các lịch hẹn đã hoàn thành
+        const completedAppointments = appointments.filter(
+          (a) => a.status === "COMPLETED"
+        );
+
+        if (completedAppointments.length > 0) {
+          // Sử dụng Promise.all để gọi API đồng thời
+          const feedbackPromises = completedAppointments.map((app) =>
+            feedbackService
+              .getFeedbackByAppointmentId(app.appId)
+              .then((feedback) => ({ appId: app.appId, feedback }))
+              .catch(() => ({ appId: app.appId, feedback: null }))
+          );
+
+          const results = await Promise.all(feedbackPromises);
+
+          // Tạo map từ kết quả
+          const feedbacksMap = {};
+          results.forEach((result) => {
+            if (result.feedback) {
+              feedbacksMap[result.appId] = result.feedback;
+            }
+          });
+
+          setAppointmentFeedbacks(feedbacksMap);
         }
-        setAppointmentFeedbacks(feedbacksMap);
       } catch (error) {
         console.error("Error fetching feedback data:", error);
       }
@@ -155,10 +191,29 @@ const Profile = () => {
     }
   }, [appointments]);
 
+  // Thêm useEffect này sau useEffect hiện tại
+  useEffect(() => {
+    const fetchCustomerFeedbacks = async () => {
+      try {
+        const sessionData = await sessionService.checkSession();
+        if (sessionData) {
+          const feedbacks = await feedbackService.getFeedbacksByCustomerId(
+            sessionData.body.cusId
+          );
+          setCustomerFeedbacks(Array.isArray(feedbacks) ? feedbacks : []);
+          console.log("Tất cả feedbacks của khách hàng:", feedbacks);
+        }
+      } catch (error) {
+        console.error("Error fetching customer feedbacks:", error);
+      }
+    };
+
+    fetchCustomerFeedbacks();
+  }, []);
   const handleFeedback = (appointment) => {
     console.log("Feedback for appointment:", appointment);
-    if (appointment.hasFeedback) {
-      alert("Buổi tiêm này đã được đánh giá.");
+    if (!needsFeedback(appointment.appId)) {
+      alert("Buổi tiêm này đã được đánh giá hoặc không cần đánh giá.");
       return;
     }
     setSelectedAppointment(appointment);
@@ -177,12 +232,21 @@ const Profile = () => {
 
       await feedbackService.submitFeedback(feedbackData);
 
-      // Update the appointments list to reflect the feedback status
-      setAppointments(
-        appointments.map((app) =>
-          app.appId === selectedAppointment.appId
-            ? { ...app, hasFeedback: true }
-            : app
+      // Cập nhật trạng thái feedback localy
+      setAppointmentFeedbacks({
+        ...appointmentFeedbacks,
+        [selectedAppointment.appId]: {
+          appointmentId: selectedAppointment.appId,
+          rating: rating,
+          feedback: comment.trim(),
+          createdDate: new Date().toISOString(),
+        },
+      });
+
+      // Loại bỏ appointment này khỏi danh sách chờ đánh giá
+      setPendingFeedbackAppointments(
+        pendingFeedbackAppointments.filter(
+          (app) => app.appId !== selectedAppointment.appId
         )
       );
 
@@ -207,14 +271,58 @@ const Profile = () => {
     setComment("");
   };
 
-  const isPendingFeedback = (appointmentId) => {
+  // Kiểm tra xem appointment có cần đánh giá không
+  const needsFeedback = (appointmentId) => {
+    // Kiểm tra xem appointment có trong danh sách chờ đánh giá không
     return pendingFeedbackAppointments.some(
       (app) => app.appId === appointmentId
     );
   };
 
+  // Kiểm tra xem appointment đã có đánh giá chưa
+  const hasFeedback = (appointmentId) => {
+    // Kiểm tra xem appointment đã có feedback trong map chưa
+    return (
+      !!appointmentFeedbacks[appointmentId] ||
+      customerFeedbacks.some((fb) => fb.appointmentId === appointmentId)
+    );
+  };
+
+  // Cập nhật hàm này để kiểm tra cả hai nguồn dữ liệu và xử lý trường hợp null
   const getAppointmentFeedback = (appointmentId) => {
-    return appointmentFeedbacks[appointmentId] || null;
+    // Kiểm tra trong appointmentFeedbacks trước
+    let feedback = appointmentFeedbacks[appointmentId];
+
+    // Nếu không có, tìm trong customerFeedbacks
+    if (!feedback) {
+      feedback = customerFeedbacks.find(
+        (fb) => fb.appointmentId === appointmentId
+      );
+    }
+
+    return feedback || { rating: 0 }; // Return default object với rating 0 nếu không tìm thấy
+  };
+
+  const handleViewFeedback = (appointmentId) => {
+    // Ưu tiên lấy từ appointmentFeedbacks (đã được load trước đó)
+    const feedback = appointmentFeedbacks[appointmentId];
+
+    // Nếu không tìm thấy, thử tìm trong customerFeedbacks
+    if (!feedback) {
+      const fbFromList = customerFeedbacks.find(
+        (fb) => fb.appointmentId === appointmentId
+      );
+      if (fbFromList) {
+        setSelectedFeedback(fbFromList);
+        setShowViewFeedbackModal(true);
+        return;
+      }
+      alert("Không tìm thấy thông tin đánh giá cho cuộc hẹn này.");
+      return;
+    }
+
+    setSelectedFeedback(feedback);
+    setShowViewFeedbackModal(true);
   };
 
   // Update handlers to use real data
@@ -281,38 +389,6 @@ const Profile = () => {
     }
   };
 
-  const handlePayment = async (appointment) => {
-    try {
-      setProcessingPayment(true);
-
-      // Get payment URL from API
-      const paymentUrl = await paymentService.createPayment(appointment.appId);
-      console.log("Payment URL:", paymentUrl);
-
-      // Save appointment ID to localStorage to check status after return
-      localStorage.setItem("pendingPaymentAppId", appointment.appId);
-
-      // Open VNPay payment page in a new tab instead of redirecting
-      const newTab = window.open(paymentUrl, "_blank");
-
-      // Check if popup was blocked
-      if (!newTab || newTab.closed || typeof newTab.closed === "undefined") {
-        alert(
-          "Trình duyệt đã chặn cửa sổ thanh toán. Vui lòng cho phép popup và thử lại."
-        );
-      }
-
-      // Reset processing state after a short delay
-      setTimeout(() => {
-        setProcessingPayment(false);
-      }, 1000);
-    } catch (error) {
-      console.error("Error initiating payment:", error);
-      alert("Không thể khởi tạo thanh toán. Vui lòng thử lại sau.");
-      setProcessingPayment(false);
-    }
-  };
-
   const handleCancel = () => {
     setIsEditing(false);
   };
@@ -370,21 +446,6 @@ const Profile = () => {
       scheduleSortField === field && scheduleSortDirection === "asc";
     setScheduleSortDirection(isAsc ? "desc" : "asc");
     setScheduleSortField(field);
-  };
-
-  const getStatusBadgeClass = (status) => {
-    switch (status) {
-      case "COMPLETED":
-        return "status-badge completed";
-      case "CONFIRMED":
-        return "status-badge confirmed";
-      case "PENDING":
-        return "status-badge pending";
-      case "CANCELLED":
-        return "status-badge cancelled";
-      default:
-        return "status-badge";
-    }
   };
 
   const getStatusText = (status) => {
@@ -733,7 +794,7 @@ const Profile = () => {
                               )}
                               {/* Nút đánh giá cho các lịch hẹn đã hoàn thành nhưng chưa có đánh giá */}
                               {appointment.status === "COMPLETED" &&
-                                appointment.hasFeedback && (
+                                needsFeedback(appointment.appId) && (
                                   <div className="info-row feedback">
                                     <button
                                       className="feedback-btn"
@@ -745,44 +806,48 @@ const Profile = () => {
                                     </button>
                                   </div>
                                 )}
+
                               {appointment.status === "COMPLETED" &&
-                                !appointment.hasFeedback && (
+                                hasFeedback(appointment.appId) && (
                                   <div className="info-row feedback-submitted">
                                     <span className="feedback-submitted-text">
-                                      {getAppointmentFeedback(
-                                        appointment.appId
-                                      ) ? (
-                                        <div className="rating-display">
-                                          {[1, 2, 3, 4, 5].map((star) => (
+                                      <div className="rating-display">
+                                        {[1, 2, 3, 4, 5].map((star) => {
+                                          // Lấy feedback và xử lý an toàn
+                                          const feedback =
+                                            getAppointmentFeedback(
+                                              appointment.appId
+                                            );
+                                          const rating = feedback
+                                            ? feedback.rating
+                                            : 0;
+
+                                          return (
                                             <FaStar
                                               key={star}
                                               className={
-                                                star <=
-                                                getAppointmentFeedback(
-                                                  appointment.appId
-                                                ).rating
+                                                star <= rating
                                                   ? "star-filled"
                                                   : "star-empty"
                                               }
                                             />
-                                          ))}
-                                          <span className="rating-text">
-                                            Đã đánh giá
-                                          </span>
-                                        </div>
-                                      ) : (
-                                        <>
-                                          <FaStar
-                                            className="info-icon"
-                                            style={{ color: "#ffc107" }}
-                                          />{" "}
-                                          Đã đánh giá
-                                        </>
-                                      )}
+                                          );
+                                        })}
+                                        <button
+                                          className="view-feedback-btn"
+                                          onClick={() =>
+                                            handleViewFeedback(
+                                              appointment.appId
+                                            )
+                                          }
+                                        >
+                                          Xem chi tiết
+                                        </button>
+                                      </div>
                                     </span>
                                   </div>
                                 )}
-                              \
+
                               {/* Nút hủy lịch hẹn nếu chưa hoàn thành và chưa hủy */}
                               {appointment.status !== "COMPLETED" &&
                                 appointment.status !== "CANCELLED" && (
@@ -1202,6 +1267,63 @@ const Profile = () => {
                 {loadingAppointmentId === appointmentToCancel.appId
                   ? "Đang xử lý..."
                   : "Xác nhận hủy"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal xem đánh giá */}
+      {showViewFeedbackModal && selectedFeedback && (
+        <div className="modal-overlay">
+          <div className="feedback-modal">
+            <div className="modal-header">
+              <h3>Chi tiết đánh giá</h3>
+              <button
+                className="close-btn"
+                onClick={() => setShowViewFeedbackModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-content">
+              <div className="appointment-info">
+                <p>
+                  <strong>Mã cuộc hẹn:</strong> {selectedFeedback.appointmentId}
+                </p>
+                <p>
+                  <strong>Ngày đánh giá:</strong>{" "}
+                  {formatDate(selectedFeedback.appointmentDate)}
+                </p>
+              </div>
+              <div className="rating-section">
+                <p>Đánh giá của bạn:</p>
+                <div className="star-rating-view">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <FaStar
+                      key={star}
+                      className={
+                        star <= selectedFeedback.rating
+                          ? "star-filled"
+                          : "star-empty"
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="comment-section">
+                <p>Nhận xét của bạn:</p>
+                <div className="feedback-text">
+                  {selectedFeedback.feedbackText || "(Không có nhận xét)"}
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="close-btn"
+                onClick={() => setShowViewFeedbackModal(false)}
+              >
+                Đóng
               </button>
             </div>
           </div>
