@@ -29,7 +29,7 @@ const AdminLayout = () => {
     <div className="admin-layout">
       <Sidebar />
       <div className="main-content">
-        <header className="main-header">
+        {/* <header className="main-header">
           <div className="header-title">
             <h1>{getPageTitle()}</h1>
             <p>Welcome back, Admin</p>
@@ -47,7 +47,7 @@ const AdminLayout = () => {
               <ChevronDown size={16} />
             </div>
           </div>
-        </header>
+        </header> */}
         <div className="content-wrapper">
           <Outlet />
         </div>

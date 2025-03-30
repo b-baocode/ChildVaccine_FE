@@ -1,0 +1,253 @@
+.feedback-dashboard {
+    padding: 2rem;
+    background-color: #f8fafc;
+    height: 100vh; /* Full viewport height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    position: relative;
+  }
+  
+  /* Make the table container scrollable horizontally if needed */
+  .feedback-table-container {
+    background-color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: auto; /* Enable horizontal scrolling for table */
+    margin-bottom: 2rem;
+    height: 400px; /* Fixed height for the table container */
+    margin: 20px 0;
+  }
+
+  .no-data {
+    width: 100%;
+  }
+  
+  /* Fix header position if needed */
+  .dashboard-title {
+    
+    top: 0;
+    background-color: #f8fafc;
+    padding: 1rem 0;
+    z-index: 10;
+  }
+  
+  /* Make table header sticky */
+  .feedback-table thead {
+    position: sticky;
+    top: 0;
+    background-color: #f8fafc;
+    z-index: 2;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1)
+  }
+  
+  /* Add some bottom padding to ensure last row is visible */
+  .feedback-table tbody {
+    padding-bottom: 2rem;
+  }
+  
+  /* Ensure proper spacing at the bottom of scrollable content */
+  .feedback-table-container:last-child {
+    margin-bottom: 2rem;
+  }
+
+  .feedback-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.feedback-table th,
+.feedback-table td {
+    min-width: 120px;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Make content column wider */
+.feedback-table th:nth-child(6),
+.feedback-table td:nth-child(6) {
+    min-width: 200px;
+}
+  
+  /* Add smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Add responsive adjustments */
+  @media (max-width: 768px) {
+    .feedback-dashboard {
+      padding: 1rem;
+    }
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .stat-card {
+    background-color: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .stat-icon {
+    background-color: #f1f5f9;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    color: #0ea5e9;
+  }
+  
+  .stat-info h3 {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .rating-distribution-card {
+    background-color: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+  }
+  
+  .rating-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .rating-bar-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .bar-container {
+    background-color: #f1f5f9;
+    border-radius: 9999px;
+    height: 8px;
+    overflow: hidden;
+  }
+  
+  .bar {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.3s ease;
+    position: relative;
+  }
+  
+  .bar-value {
+    position: absolute;
+    right: 8px;
+    top: -14px;
+    font-size: 0.75rem;
+    color: #475569;
+  }
+  
+  .filters-section {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .search-box {
+    flex: 1;
+    position: relative;
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  
+  .search-input:focus {
+    border-color: #0ea5e9;
+  }
+  
+  .rating-filter {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    outline: none;
+    background-color: white;
+    min-width: 150px;
+  }
+  
+  .feedback-table-container {
+    background-color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .feedback-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .feedback-table th,
+  .feedback-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  
+  .feedback-table th {
+    background-color: #f8fafc;
+    font-weight: 600;
+    color: #475569;
+  }
+  
+  .feedback-table tr:hover {
+    background-color: #f1f5f9;
+  }
+  
+  .table-rating {
+    display: flex;
+    gap: 0.25rem;
+  }
+  
+  @media (max-width: 768px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .filters-section {
+      flex-direction: column;
+    }
+    
+    .feedback-table-container {
+      overflow-x: auto;
+    }
+  }

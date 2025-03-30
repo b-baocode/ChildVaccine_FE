@@ -1,69 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
+import appointmentService from '../../service/appointmentService';
 import '../../styles/AdminStyles/VaccinationHistory.css';
 
 const VaccinationHistory = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [vaccineStatus, setVaccineStatus] = useState('');
   const [paymentStatus, setPaymentStatus] = useState('');
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const [appointments] = useState([
-    {
-      id: 'APT001',
-      patientName: 'Nguyễn Văn An',
-      patientAge: 5,
-      vaccine: 'Vaccine 5 trong 1',
-      date: '2024-03-20',
-      time: '09:00 AM',
-      status: 'Chưa tiêm',
-      paymentStatus: 'Đã thanh toán',
-      price: '1,500,000 VNĐ'
-    },
-    {
-      id: 'APT002',
-      patientName: 'Trần Thị Bình',
-      patientAge: 3,
-      vaccine: 'Vaccine Rotavirus',
-      date: '2024-03-19',
-      time: '10:30 AM',
-      status: 'Đã tiêm',
-      paymentStatus: 'Đã thanh toán',
-      price: '850,000 VNĐ'
-    },
-    {
-      id: 'APT003',
-      patientName: 'Lê Minh Cường',
-      patientAge: 4,
-      vaccine: 'Vaccine Viêm gan B',
-      date: '2024-03-21',
-      time: '02:00 PM',
-      status: 'Đã hủy',
-      paymentStatus: 'Chưa thanh toán',
-      price: '750,000 VNĐ'
-    },
-    {
-      id: 'APT004',
-      patientName: 'Phạm Thị Dung',
-      patientAge: 2,
-      vaccine: 'Vaccine 6 trong 1',
-      date: '2024-03-22',
-      time: '11:00 AM',
-      status: 'Chưa tiêm',
-      paymentStatus: 'Đã thanh toán một phần',
-      price: '1,800,000 VNĐ'
-    },
-    {
-      id: 'APT005',
-      patientName: 'Hoàng Văn Em',
-      patientAge: 1,
-      vaccine: 'Vaccine Pneumo',
-      date: '2024-03-20',
-      time: '03:30 PM',
-      status: 'Đã tiêm',
-      paymentStatus: 'Đã thanh toán',
-      price: '1,200,000 VNĐ'
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const data = await appointmentService.getAllAppointments();
+        const formattedAppointments = data.map(appointment => ({
+          id: appointment.appId,
+          patientName: appointment.child.fullName,
+          patientAge: calculateAge(appointment.child.dateOfBirth),
+          vaccine: appointment.vaccineId ? appointment.vaccineId.vaccineId : 
+                  appointment.packageId ? appointment.packageId.packageId : '',
+          date: appointment.appointmentDate,
+          time: appointment.appointmentTime,
+          status: mapStatus(appointment.status),
+          paymentStatus: mapPaymentStatus(appointment.paymentStatus),
+          price: appointment.vaccineId ? 
+                appointment.vaccineId.price.toLocaleString('vi-VN') + ' VNĐ' :
+                appointment.packageId ? 
+                appointment.packageId.price.toLocaleString('vi-VN') + ' VNĐ' : ''
+        }));
+        setAppointments(formattedAppointments);
+        setLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch appointments:', error);
+        setError('Failed to load appointments');
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, []);
+
+  const calculateAge = (dateOfBirth) => {
+    const birthDate = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
     }
-  ]);
+    return age;
+  };
+
+  const mapStatus = (status) => {
+    switch (status) {
+      case 'COMPLETED': return 'Đã tiêm';
+      case 'CONFIRMED': return 'Chưa tiêm';
+      case 'CANCELLED': return 'Đã hủy';
+      default: return status;
+    }
+  };
+
+  const mapPaymentStatus = (status) => {
+    switch (status) {
+      case 'PAID': return 'Đã thanh toán';
+      case 'PENDING': return 'Chưa thanh toán';
+      default: return status;
+    }
+  };
+  
+  
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -137,7 +144,6 @@ const VaccinationHistory = () => {
             <option value="">Trạng thái thanh toán</option>
             <option value="Đã thanh toán">Đã thanh toán</option>
             <option value="Chưa thanh toán">Chưa thanh toán</option>
-            <option value="Đã thanh toán một phần">Đã thanh toán một phần</option>
           </select>
         </div>
       </div>
@@ -155,7 +161,6 @@ const VaccinationHistory = () => {
               <th>Giá tiền</th>
               <th>Trạng thái tiêm</th>
               <th>Trạng thái thanh toán</th>
-              <th>Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -177,12 +182,6 @@ const VaccinationHistory = () => {
                   <span className={`status-badge ${getPaymentStatusColor(appointment.paymentStatus)}`}>
                     {appointment.paymentStatus}
                   </span>
-                </td>
-                <td>
-                  <div className="action-buttons">
-                    <button className="btn-view">Xem</button>
-                    <button className="btn-edit">Sửa</button>
-                  </div>
                 </td>
               </tr>
             ))}
