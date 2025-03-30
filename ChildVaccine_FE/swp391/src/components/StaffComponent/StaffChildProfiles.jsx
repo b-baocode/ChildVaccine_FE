@@ -124,16 +124,19 @@ useEffect(() => {
     });
   };
 
+  
+
   // In the same file
   const ProfileList = () => (
     <div className="profiles-sidebar">
-        <div className="search-box">
-            <FaSearch className="search-icon" />
+        <div className="staff-search-box">
+            <FaSearch className="staff-search-icon" />
             <input
                 type="text"
                 placeholder="Tìm kiếm theo tên hoặc ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                className="staff-search-input"
             />
         </div>
         <div className="profiles-list">

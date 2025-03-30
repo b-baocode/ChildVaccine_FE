@@ -7,6 +7,7 @@
   position: relative;
 }
 
+
 /* Sidebar Styles */
 .profile-sidebar {
   flex: 0 0 350px;
@@ -17,10 +18,12 @@
   height: fit-content;
 }
 
+
 .user-avatar {
   text-align: center;
   margin-bottom: 2rem;
 }
+
 
 .user-avatar img {
   width: 150px;
@@ -30,11 +33,13 @@
   padding: 5px;
 }
 
+
 .user-info {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
+
 
 .info-item {
   display: flex;
@@ -42,6 +47,7 @@
   gap: 10px;
   color: #555;
 }
+
 
 .info-item.name h2 {
   margin: 0;
@@ -51,10 +57,12 @@
   text-align: center;
 }
 
+
 .info-icon {
   color: #4a90e2;
   font-size: 1.2rem;
 }
+
 
 /* Edit Form Styles */
 .edit-form {
@@ -63,11 +71,13 @@
   gap: 1rem;
 }
 
+
 .edit-item {
   display: flex;
   align-items: center;
   gap: 10px;
 }
+
 
 .edit-item input {
   flex: 1;
@@ -77,11 +87,13 @@
   font-size: 0.9rem;
 }
 
+
 .edit-buttons {
   display: flex;
   gap: 10px;
   margin-top: 1rem;
 }
+
 
 .edit-btn, .save-btn, .cancel-btn {
   display: flex;
@@ -95,11 +107,13 @@
   transition: all 0.3s ease;
 }
 
+
 .edit-btn {
   background: #4a90e2;
   color: white;
   width: 100%;
 }
+
 
 .save-btn {
   background: #4caf50;
@@ -107,11 +121,13 @@
   flex: 1;
 }
 
+
 .cancel-btn {
   background: #f44336;
   color: white;
   flex: 1;
 }
+
 
 /* Content Section Styles */
 .profile-content {
@@ -119,15 +135,18 @@
   min-width: 0;
 }
 
+
 .content-header {
   margin-bottom: 2rem;
 }
+
 
 .tab-buttons {
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
 }
+
 
 .tab-btn {
   padding: 10px 20px;
@@ -140,15 +159,18 @@
   transition: all 0.3s ease;
 }
 
+
 .tab-btn.active {
   background: #4a90e2;
   color: white;
 }
 
+
 /* Children List Styles */
 .add-child-section {
   margin-bottom: 2rem;
 }
+
 
 .add-child-btn {
   display: flex;
@@ -164,10 +186,12 @@
   transition: all 0.3s ease;
 }
 
+
 .children-list {
   display: grid;
   gap: 1.5rem;
 }
+
 
 .child-card {
   background: white;
@@ -176,6 +200,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+
 .child-header {
   display: flex;
   justify-content: space-between;
@@ -183,15 +208,18 @@
   margin-bottom: 1rem;
 }
 
+
 .child-header h3 {
   margin: 0;
   color: #333;
 }
 
+
 .child-id {
   color: #666;
   font-size: 0.9rem;
 }
+
 
 .child-info {
   display: flex;
@@ -199,11 +227,13 @@
   gap: 0.8rem;
 }
 
+
 .info-row {
   display: flex;
   justify-content: space-between;
   color: #555;
 }
+
 
 .health-status {
   padding: 4px 12px;
@@ -211,21 +241,25 @@
   font-size: 0.9rem;
 }
 
+
 .health-status.healthy {
   background: #e8f5e9;
   color: #2e7d32;
 }
+
 
 .health-status.monitoring {
   background: #fff3e0;
   color: #ef6c00;
 }
 
+
 /* Vaccine History Styles */
 .vaccine-history {
   display: grid;
   gap: 1.5rem;
 }
+
 
 .history-card {
   background: white;
@@ -234,6 +268,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+
 .history-header {
   display: flex;
   justify-content: space-between;
@@ -241,10 +276,12 @@
   margin-bottom: 1rem;
 }
 
+
 .history-header h3 {
   margin: 0;
   color: #333;
 }
+
 
 .status {
   padding: 4px 12px;
@@ -252,14 +289,16 @@
   font-size: 0.9rem;
 }
 
+
 .status.hoàn.thành {
   background: #e8f5e9;
   color: #2e7d32;
 }
 
+
 /* Thêm style cho profile-header */
 .profile-header {
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   right: 0;
@@ -268,6 +307,7 @@
   border-bottom: 1px solid #e9ecef;
   border-radius: 15px 15px 0 0;
 }
+
 
 /* Cập nhật style cho back-home-btn */
 .back-home-btn {
@@ -284,6 +324,7 @@
   transition: all 0.3s ease;
 }
 
+
 .back-home-btn:hover {
   background: #4a90e2;
   color: white;
@@ -291,38 +332,41 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .profile-container {
     flex-direction: column;
   }
-  
+ 
   .profile-sidebar {
     flex: none;
     width: 100%;
   }
 }
 
+
 @media (max-width: 768px) {
   .info-row {
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+ 
   .tab-buttons {
     flex-direction: column;
   }
-  
+ 
   .profile-header {
     position: relative;
     margin-bottom: 1rem;
   }
-  
+ 
   .back-home-btn {
     width: 100%;
     justify-content: center;
   }
 }
+
 
 .info-row.feedback {
   justify-content: flex-end;
@@ -330,6 +374,7 @@
   padding-top: 15px;
   border-top: 1px dashed #eee;
 }
+
 
 .feedback-btn {
   background-color: #4CAF50;
@@ -342,14 +387,17 @@
   transition: background-color 0.3s ease;
 }
 
+
 .feedback-btn:hover {
   background-color: #45a049;
 }
+
 
 .feedback-btn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
+
 
 .modal-overlay {
   position: fixed;
@@ -364,6 +412,7 @@
   z-index: 1000;
 }
 
+
 .feedback-modal {
   background: white;
   border-radius: 8px;
@@ -373,15 +422,18 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+
 .modal-header {
   margin-bottom: 12px; /* Reduced from 20px */
   padding-bottom: 8px; /* Reduced from 10px */
 }
 
+
 .modal-header h3 {
   font-size: 18px; /* Reduced from default */
   margin: 0;
 }
+
 
 .appointment-info {
   margin-bottom: 12px;
@@ -391,21 +443,26 @@
   font-size: 14px; /* Reduced text size */
 }
 
+
 .appointment-info p {
   margin: 4px 0;
 }
+
 
 .rating-section {
   margin: 12px 0;
 }
 
+
 .star-rating {
   gap: 8px; /* Reduced from 10px */
 }
 
+
 .star {
   font-size: 20px; /* Reduced from 24px */
 }
+
 
 .comment-section textarea {
   padding: 8px;
@@ -413,15 +470,18 @@
   margin-top: 8px;
 }
 
+
 .modal-footer {
   margin-top: 16px;
   padding-top: 12px;
 }
 
+
 .modal-footer button {
   padding: 6px 12px;
   font-size: 14px;
 }
+
 
 .feedback-submitted {
   display: flex;
@@ -431,6 +491,7 @@
   border-top: 1px dashed #eee;
 }
 
+
 .feedback-submitted-text {
   color: #666;
   display: flex;
@@ -439,9 +500,11 @@
   font-size: 14px;
 }
 
+
 .feedback-submitted .info-icon {
   margin-right: 4px;
 }
+
 
 .cancel-appointment-btn {
   background-color: #dc3545;
@@ -455,14 +518,17 @@
   margin-right: 10px;
 }
 
+
 .cancel-appointment-btn:hover {
   background-color: #c82333;
 }
+
 
 .cancel-appointment-btn:disabled {
   background-color: #e3858d;
   cursor: not-allowed;
 }
+
 
 /* CSS cho modal hủy lịch hẹn */
 .cancel-modal {
@@ -475,9 +541,11 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
+
 .reason-section {
   margin-top: 20px;
 }
+
 
 .reason-options {
   display: flex;
@@ -486,21 +554,25 @@
   margin-top: 10px;
 }
 
+
 .reason-option {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
+
 .reason-option input[type="radio"] {
   margin: 0;
   cursor: pointer;
 }
 
+
 .reason-option label {
   cursor: pointer;
   font-size: 15px;
 }
+
 
 .other-reason {
   width: 100%;
@@ -510,6 +582,7 @@
   border-radius: 4px;
   resize: vertical;
 }
+
 
 .confirm-btn {
   background-color: #dc3545;
@@ -522,511 +595,14 @@
   transition: background-color 0.2s;
 }
 
+
 .confirm-btn:hover:not(:disabled) {
   background-color: #c82333;
 }
+
 
 .confirm-btn:disabled {
   background-color: #e9a7ad;
   cursor: not-allowed;
 }
 
-/* Tab Buttons */
-.tab-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.tab-btn {
-  padding: 10px 16px;
-  background-color: #f0f0f0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.tab-btn.active {
-  background-color: #0275d8;
-  color: white;
-}
-
-.tab-btn:hover:not(.active) {
-  background-color: #e0e0e0;
-}
-
-/* Schedules Table */
-.schedules-section {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
-
-.section-title {
-  margin-bottom: 20px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-}
-
-.controls {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-.search-bar {
-  position: relative;
-  flex: 1;
-  max-width: 400px;
-}
-
-.search-bar input {
-  width: 100%;
-  padding: 10px 10px 10px 35px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.search-bar svg {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #666;
-}
-
-.filter {
-  display: flex;
-  align-items: center;
-}
-
-.filter label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.filter select {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.schedules-table-wrapper {
-  overflow-x: auto;
-}
-
-.schedules-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 14px;
-}
-
-.schedules-table th, 
-.schedules-table td {
-  padding: 12px 15px;
-  border-bottom: 1px solid #eee;
-}
-
-.schedules-table th {
-  background-color: #f8f9fa;
-  color: #333;
-  cursor: pointer;
-  user-select: none;
-}
-
-.schedules-table th:hover {
-  background-color: #e9ecef;
-}
-
-.view-btn {
-  background-color: #0d6efd;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 12px;
-  font-size: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.view-btn:hover {
-  background-color: #0a58ca;
-}
-
-.no-schedules {
-  text-align: center;
-  padding: 30px;
-  color: #6c757d;
-}
-
-/* Schedule Detail */
-.schedule-detail {
-  animation: fadeIn 0.3s ease-out;
-}
-
-.header-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
-
-.back-btn {
-  background-color: #f8f9fa;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 8px 15px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.back-btn:hover {
-  background-color: #e9ecef;
-}
-
-.schedule-summary {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.summary-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.summary-item .label {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 5px;
-}
-
-.summary-item .value {
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.vaccine-type {
-  font-size: 14px;
-  color: #666;
-}
-
-.appointments-section {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.appointments-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 14px;
-}
-
-.appointments-table th, 
-.appointments-table td {
-  padding: 12px 15px;
-  border-bottom: 1px solid #eee;
-}
-
-.appointments-table thead th {
-  background-color: #f8f9fa;
-  color: #333;
-  font-weight: 600;
-}
-
-.shot-number {
-  text-align: center;
-  font-weight: 500;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 5px 10px;
-  border-radius: 15px;
-  font-size: 12px;
-  font-weight: 500;
-  text-align: center;
-  min-width: 100px;
-}
-
-.status-badge.active {
-  background-color: #e3f5e3;
-  color: #28a745;
-}
-
-.status-badge.completed {
-  background-color: #cfe8ff;
-  color: #0d6efd;
-}
-
-.status-badge.cancelled {
-  background-color: #fee5e5;
-  color: #dc3545;
-}
-
-.status-badge.pending {
-  background-color: #fff3cd;
-  color: #ffc107;
-}
-
-.status-badge.confirmed {
-  background-color: #d4edda;
-  color: #28a745;
-}
-
-.payment-status {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-}
-
-.payment-status.paid {
-  background-color: #d1e7dd;
-  color: #0f5132;
-}
-
-.payment-status.pending {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-.no-data {
-  text-align: center;
-  color: #6c757d;
-  padding: 30px;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .summary-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .appointments-table {
-    display: block;
-    overflow-x: auto;
-  }
-}
-
-/* Tạo style riêng cho header-section trong schedule-detail */
-.schedule-detail .header-section {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 15px;
-  margin-bottom: 25px;
-  position: relative;
-  padding-top: 10px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
-}
-
-/* Style cho back button trong schedule-detail */
-.schedule-detail .back-btn {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2;
-  background-color: #0d6efd;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 15px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.schedule-detail .back-btn:hover {
-  background-color: #0a58ca;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-/* Style cho heading trong schedule-detail */
-.schedule-detail .header-section h1 {
-  width: 100%;
-  text-align: center;
-  font-size: 1.5rem;
-  margin-top: 40px; /* Tạo khoảng trống cho nút back */
-  margin-bottom: 0;
-  color: #2c3e50;
-}
-
-/* Responsive styles */
-@media screen and (max-width: 768px) {
-  .schedule-detail .header-section h1 {
-    font-size: 1.2rem;
-  }
-
-  .schedule-detail .back-btn {
-    padding: 6px 12px;
-    font-size: 0.9rem;
-  }
-}
-
-/* Thêm vào CSS */
-.rating-display {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.star-filled {
-  color: #ffc107;
-}
-
-.star-empty {
-  color: #e0e0e0;
-}
-
-.rating-text {
-  margin-left: 8px;
-  font-size: 0.85rem;
-  color: #666;
-}
-
-/* Action buttons container trong bảng */
-.action-buttons {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-/* Style cho nút xem chi tiết (đã có sẵn nhưng điều chỉnh để phù hợp) */
-.view-btn {
-  font-size: 0.8rem;
-  padding: 4px 8px;
-}
-
-/* Style cho nút dời lịch trong bảng */
-.schedules-table .reschedule-btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.schedules-table .reschedule-btn:hover {
-  background-color: #0069d9;
-}
-
-/* Điều chỉnh độ rộng cột thao tác */
-.schedules-table th:last-child,
-.schedules-table td:last-child {
-  min-width: 140px;
-}
-
-/* Error Modal */
-.error-modal {
-  background-color: white;
-  border-radius: 8px;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  animation: fadeIn 0.3s;
-}
-
-.error-modal .modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.error-modal .modal-header h3 {
-  color: #dc3545;
-  margin: 0;
-  font-size: 1.2rem;
-}
-
-.error-modal .modal-content {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.error-modal .error-icon {
-  color: #dc3545;
-  font-size: 3rem;
-  margin-bottom: 15px;
-}
-
-.error-modal .error-message {
-  color: #343a40;
-  font-size: 1rem;
-  margin: 0;
-  line-height: 1.5;
-}
-
-.error-modal .modal-footer {
-  padding: 15px 20px;
-  display: flex;
-  justify-content: center;
-  border-top: 1px solid #e9ecef;
-}
-
-.error-modal .close-btn {
-  background-color: #6c757d;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.error-modal .close-btn:hover {
-  background-color: #5a6268;
-}

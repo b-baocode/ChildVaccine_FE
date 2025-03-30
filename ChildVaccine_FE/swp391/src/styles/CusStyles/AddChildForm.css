@@ -5,6 +5,8 @@
 }
 
 
+
+
 /* Header */
 .form-header {
   display: flex;
@@ -15,7 +17,10 @@
   padding: 1.5rem 2rem;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  margin-top: 50px;
 }
+
+
 
 
 .form-header h2 {
@@ -25,6 +30,8 @@
   font-weight: 700;
   letter-spacing: -0.5px;
 }
+
+
 
 
 .back-btn {
@@ -43,12 +50,16 @@
 }
 
 
+
+
 .back-btn:hover {
   background: #1e4db7;
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(30, 77, 183, 0.25);
 }
+
+
 
 
 /* Form */
@@ -62,9 +73,13 @@
 }
 
 
+
+
 .form-section {
   margin-bottom: 2.5rem;
 }
+
+
 
 
 .form-section h3 {
@@ -79,6 +94,8 @@
 }
 
 
+
+
 .form-section h3::after {
   content: '';
   position: absolute;
@@ -90,6 +107,8 @@
 }
 
 
+
+
 .form-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -97,9 +116,13 @@
 }
 
 
+
+
 .form-group {
   margin-bottom: 1.5rem;
 }
+
+
 
 
 .form-group label {
@@ -110,6 +133,8 @@
   margin-bottom: 0.8rem;
   letter-spacing: 0.2px;
 }
+
+
 
 
 .form-group input,
@@ -129,6 +154,8 @@
 }
 
 
+
+
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
@@ -138,27 +165,94 @@
 }
 
 
+
+
 .form-group textarea {
   min-height: 120px;
   resize: vertical;
 }
 
 
+
+
 /* Success Message */
-.success-message {
-  background: linear-gradient(to right, #4caf50, #43a047);
-  color: white;
-  padding: 1.2rem 1.8rem;
-  border-radius: 10px;
-  margin-bottom: 1.8rem;
+.success-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+
+.success-dialog {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+.success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  font-size: 1rem;
-  font-weight: 500;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
-  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  justify-content: center;
+  margin: 0 auto 1.5rem;
 }
+
+
+.success-icon svg {
+  width: 32px;
+  height: 32px;
+  color: white;
+}
+
+
+.success-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+
+.success-message {
+  color: #4a4a4a;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
 
 
 /* Submit Button */
@@ -167,6 +261,8 @@
   display: flex;
   justify-content: flex-end;
 }
+
+
 
 
 .submit-btn {
@@ -187,10 +283,14 @@
 }
 
 
+
+
 .submit-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(76, 175, 80, 0.3);
 }
+
+
 
 
 /* Animations */
@@ -206,11 +306,15 @@
 }
 
 
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .add-child-container {
     padding: 1rem;
   }
+
+
 
 
   .form-header {
@@ -221,15 +325,21 @@
   }
 
 
+
+
   .form-header h2 {
     font-size: 1.6rem;
   }
+
+
 
 
   .form-row {
     grid-template-columns: 1fr;
     gap: 1.2rem;
   }
+
+
 
 
   .back-btn,
@@ -239,9 +349,13 @@
   }
 
 
+
+
   .form-actions {
     margin-top: 2rem;
   }
+
+
 
 
   .add-child-form {
@@ -249,154 +363,14 @@
   }
 
 
+
+
   .form-section h3 {
     font-size: 1.3rem;
   }
 }
 
-/* Success Modal */
-.success-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease-out;
-}
 
-.success-modal {
-  background-color: white;
-  border-radius: 8px;
-  padding: 30px;
-  width: 400px;
-  max-width: 90%;
-  text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  animation: slideIn 0.4s ease-out;
-}
 
-.success-icon {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
 
-.success-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #28a745;
-  margin-bottom: 10px;
-}
 
-.success-message {
-  font-size: 16px;
-  color: #555;
-  margin-bottom: 20px;
-}
-
-/* Checkmark animation */
-.checkmark {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  display: block;
-  stroke-width: 2;
-  stroke: #28a745;
-  stroke-miterlimit: 10;
-  box-shadow: inset 0px 0px 0px #28a745;
-  animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
-}
-
-.checkmark-circle {
-  stroke-dasharray: 166;
-  stroke-dashoffset: 166;
-  stroke-width: 2;
-  stroke-miterlimit: 10;
-  stroke: #28a745;
-  fill: none;
-  animation: stroke .6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-}
-
-.checkmark-check {
-  transform-origin: 50% 50%;
-  stroke-dasharray: 48;
-  stroke-dashoffset: 48;
-  animation: stroke .3s cubic-bezier(0.65, 0, 0.45, 1) .8s forwards;
-}
-
-.input-error {
-  border: 2px solid #dc3545 !important;
-  background-color: #fff8f8;
-}
-
-.error-text {
-  color: #dc3545;
-  font-size: 0.8rem;
-  margin-top: 4px;
-  display: block;
-  font-weight: 500;
-}
-
-.validation-summary {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px 15px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  border: 1px solid #f5c6cb;
-}
-
-.validation-summary ul {
-  margin: 5px 0 0 20px;
-  padding: 0;
-}
-
-.validation-summary li {
-  margin-bottom: 3px;
-}
-
-@keyframes stroke {
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes scale {
-  0%, 100% {
-    transform: none;
-  }
-  50% {
-    transform: scale3d(1.1, 1.1, 1);
-  }
-}
-
-@keyframes fill {
-  100% {
-    box-shadow: inset 0px 0px 0px 30px rgba(40, 167, 69, 0.1);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}

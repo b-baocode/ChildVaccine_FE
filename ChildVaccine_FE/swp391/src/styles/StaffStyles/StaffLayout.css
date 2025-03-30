@@ -4,12 +4,14 @@
   background-color: #f5f7fa;
 }
 
+
 .staff-content {
   flex: 1;
   margin-left: 260px;
   display: flex;
   flex-direction: column;
 }
+
 
 .staff-header {
   height: 64px;
@@ -21,11 +23,13 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+
 .page-title h1 {
   font-size: 1.25rem;
   color: #2c3e50;
   margin: 0;
 }
+
 
 .header-actions {
   display: flex;
@@ -33,9 +37,11 @@
   gap: 16px;
 }
 
+
 .search-box {
   position: relative;
 }
+
 
 .search-input {
   width: 300px;
@@ -47,6 +53,7 @@
   transition: all 0.2s ease;
 }
 
+
 .search-input:focus {
   outline: none;
   border-color: #1976d2;
@@ -54,11 +61,13 @@
   box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
 }
 
+
 .staff-main {
   flex: 1;
   padding: 24px;
   overflow-y: auto;
 }
+
 
 /* Component Container Styles */
 .component-container {
@@ -68,12 +77,14 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+
 /* Table Styles */
 .data-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 16px;
 }
+
 
 .data-table th {
   background-color: #f8f9fa;
@@ -84,10 +95,12 @@
   border-bottom: 2px solid #e0e0e0;
 }
 
+
 .data-table td {
   padding: 12px;
   border-bottom: 1px solid #e0e0e0;
 }
+
 
 /* Button Styles */
 .action-button {
@@ -99,25 +112,29 @@
   transition: all 0.2s ease;
 }
 
+
 .primary-button {
   background-color: #1976d2;
   color: white;
 }
 
+
 .primary-button:hover {
   background-color: #1565c0;
 }
+
 
 /* Responsive Design */
 @media (max-width: 1024px) {
   .staff-content {
     margin-left: 0;
   }
-  
+ 
   .search-input {
     width: 200px;
   }
 }
+
 
 @media (max-width: 768px) {
   .staff-header {
@@ -126,11 +143,12 @@
     padding: 16px;
     gap: 12px;
   }
-  
+ 
   .search-input {
     width: 100%;
   }
 }
+
 
 /* Thêm vào file StaffLayout.css */
 .staff-loading, .staff-error {
@@ -143,6 +161,7 @@
   padding: 2rem;
 }
 
+
 .loading-spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
@@ -153,15 +172,18 @@
   margin-bottom: 1rem;
 }
 
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
+
 .error-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
 }
+
 
 .user-info {
   display: flex;
@@ -170,9 +192,11 @@
   margin-left: 20px;
 }
 
+
 .user-name {
   font-weight: 500;
 }
+
 
 .logout-btn {
   background-color: #f44336;
@@ -184,6 +208,8 @@
   font-size: 0.85rem;
 }
 
+
 .logout-btn:hover {
   background-color: #d32f2f;
 }
+

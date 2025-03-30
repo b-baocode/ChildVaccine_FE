@@ -5,6 +5,7 @@
     font-family: 'Roboto', sans-serif;
 }
 
+
 .register-box {
     flex: 0.5;
     display: flex;
@@ -16,6 +17,7 @@
     overflow: hidden;
 }
 
+
 .register-box::before {
     content: '';
     position: absolute;
@@ -26,10 +28,12 @@
     background: linear-gradient(90deg, #31498B, #1a2b5c);
 }
 
+
 .register-header {
     text-align: center;
     margin-bottom: 3rem;
 }
+
 
 .register-header h2 {
     font-size: 2.2rem;
@@ -39,10 +43,12 @@
     text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
+
 .register-header p {
     color: #666;
     font-size: 1rem;
 }
+
 
 .register-form {
     max-width: 450px;
@@ -50,10 +56,12 @@
     width: 100%;
 }
 
+
 .form-group {
     position: relative;
     margin-bottom: 1.8rem;
 }
+
 
 .form-group input {
     width: 100%;
@@ -64,6 +72,7 @@
     transition: all 0.3s ease;
     background: #f8f9fa;
 }
+
 
 .form-group input[type="date"] {
     width: 88%;
@@ -76,14 +85,17 @@
     color: #495057;
 }
 
+
 /* Thêm style cho placeholder của input date */
 .form-group input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-text,
 .form-group input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-month-field,
 .form-group input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-day-field,
-.form-group 
+.form-group
 input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     color: transparent;
 }
+
+
 
 
 .form-group input[type="date"]:focus::-webkit-datetime-edit-text,
@@ -98,6 +110,8 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
 }
 
 
+
+
 .form-group input[type="date"]::before {
     content: "Ngày sinh";
     color: #6c757d;
@@ -106,10 +120,12 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     margin-left: 33px;
 }
 
+
 .form-group input[type="date"]:focus::before,
 .form-group input[type="date"]:valid::before {
     display: none;
 }
+
 
 .form-group input:focus {
     border-color: #31498B;
@@ -118,11 +134,13 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     background: white;
 }
 
+
 .gender-group {
     display: flex;
     align-items: center;
     gap: 1.5rem;
 }
+
 
 .gender-label {
     color: #666;
@@ -130,10 +148,12 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     min-width: 80px;
 }
 
+
 .gender-options {
     display: flex;
     gap: 2rem;
 }
+
 
 .gender-options label {
     display: flex;
@@ -143,15 +163,18 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     cursor: pointer;
 }
 
+
 .gender-options input[type="radio"] {
     width: 1.2rem;
     height: 1.2rem;
     accent-color: #31498B;
 }
 
+
 .terms {
     margin: 2rem 0;
 }
+
 
 .checkbox-label {
     display: flex;
@@ -161,11 +184,13 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     cursor: pointer;
 }
 
+
 .checkbox-label input[type="checkbox"] {
     width: 1.2rem;
     height: 1.2rem;
     accent-color: #31498B;
 }
+
 
 .submit-btn {
     width: 100%;
@@ -182,17 +207,20 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     letter-spacing: 1px;
 }
 
+
 .submit-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(49, 73, 139, 0.3);
     background: linear-gradient(135deg, #1a2b5c 0%, #31498B 100%);
 }
 
+
 .register-footer {
     text-align: center;
     margin-top: 2rem;
     color: #666;
 }
+
 
 .toggle-btn {
     background: none;
@@ -205,10 +233,12 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     transition: all 0.3s ease;
 }
 
+
 .toggle-btn:hover {
     color: #1a2b5c;
     text-decoration: underline;
 }
+
 
 .register-image {
     flex: 0.5;
@@ -221,24 +251,27 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     text-align: center;
 }
 
+
 .overlay {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, 
-        rgba(49, 73, 139, 0.95) 0%, 
+    background: linear-gradient(135deg,
+        rgba(49, 73, 139, 0.95) 0%,
         rgba(26, 43, 92, 0.95) 100%
     );
     backdrop-filter: blur(5px);
 }
+
 
 .image-content {
     position: relative;
     z-index: 1;
     padding: 3rem;
 }
+
 
 .image-content h1 {
     font-size: 3.5rem;
@@ -247,11 +280,13 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
 }
 
+
 .image-content p {
     font-size: 1.4rem;
     opacity: 0.9;
     font-weight: 500;
 }
+
 
 @media (max-width: 1200px) {
     .register-box {
@@ -259,41 +294,50 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     }
 }
 
+
 @media (max-width: 992px) {
     .register-container {
         flex-direction: column;
     }
 
+
     .register-box {
         padding: 2rem;
     }
+
 
     .form-row {
         flex-direction: column;
         gap: 0;
     }
 
+
     .register-image {
         min-height: 300px;
     }
+
 
     .image-content h1 {
         font-size: 2.5rem;
     }
 
+
     .image-content p {
         font-size: 1.2rem;
     }
+
 
     .register-form {
         max-width: 100%;
     }
 }
 
+
 @media (max-width: 480px) {
     .register-header h2 {
         font-size: 2.2rem;
     }
+
 
     .gender-options {
         flex-direction: column;
@@ -301,17 +345,19 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     }
 }
 
+
 @media (max-width: 768px) {
     .gender-group {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
     }
-    
+   
     .gender-options {
         margin-top: 0.5rem;
     }
 }
+
 
 .input-icon {
     position: absolute;
@@ -323,10 +369,12 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     transition: all 0.3s ease;
 }
 
+
 .form-group input:focus + .input-icon {
     color: #1a2b5c;
     transform: translateY(-50%) scale(1.1);
 }
+
 
 .form-group textarea {
     width: 100%;
@@ -340,10 +388,15 @@ input[type="date"]:not(:focus):not(:valid)::-webkit-datetime-edit-year-field {
     min-height: 100px;
 }
 
+
 .form-group textarea:focus {
     border-color: #31498B;
     outline: none;
     box-shadow: 0 0 0 4px rgba(49, 73, 139, 0.1);
     background: white;
-} 
+}
+
+
+
+
 

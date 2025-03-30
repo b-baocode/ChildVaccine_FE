@@ -6,6 +6,7 @@
   background-color: #f8f9fa;
 }
 
+
 .payment-result {
   background-color: white;
   border-radius: 8px;
@@ -16,28 +17,34 @@
   width: 90%;
 }
 
+
 .result-icon {
   font-size: 4rem;
   margin-bottom: 1rem;
 }
 
+
 .result-icon.success {
   color: #28a745;
 }
 
+
 .result-icon.error {
   color: #dc3545;
 }
+
 
 .payment-result h2 {
   margin-bottom: 1rem;
   color: #333;
 }
 
+
 .payment-result p {
   color: #666;
   margin-bottom: 1.5rem;
 }
+
 
 .appointment-details {
   background-color: #f8f9fa;
@@ -47,6 +54,7 @@
   text-align: left;
 }
 
+
 .appointment-details h3 {
   border-bottom: 1px solid #e0e0e0;
   padding-bottom: 0.5rem;
@@ -54,21 +62,25 @@
   color: #555;
 }
 
+
 .detail-item {
   display: flex;
   justify-content: space-between;
   margin-bottom: 0.5rem;
 }
 
+
 .status-paid {
   color: #28a745;
   font-weight: bold;
 }
 
+
 .status-pending {
   color: #dc3545;
   font-weight: bold;
 }
+
 
 .back-btn {
   background-color: #007bff;
@@ -84,13 +96,16 @@
   transition: background-color 0.2s;
 }
 
+
 .back-btn svg {
   margin-right: 0.5rem;
 }
 
+
 .back-btn:hover {
   background-color: #0069d9;
 }
+
 
 .payment-result.loading {
   display: flex;
@@ -100,3 +115,4 @@
   font-size: 1.2rem;
   color: #666;
 }
+

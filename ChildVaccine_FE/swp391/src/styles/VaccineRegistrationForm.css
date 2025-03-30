@@ -1,5 +1,6 @@
 /* VaccineRegistrationForm.css */
 
+
 .registration-container {
   max-width: 800px;
   margin: 0 auto;
@@ -10,10 +11,12 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+
 .registration-container h1 {
   color: blue;
   font: 4em Arial, sans-serif;
 }
+
 
 .header {
   background-color: #007bff; /* Màu nền */
@@ -24,15 +27,18 @@
   margin-bottom: 20px;
 }
 
+
 .header h1 {
   font-size: 2.5rem;
   margin-bottom: 10px;
 }
 
+
 .header p {
   font-size: 1.2rem;
   margin: 0;
 }
+
 
 .registration-container {
   max-width: 800px;
@@ -44,6 +50,7 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+
 .guardian-info {
   background-color: #fff;
   padding: 20px;
@@ -51,16 +58,19 @@
   margin-bottom: 20px;
 }
 
+
 .guardian-info h2 {
   color: #555;
   margin-bottom: 15px;
 }
+
 
 .info-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
+
 
 .info-item {
   display: flex;
@@ -70,14 +80,17 @@
   border-radius: 4px;
 }
 
+
 .info-item label {
   font-weight: bold;
   color: #333;
 }
 
+
 .info-item span {
   color: #555;
 }
+
 
 form {
   background-color: #fff;
@@ -85,9 +98,11 @@ form {
   border-radius: 8px;
 }
 
+
 .form-group {
   margin-bottom: 20px;
 }
+
 
 .form-group label {
   display: block;
@@ -95,10 +110,12 @@ form {
   color: #333;
 }
 
+
 .child-selection .child-select-container {
   display: flex;
   gap: 10px;
 }
+
 
 .child-selection select {
   flex: 1;
@@ -106,6 +123,7 @@ form {
   border-radius: 4px;
   border: 1px solid #ccc;
 }
+
 
 .add-child-btn {
   padding: 10px 20px;
@@ -116,23 +134,28 @@ form {
   cursor: pointer;
 }
 
+
 .add-child-btn:hover {
   background-color: #0056b3;
 }
+
 
 .service-info h2 {
   color: #555;
   margin-bottom: 15px;
 }
 
+
 .vaccine-type-selection {
   margin-bottom: 20px;
 }
+
 
 .vaccine-type-buttons {
   display: flex;
   gap: 10px;
 }
+
 
 .vaccine-type-buttons button {
   padding: 10px 20px;
@@ -143,11 +166,14 @@ form {
   cursor: pointer;
 }
 
+
 .vaccine-type-buttons button.active {
   background-color: #0056b3;
 }
 
+
 /* VaccineRegistrationForm.css */
+
 
 .datetime-selection {
   display: flex;
@@ -155,11 +181,13 @@ form {
   margin-bottom: 20px;
 }
 
+
 .date-picker, .time-picker {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
+
 
 .date-picker label, .time-picker label {
   margin-bottom: 12px;
@@ -167,6 +195,7 @@ form {
   color: #333;
   font-size: 1rem;
 }
+
 
 .date-picker input, .time-picker select {
   width: 100%;
@@ -178,9 +207,11 @@ form {
   cursor: pointer;
 }
 
+
 .date-picker input {
   height: 40px;
 }
+
 
 .time-picker select {
   height: 40px;
@@ -191,16 +222,19 @@ form {
   background-size: 12px;
 }
 
+
 /* Hiệu ứng khi hover và focus */
 .date-picker input:hover, .time-picker select:hover {
   border-color: #007bff;
 }
+
 
 .date-picker input:focus, .time-picker select:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+
 
 .submit-btn {
   width: 100%;
@@ -213,6 +247,8 @@ form {
   font-size: 16px;
 }
 
+
 .submit-btn:hover {
   background-color: #218838;
 }
+

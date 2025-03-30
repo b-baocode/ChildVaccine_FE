@@ -1246,7 +1246,7 @@ const ScheduleDetail = () => {
                 onClick={handleCloseRescheduleModal}
                 disabled={reschedulingAppointment}
               >
-                Hủy
+                Hủy Bỏ
               </button>
               <button
                 className="confirm-btn"
