@@ -1,103 +1,52 @@
-import React, { useState } from 'react';
-import { Search, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Star, Calendar, Users, MessageSquare } from 'lucide-react';
+import feedbackService from '../../service/adminService';
 import '../../styles/AdminStyles/AdminFeedback.css';
 
 const Feedback = () => {
   // Fake data
-  const [feedbacks] = useState([
-    {
-      id: "FB001",
-      appointmentId: "APT112233",
-      customerName: "Nguyễn Văn An",
-      content: "Dịch vụ rất tốt, nhân viên thân thiện và chuyên nghiệp",
-      rating: 5,
-      date: "2024-03-15",
-      vaccineType: "Vaccine 6 trong 1"
-    },
-    {
-      id: "FB002",
-      appointmentId: "APT112234",
-      customerName: "Trần Thị Bình",
-      content: "Con tôi không khóc khi tiêm, bác sĩ rất giỏi",
-      rating: 5,
-      date: "2024-03-14",
-      vaccineType: "Vaccine Viêm gan B"
-    },
-    {
-      id: "FB003",
-      appointmentId: "APT112235",
-      customerName: "Lê Minh Cường",
-      content: "Thời gian chờ đợi hơi lâu nhưng chất lượng dịch vụ tốt",
-      rating: 4,
-      date: "2024-03-14",
-      vaccineType: "Vaccine Rotavirus"
-    },
-    {
-      id: "FB004",
-      appointmentId: "APT112236",
-      customerName: "Phạm Thị Dung",
-      content: "Giá hơi cao nhưng xứng đáng với chất lượng",
-      rating: 4,
-      date: "2024-03-13",
-      vaccineType: "Vaccine 5 trong 1"
-    },
-    {
-      id: "FB005",
-      appointmentId: "APT112237",
-      customerName: "Hoàng Văn Em",
-      content: "Cơ sở vật chất sạch sẽ, hiện đại",
-      rating: 5,
-      date: "2024-03-13",
-      vaccineType: "Vaccine Pneumo"
-    },
-    {
-      id: "FB006",
-      appointmentId: "APT112238",
-      customerName: "Đỗ Thị Phương",
-      content: "Hơi khó tìm địa điểm, nhưng nhân viên nhiệt tình hướng dẫn",
-      rating: 3,
-      date: "2024-03-12",
-      vaccineType: "Vaccine 6 trong 1"
-    },
-    {
-      id: "FB007",
-      appointmentId: "APT112239",
-      customerName: "Vũ Đình Giang",
-      content: "Tốt, sẽ quay lại lần sau",
-      rating: 4,
-      date: "2024-03-12",
-      vaccineType: "Vaccine Viêm gan B"
-    },
-    {
-      id: "FB008",
-      appointmentId: "APT112240",
-      customerName: "Ngô Thị Hương",
-      content: "Dịch vụ tạm được, cần cải thiện thêm về thời gian chờ",
-      rating: 3,
-      date: "2024-03-11",
-      vaccineType: "Vaccine Rotavirus"
-    },
-    {
-      id: "FB009",
-      appointmentId: "APT112241",
-      customerName: "Đặng Văn Inh",
-      content: "Rất hài lòng với dịch vụ",
-      rating: 5,
-      date: "2024-03-11",
-      vaccineType: "Vaccine 5 trong 1"
-    },
-    {
-      id: "FB010",
-      appointmentId: "APT112242",
-      customerName: "Bùi Thị Kim",
-      content: "Không gian thoáng mát, sạch sẽ",
-      rating: 4,
-      date: "2024-03-10",
-      vaccineType: "Vaccine Pneumo"
-    }
-  ]);
-
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedRating, setSelectedRating] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        console.log('Fetching feedbacks...');
+        
+        const data = await feedbackService.getAllFeedbacks();
+        console.log('Received data:', data);
+        
+        const formattedFeedbacks = data.map(feedback => ({
+          id: feedback.id, // Feedback ID
+          appointmentId: feedback.appointment.appId, // Appointment ID
+          customerName: feedback.customer.user.fullName,
+          vaccineType: feedback.appointment.vaccineId 
+            ? feedback.appointment.vaccineId.name 
+            : feedback.appointment.packageId 
+              ? feedback.appointment.packageId.name 
+              : 'N/A',
+          rating: feedback.rating,
+          content: feedback.feedback,
+          date: new Date(feedback.appointment.appointmentDate).toLocaleDateString('vi-VN')
+        }));
+  
+        console.log('Formatted feedbacks:', formattedFeedbacks);
+        setFeedbacks(formattedFeedbacks);
+      } catch (err) {
+        console.error('Feedback error details:', err);
+        setError(err.message || 'Không thể tải dữ liệu phản hồi');
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchFeedbacks();
+  }, []);
 
   // Tính toán thống kê
   const calculateStats = () => {
@@ -118,95 +67,162 @@ const Feedback = () => {
   const stats = calculateStats();
 
   // Lọc feedback theo rating
-  const filteredFeedbacks = selectedRating
-    ? feedbacks.filter(feedback => feedback.rating === parseInt(selectedRating))
-    : feedbacks;
+  const filteredFeedbacks = feedbacks.filter(feedback => {
+    const matchesRating = selectedRating ? feedback.rating === parseInt(selectedRating) : true;
+    const matchesSearch = searchTerm 
+      ? feedback.customerName.toLowerCase().includes(searchTerm.toLowerCase()) 
+      : true;
+    return matchesRating && matchesSearch;
+  });
 
   return (
-    <div className="feedback-container">
-      {/* Phần thống kê */}
-      <div className="feedback-stats">
-        <div className="stat-card">
-          <h3>Tổng số đánh giá</h3>
-          <div className="stat-value">{stats.total}</div>
+    <div className="feedback-dashboard">
+      <h1 className="dashboard-title">Quản lý phản hồi</h1>
+      
+      {loading ? (
+        <div className="loading-state">
+          <div className="loader"></div>
+          <p>Đang tải dữ liệu...</p>
         </div>
-        <div className="stat-card">
-          <h3>Đánh giá trung bình</h3>
-          <div className="stat-value">
-            {stats.averageRating} <Star size={20} fill="#ffd700" color="#ffd700" />
-          </div>
+      ) : error ? (
+        <div className="error-state">
+          <p>{error}</p>
         </div>
-        <div className="rating-distribution">
-          {[5, 4, 3, 2, 1].map(rating => (
-            <div key={rating} className="rating-bar">
-              <span>{rating} sao</span>
-              <div className="bar-container">
-                <div 
-                  className="bar" 
-                  style={{ 
-                    width: `${(stats.ratingCounts[rating] || 0) / stats.total * 100}%` 
-                  }}
-                ></div>
+      ) : (
+        <>
+          {/* Stats Cards */}
+          <div className="stats-grid">
+            <div className="stat-card total-reviews">
+              <div className="stat-icon">
+                <MessageSquare size={24} />
               </div>
-              <span>{stats.ratingCounts[rating] || 0}</span>
+              <div className="stat-info">
+                <h3>Tổng số đánh giá</h3>
+                <div className="stat-value">{stats.total || 0}</div>
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Phần tìm kiếm */}
-      <div className="feedback-filters">
-        <div className="search-field">
-          <Search size={20} />
-          <select 
-            value={selectedRating} 
-            onChange={(e) => setSelectedRating(e.target.value)}
-          >
-            <option value="">Tất cả đánh giá</option>
-            <option value="5">5 sao</option>
-            <option value="4">4 sao</option>
-            <option value="3">3 sao</option>
-            <option value="2">2 sao</option>
-            <option value="1">1 sao</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Danh sách feedback */}
-      <div className="feedback-list">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Mã đơn tiêm</th>
-              <th>Khách hàng</th>
-              <th>Loại vaccine</th>
-              <th>Đánh giá</th>
-              <th>Nội dung</th>
-              <th>Ngày</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredFeedbacks.map((feedback) => (
-              <tr key={feedback.id}>
-                <td>{feedback.id}</td>
-                <td>{feedback.appointmentId}</td>
-                <td>{feedback.customerName}</td>
-                <td>{feedback.vaccineType}</td>
-                <td>
-                  <div className="rating-display">
-                    {Array(feedback.rating).fill().map((_, i) => (
-                      <Star key={i} size={16} fill="#ffd700" color="#ffd700" />
+  
+            <div className="stat-card average-rating">
+              <div className="stat-icon">
+                <Star size={24} />
+              </div>
+              <div className="stat-info">
+                <h3>Đánh giá trung bình</h3>
+                <div className="stat-value">
+                  {stats.averageRating || 0}
+                  <div className="stars-display">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        size={16}
+                        fill={i < Math.round(stats.averageRating) ? "#ffd700" : "none"}
+                        color={i < Math.round(stats.averageRating) ? "#ffd700" : "#cbd5e1"}
+                      />
                     ))}
                   </div>
-                </td>
-                <td>{feedback.content}</td>
-                <td>{feedback.date}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          {/* Rating Distribution */}
+          <div className="rating-distribution-card">
+            <h3>Phân bố đánh giá</h3>
+            <div className="rating-bars">
+              {[5, 4, 3, 2, 1].map(rating => (
+                <div key={rating} className="rating-bar-row">
+                  <div className="rating-label">
+                    {rating} <Star size={14} fill="#ffd700" color="#ffd700" />
+                  </div>
+                  <div className="bar-container">
+                    <div 
+                      className="bar"
+                      style={{ 
+                        width: `${(stats.ratingCounts[rating] || 0) / (stats.total || 1) * 100}%`,
+                        backgroundColor: rating >= 4 ? '#22c55e' : rating === 3 ? '#f59e0b' : '#ef4444'
+                      }}
+                    >
+                      <span className="bar-value">
+                        {((stats.ratingCounts[rating] || 0) / (stats.total || 1) * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                  <div className="count-label">{stats.ratingCounts[rating] || 0}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+  
+          {/* Filters */}
+          <div className="filters-section">
+            <div className="search-box">
+              <Search size={20} className="search-icon" />
+              <input 
+                type="text" 
+                placeholder="Tìm kiếm theo tên khách hàng..."
+                className="search-input"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <select 
+              value={selectedRating} 
+              onChange={(e) => setSelectedRating(e.target.value)}
+              className="rating-filter"
+            >
+              <option value="">Tất cả đánh giá</option>
+              <option value="5">5 sao</option>
+              <option value="4">4 sao</option>
+              <option value="3">3 sao</option>
+              <option value="2">2 sao</option>
+              <option value="1">1 sao</option>
+            </select>
+          </div>
+  
+          {/* Feedback Table */}
+          <div className="feedback-table-container">
+            {filteredFeedbacks.length === 0 ? (
+              <div className="no-data">Không tìm thấy phản hồi nào</div>
+            ) : (
+              <table className="feedback-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Mã đơn tiêm</th>
+                    <th>Khách hàng</th>
+                    <th>Loại vaccine</th>
+                    <th>Đánh giá</th>
+                    <th>Nội dung</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredFeedbacks.map((feedback) => (
+                    <tr key={feedback.id}>
+                      <td>{feedback.id}</td>
+                      <td>{feedback.appointmentId}</td>
+                      <td>{feedback.customerName}</td>
+                      <td>{feedback.vaccineType}</td>
+                      <td>
+                        <div className="table-rating">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              size={14}
+                              fill={i < feedback.rating ? "#ffd700" : "none"}
+                              color={i < feedback.rating ? "#ffd700" : "#cbd5e1"}
+                            />
+                          ))}
+                        </div>
+                      </td>
+                      <td>{feedback.content}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };
