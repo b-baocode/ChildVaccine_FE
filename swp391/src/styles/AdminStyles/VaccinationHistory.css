@@ -1,5 +1,7 @@
 .vaccination-history {
-    padding: 20px;
+  height: calc(100vh - 64px); /* Adjust based on your layout */
+  display: flex;
+  flex-direction: column;
   }
   
   .search-filters {
@@ -11,6 +13,7 @@
   .search-field {
     flex: 2;
     position: relative;
+    display: flex;
   }
   
   .search-field input {
@@ -47,12 +50,14 @@
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    overflow: auto;
+    max-height: calc(100vh - 200px); /* Adjust the value based on your header height */
   }
   
   table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 1000px;
   }
   
   th {
