@@ -1,83 +1,102 @@
-import React, { useEffect, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import StaffSidebar from '../components/shared/StaffSidebar';
-import { useAuth } from '../context/AuthContext';
-import sessionService from '../service/sessionService';
-import '../styles/StaffStyles/StaffLayout.css';
-
-
+import React, { useEffect, useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import StaffSidebar from "../components/shared/StaffSidebar";
+import sessionService from "../service/sessionService";
+import "../styles/StaffStyles/StaffLayout.css";
 
 const StaffLayout = () => {
-
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [staffInfo, setStaffInfo] = useState(null);
+  const [showHeader, setShowHeader] = useState(true);
 
-  // useEffect(() => {
-  //   const validateStaffSession = async () => {
-  //     try {
-  //       setIsLoading(true);
-  //       // Kiểm tra session có tồn tại không
-  //       const sessionData = await sessionService.checkStaffSession();
+  const layoutContext = {
+    staffInfo,
+    hideHeader: () => setShowHeader(false),
+    showHeader: () => setShowHeader(true),
+    setShowHeader,
+  };
 
-  //       console.log('Session Staff data:', sessionData);
-  //       console.log('Session Staff body:', sessionData.body);
-  //       console.log('Session Staff role:', sessionData.body.role);
-        
-  //       // Kiểm tra xem có session data không và có phải STAFF không
-  //       if (!sessionData || !sessionData.body || sessionData.body.role !== 'STAFF') {
-  //         console.log('Invalid staff session, redirecting to login');
-  //         await logout();
-  //         navigate('/login');
-  //         return;
-  //       }
-        
-  //       // Session hợp lệ
-  //       console.log('Valid staff session');
-  //     } catch (error) {
-  //       console.error('Error validating staff session:', error);
-  //       setError('Phiên đăng nhập không hợp lệ hoặc đã hết hạn');
-        
-  //       // Logout và chuyển về trang đăng nhập
-  //       setTimeout(async () => {
-  //         await logout();
-  //         navigate('/login');
-  //       }, 1500);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const checkStaffSession = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-  //   validateStaffSession();
-  // }, [logout, navigate]);
+        // Kiểm tra token và user
+        if (!localStorage.getItem("authToken")) {
+          console.log("Không tìm thấy token, chuyển hướng đến trang đăng nhập");
+          navigate("/login");
+          return;
+        }
 
-  // // Nếu đang loading, hiển thị trạng thái loading
-  // if (isLoading) {
-  //   return (
-  //     <div className="staff-loading">
-  //       <div className="loading-spinner"></div>
-  //       <p>Đang kiểm tra phiên làm việc...</p>
-  //     </div>
-  //   );
-  // }
+        if (!user) {
+          console.log(
+            "Không có thông tin user, chuyển hướng đến trang đăng nhập"
+          );
+          navigate("/login");
+          return;
+        }
 
-  // // Nếu có lỗi, hiển thị thông báo lỗi
-  // if (error) {
-  //   return (
-  //     <div className="staff-error">
-  //       <div className="error-icon">⚠️</div>
-  //       <p>{error}</p>
-  //       <p>Đang chuyển hướng đến trang đăng nhập...</p>
-  //     </div>
-  //   );
-  // }
+        if (user.role !== "STAFF") {
+          console.log(
+            "User không phải là nhân viên, chuyển hướng đến trang chủ"
+          );
+          navigate("/");
+          return;
+        }
 
-  // // Nếu không có user hoặc role không phải STAFF, chuyển về login
-  // if (!user || user.role !== 'STAFF') {
-  //   navigate('/login');
-  //   return null;
-  // }
+        // Kiểm tra session staff
+        console.log("Đang kiểm tra session staff...");
+        const response = await sessionService.checkStaffSession();
+
+        if (!response || !response.success) {
+          console.error(
+            "Session staff không hợp lệ:",
+            response?.message || "Không có phản hồi"
+          );
+          await logout();
+          navigate("/login");
+          return;
+        }
+
+        console.log("Session staff hợp lệ:", response.body);
+
+        // Lưu thông tin staff để sử dụng trong các components con
+        setStaffInfo(response.body);
+      } catch (error) {
+        console.error("Lỗi kiểm tra session staff:", error);
+        setError("Có lỗi xảy ra khi xác thực phiên làm việc");
+        await logout();
+        navigate("/login");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkStaffSession();
+  }, [user, navigate, logout]);
+
+  if (isLoading) {
+    return (
+      <div className="staff-loading">
+        <div className="spinner"></div>
+        <p>Đang kiểm tra phiên làm việc...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="staff-error">
+        <p>{error}</p>
+        <button onClick={() => navigate("/login")}>Đăng nhập lại</button>
+      </div>
+    );
+  }
 
   return (
     <div className="staff-layout">
@@ -87,19 +106,18 @@ const StaffLayout = () => {
           <div className="page-title">
             <h1>Quản lý Tiêm chủng</h1>
           </div>
-          <div className="header-actions">
-            <div className="search-box">
-              <input 
-                type="search" 
-                placeholder="Tìm kiếm hồ sơ..." 
-                className="search-input"
-              />
-            </div>
-          </div>
         </div>
-        
+
         <main className="staff-main">
-          <Outlet />
+          <div>
+            {staffInfo && showHeader && (
+              <header>
+                <h1>Xin chào, {staffInfo.fullName}</h1>
+                <p>Bộ phận: {staffInfo.department}</p>
+              </header>
+            )}
+            <Outlet context={layoutContext} />
+          </div>
         </main>
       </div>
     </div>

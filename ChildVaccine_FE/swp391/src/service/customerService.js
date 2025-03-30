@@ -52,6 +52,30 @@ const customerService = {
         } catch (error) {
             return [];
         }
+    },
+
+    updateCustomerProfile: async (cusId, updateData) => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(`${API_BASE_URL}/customers/update/${cusId}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updateData)
+        });
+    
+        if (!response.ok) {
+          throw new Error('Không thể cập nhật thông tin');
+        }
+    
+        const data = await response.json();
+        return { ok: true, data };
+      } catch (error) {
+        console.error('Error updating customer profile:', error);
+        return { ok: false, message: error.message };
+      }
     }
 };
 

@@ -78,13 +78,6 @@ const Profile = () => {
   const [showViewFeedbackModal, setShowViewFeedbackModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState(null);
 
-  // Thêm state mới vào các state hiện có
-  const [showErrorModal, setShowErrorModal] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const [updatingProfile, setUpdatingProfile] = useState(false);
-  const [updateSuccess, setUpdateSuccess] = useState(false);
-
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
@@ -217,10 +210,10 @@ const Profile = () => {
 
     fetchCustomerFeedbacks();
   }, []);
-
   const handleFeedback = (appointment) => {
     console.log("Feedback for appointment:", appointment);
     if (!needsFeedback(appointment.appId)) {
+      alert("Buổi tiêm này đã được đánh giá hoặc không cần đánh giá.");
       return;
     }
     setSelectedAppointment(appointment);
@@ -231,12 +224,10 @@ const Profile = () => {
     try {
       setSubmitting(true);
 
-      const currentDate = new Date().toISOString();
       const feedbackData = {
         appointmentId: selectedAppointment.appId,
         rating: rating,
         feedback: comment.trim(),
-        createdDate: currentDate, // Thêm ngày tạo feedback
       };
 
       await feedbackService.submitFeedback(feedbackData);
@@ -252,24 +243,6 @@ const Profile = () => {
         },
       });
 
-      const result = await feedbackService.submitFeedback(feedbackData);
-
-      // Tạo đối tượng feedback đầy đủ để cập nhật UI
-      const newFeedback = {
-        id: result?.id || `temp-${Date.now()}`,
-        appointmentId: selectedAppointment.appId,
-        rating: rating,
-        feedbackText: comment.trim(),
-        createdDate: currentDate,
-        appointmentDate: selectedAppointment.appointmentDate,
-      };
-
-      // Cập nhật cả hai state để đảm bảo hiển thị nhất quán
-      setAppointmentFeedbacks({
-        ...appointmentFeedbacks,
-        [selectedAppointment.appId]: newFeedback,
-      });
-
       // Loại bỏ appointment này khỏi danh sách chờ đánh giá
       setPendingFeedbackAppointments(
         pendingFeedbackAppointments.filter(
@@ -277,14 +250,15 @@ const Profile = () => {
         )
       );
 
+      alert("Cảm ơn bạn đã đánh giá!");
+
       setShowFeedbackModal(false);
       setSelectedAppointment(null);
       setRating(0);
       setComment("");
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      setErrorMessage("Không thể gửi đánh giá. Vui lòng thử lại sau.");
-      setShowErrorModal(true);
+      alert("Không thể gửi đánh giá. Vui lòng thử lại sau.");
     } finally {
       setSubmitting(false);
     }
@@ -343,8 +317,7 @@ const Profile = () => {
         setShowViewFeedbackModal(true);
         return;
       }
-      setErrorMessage("Không tìm thấy thông tin đánh giá cho cuộc hẹn này.");
-      setShowErrorModal(true);
+      alert("Không tìm thấy thông tin đánh giá cho cuộc hẹn này.");
       return;
     }
 
@@ -362,54 +335,17 @@ const Profile = () => {
   };
 
   const handleSave = async () => {
-    if (!editedInfo.phone || !editedInfo.address) {
-      setErrorMessage("Vui lòng nhập đầy đủ thông tin.");
-      setShowErrorModal(true);
-      return;
-    }
-
     try {
-      setUpdatingProfile(true);
-
-      // Tạo đối tượng dữ liệu cập nhật
-      const updateData = {
+      // Add API call to update customer info here
+      setUserInfo((prev) => ({
+        ...prev,
         phone: editedInfo.phone,
         address: editedInfo.address,
-      };
-
-      // Gọi API cập nhật thông tin
-      const result = await customerService.updateCustomerProfile(
-        userInfo.id,
-        updateData
-      );
-
-      if (result.ok) {
-        // Cập nhật state với thông tin mới
-        setUserInfo((prev) => ({
-          ...prev,
-          phone: editedInfo.phone,
-          address: editedInfo.address,
-        }));
-
-        // Hiển thị thông báo thành công
-        setUpdateSuccess(true);
-        setTimeout(() => setUpdateSuccess(false), 3000);
-
-        // Thoát chế độ chỉnh sửa
-        setIsEditing(false);
-      } else {
-        // Hiển thị thông báo lỗi
-        setErrorMessage(
-          result.message || "Không thể cập nhật thông tin. Vui lòng thử lại."
-        );
-        setShowErrorModal(true);
-      }
+      }));
+      setIsEditing(false);
     } catch (error) {
       console.error("Error updating profile:", error);
-      setErrorMessage("Đã xảy ra lỗi khi cập nhật thông tin.");
-      setShowErrorModal(true);
-    } finally {
-      setUpdatingProfile(false);
+      setError("Không thể cập nhật thông tin");
     }
   };
 
@@ -444,10 +380,10 @@ const Profile = () => {
 
       // Đóng modal và hiển thị thông báo
       setShowCancelModal(false);
+      alert("Đã hủy cuộc hẹn thành công");
     } catch (error) {
       console.error("Error cancelling appointment:", error);
-      setErrorMessage("Không thể hủy cuộc hẹn. Vui lòng thử lại sau.");
-      setShowErrorModal(true);
+      alert("Không thể hủy cuộc hẹn. Vui lòng thử lại sau.");
     } finally {
       setLoadingAppointmentId(null);
     }
@@ -479,13 +415,11 @@ const Profile = () => {
       if (response.ok) {
         setScheduleAppointments(response.appointments || []);
       } else {
-        setErrorMessage("Không thể tải danh sách cuộc hẹn cho lịch tiêm này.");
-        setShowErrorModal(true);
+        alert("Không thể tải danh sách cuộc hẹn cho lịch tiêm này.");
       }
     } catch (error) {
       console.error("Error loading schedule details:", error);
-      setErrorMessage("Đã xảy ra lỗi khi tải chi tiết lịch tiêm.");
-      setShowErrorModal(true);
+      alert("Đã xảy ra lỗi khi tải chi tiết lịch tiêm.");
     } finally {
       setLoadingScheduleDetails(false);
     }
@@ -586,8 +520,8 @@ const Profile = () => {
     // Khởi tạo ngày mặc định (ngày mai)
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    setNewAppointmentDate(appointment.appointmentDate);
-    setNewAppointmentTime(appointment.appointmentTime || "07:00:00");
+    setNewAppointmentDate(tomorrow.toISOString().split("T")[0]);
+    setNewAppointmentTime("07:00:00"); // Mặc định 8:00 sáng
     setShowRescheduleModal(true);
   };
 
@@ -641,54 +575,21 @@ const Profile = () => {
 
         // Đóng modal và hiển thị thông báo
         setShowRescheduleModal(false);
+        alert("Lịch hẹn đã được dời thành công.");
       } else {
-        setErrorMessage(`Không thể dời lịch hẹn: ${result.message}`);
-        setShowErrorModal(true);
+        alert(`Không thể dời lịch hẹn: ${result.message}`);
       }
     } catch (error) {
       console.error("Error rescheduling appointment:", error);
-      setErrorMessage("Đã xảy ra lỗi khi dời lịch hẹn.");
-      setShowErrorModal(true);
+      alert("Đã xảy ra lỗi khi dời lịch hẹn.");
     } finally {
       setReschedulingAppointment(false);
     }
   };
 
-  const calculateDateRange = (baseDate) => {
-    if (!baseDate) return { min: null, max: null };
-
-    const date = new Date(baseDate);
-
-    // Tính 3 ngày trước
-    const minDate = new Date(date);
-    minDate.setDate(date.getDate() - 3);
-
-    // Tính 3 ngày sau
-    const maxDate = new Date(date);
-    maxDate.setDate(date.getDate() + 3);
-
-    // Đảm bảo không chọn ngày quá khứ
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    return {
-      min:
-        minDate < today
-          ? today.toISOString().split("T")[0]
-          : minDate.toISOString().split("T")[0],
-      max: maxDate.toISOString().split("T")[0],
-    };
-  };
-
   return (
     <div className="profile-container">
       <div className="profile-header">
-        {updateSuccess && (
-          <div className="success-message">
-            <FaCheck /> Cập nhật thông tin thành công!
-          </div>
-        )}
-
         <button onClick={handleBackHome} className="back-home-btn">
           <FaHome /> Quay lại trang chủ
         </button>
@@ -727,7 +628,6 @@ const Profile = () => {
                     setEditedInfo({ ...editedInfo, phone: e.target.value })
                   }
                   placeholder="Số điện thoại"
-                  disabled={updatingProfile}
                 />
               </div>
               <div className="edit-item">
@@ -739,28 +639,13 @@ const Profile = () => {
                     setEditedInfo({ ...editedInfo, address: e.target.value })
                   }
                   placeholder="Địa chỉ"
-                  disabled={updatingProfile}
                 />
               </div>
               <div className="edit-buttons">
-                <button
-                  onClick={handleSave}
-                  className="save-btn"
-                  disabled={updatingProfile}
-                >
-                  {updatingProfile ? (
-                    <>Đang cập nhật...</>
-                  ) : (
-                    <>
-                      <FaSave /> Lưu
-                    </>
-                  )}
+                <button onClick={handleSave} className="save-btn">
+                  <FaSave /> Lưu
                 </button>
-                <button
-                  onClick={handleCancel}
-                  className="cancel-btn"
-                  disabled={updatingProfile}
-                >
+                <button onClick={handleCancel} className="cancel-btn">
                   <FaTimes /> Hủy
                 </button>
               </div>
@@ -1158,22 +1043,9 @@ const Profile = () => {
                     id="newDate"
                     value={newAppointmentDate}
                     onChange={(e) => setNewAppointmentDate(e.target.value)}
-                    min={
-                      calculateDateRange(
-                        appointmentToReschedule.appointmentDate
-                      ).min
-                    }
-                    max={
-                      calculateDateRange(
-                        appointmentToReschedule.appointmentDate
-                      ).max
-                    }
+                    min={new Date().toISOString().split("T")[0]} // Ngăn chọn ngày quá khứ
                     required
                   />
-                  <small className="date-range-info">
-                    (Bạn chỉ có thể chọn trong phạm vi 3 ngày trước và sau ngày
-                    hẹn ban đầu)
-                  </small>
                 </div>
                 <div className="form-group">
                   <label htmlFor="newTime">Chọn thời gian mới:</label>
@@ -1420,12 +1292,8 @@ const Profile = () => {
                   <strong>Mã cuộc hẹn:</strong> {selectedFeedback.appointmentId}
                 </p>
                 <p>
-                  <strong>Ngày tiêm:</strong>{" "}
-                  {formatDate(selectedFeedback.appointmentDate)}
-                </p>
-                <p>
                   <strong>Ngày đánh giá:</strong>{" "}
-                  {formatDate(selectedFeedback.createdDate)}
+                  {formatDate(selectedFeedback.appointmentDate)}
                 </p>
               </div>
               <div className="rating-section">
@@ -1446,9 +1314,7 @@ const Profile = () => {
               <div className="comment-section">
                 <p>Nhận xét của bạn:</p>
                 <div className="feedback-text">
-                  {selectedFeedback.feedbackText ||
-                    selectedFeedback.feedback ||
-                    "(Không có nhận xét)"}
+                  {selectedFeedback.feedbackText || "(Không có nhận xét)"}
                 </div>
               </div>
             </div>
@@ -1456,37 +1322,6 @@ const Profile = () => {
               <button
                 className="close-btn"
                 onClick={() => setShowViewFeedbackModal(false)}
-              >
-                Đóng
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Error Modal */}
-      {showErrorModal && (
-        <div className="modal-overlay">
-          <div className="error-modal">
-            <div className="modal-header">
-              <h3>Có lỗi xảy ra</h3>
-              <button
-                className="close-btn"
-                onClick={() => setShowErrorModal(false)}
-              >
-                ×
-              </button>
-            </div>
-            <div className="modal-content">
-              <div className="error-icon">
-                <FaTimes />
-              </div>
-              <p className="error-message">{errorMessage}</p>
-            </div>
-            <div className="modal-footer">
-              <button
-                className="close-btn"
-                onClick={() => setShowErrorModal(false)}
               >
                 Đóng
               </button>

@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
 import authService from '../service/AuthenService';
-import sessionService from '../service/sessionService';
 
 const AuthContext = createContext(null);
 
@@ -27,38 +26,11 @@ export const AuthProvider = ({ children }) => {
     const parsedUser = storedUser ? JSON.parse(storedUser) : null;
     const [user, setUser] = useState(parsedUser);
     const [token, setToken] = useState(storedToken);
-    const [staffInfo, setStaffInfo] = useState(null);
     
     console.log('🔍 AuthContext - Khởi tạo với:', { 
         token: token ? 'Có token' : 'Không có token', 
         user: user ? user.role : 'null' 
     });
-
-    const validateSession = async () => {
-        const currentToken = localStorage.getItem('authToken');
-        const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
-        
-        if (!currentToken || !currentUser) return false;
-        
-        try {
-            if (currentUser.role === 'STAFF') {
-                // Kiểm tra session staff
-                const staffSession = await sessionService.checkStaffSession();
-                if (staffSession && staffSession.success) {
-                    setStaffInfo(staffSession.body);
-                    return true;
-                }
-            } else if (currentUser.role === 'CUSTOMER') {
-                // Kiểm tra session customer
-                const customerSession = await sessionService.checkSession();
-                return customerSession && customerSession.success;
-            }
-            return false;
-        } catch (error) {
-            console.error('❌ Lỗi kiểm tra phiên làm việc:', error);
-            return false;
-        }
-    };
 
     useEffect(() => {
         const syncAuthState = () => {
@@ -109,6 +81,16 @@ export const AuthProvider = ({ children }) => {
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
+    // const login = async (response) => {
+    //     if (response.body?.token && response.body?.user) {
+    //         localStorage.setItem("authToken", response.body.token);
+    //         localStorage.setItem("loggedInCustomer", JSON.stringify(response.body.user));
+    //         setUser(response.body.user);
+    //         setToken(response.body.token);
+    //         window.dispatchEvent(new Event("storage"));
+    //     }
+    // };
+
     const login = async (response) => {
         if (response.body?.token && response.body?.user) {
             // Lưu token
@@ -129,18 +111,6 @@ export const AuthProvider = ({ children }) => {
             // Cập nhật state
             setUser(userData);
             setToken(response.body.token);
-
-            // Nếu là staff, lấy thêm thông tin chi tiết
-            if (userData.role === 'STAFF') {
-                try {
-                    const staffSession = await sessionService.checkStaffSession();
-                    if (staffSession && staffSession.success) {
-                        setStaffInfo(staffSession.body);
-                    }
-                } catch (error) {
-                    console.error('❌ Lỗi lấy thông tin staff:', error);
-                }
-            }
             
             console.log('✅ Đăng nhập thành công:', {
                 token: response.body.token.substring(0, 10) + '...',
@@ -162,7 +132,6 @@ export const AuthProvider = ({ children }) => {
             localStorage.removeItem('loggedInCustomer'); // Add this line
             setUser(null);
             setToken(null);
-            setStaffInfo(null); // Reset staff info
             // Notify other tabs
             window.dispatchEvent(new Event("storage"));
         }
@@ -198,10 +167,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, token, 
-            staffInfo, login, logout
-
-        }}>
+        <AuthContext.Provider value={{ user, token, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

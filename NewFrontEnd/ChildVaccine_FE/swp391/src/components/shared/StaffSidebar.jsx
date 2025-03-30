@@ -1,5 +1,5 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   FaCalendarCheck,
   FaSyringe,
@@ -7,11 +7,10 @@ import {
   FaClipboardList,
   FaExclamationCircle,
   FaSignOutAlt,
-  FaCalendarTimes,
-  FaCalendarAlt, // Thêm icon đăng xuất
-} from "react-icons/fa";
-import { useAuth } from "../../context/AuthContext"; // Thêm import useAuth
-import "../../styles/StaffStyles/StaffSidebar.css";
+  FaCalendarAlt // Thêm icon đăng xuất
+} from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext'; // Thêm import useAuth
+import '../../styles/StaffStyles/StaffSidebar.css';
 
 const StaffSidebar = () => {
   const location = useLocation();
@@ -23,8 +22,8 @@ const StaffSidebar = () => {
       await logout();
       setShowLogoutDialog(false);
       // Optional: Show logout success message
-      const modal = document.createElement("div");
-      modal.className = "success-modal";
+      const modal = document.createElement('div');
+      modal.className = 'success-modal';
       modal.innerHTML = `
         <div class="success-content">
           <h3>Đăng xuất thành công</h3>
@@ -36,52 +35,46 @@ const StaffSidebar = () => {
         document.body.removeChild(modal);
       }, 1500);
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error('Logout error:', error);
     }
   };
 
   const menuItems = [
     {
-      path: "/staff/schedule-info", // Add new path for ScheduleInfo
+      path: '/staff/appointment-info',
+      icon: <FaCalendarCheck />,
+      title: 'Quản lý buổi hẹn'
+    },
+    {
+      path: '/staff/schedule-info', // Add new path for ScheduleInfo
       icon: <FaCalendarAlt />,
-      title: "Quản lý lịch tiêm",
+      title: 'Quản lý lịch tiêm'
     },
     {
-      path: "/staff/child-profiles",
+      path: '/staff/child-profiles',
       icon: <FaUserMd />,
-      title: "Hồ sơ bệnh nhân",
+      title: 'Hồ sơ bệnh nhân'
     },
     {
-      path: "/staff/post-vaccination-info",
+      path: '/staff/post-vaccination-info',
       icon: <FaExclamationCircle />,
-      title: "Phản ứng sau tiêm",
-    },
-    {
-      path: "/staff/appointment-overdue",
-      icon: <FaCalendarTimes />,
-      title: "Buổi tiêm quá hẹn",
-    },
+      title: 'Phản ứng sau tiêm'
+    }
   ];
 
   return (
     <div className="staff-sidebar">
       <div className="sidebar-header">
-        <img
-          src="https://vnvc.vn/img/logo-tet-vnvc.png"
-          alt="Logo"
-          className="sidebar-logo"
-        />
+        <img src="https://vnvc.vn/img/logo-tet-vnvc.png" alt="Logo" className="sidebar-logo" />
         <h2>Trung tâm Tiêm chủng</h2>
       </div>
-
+      
       <nav className="sidebar-nav">
         {menuItems.map((item) => (
           <Link
             key={item.path}
             to={item.path}
-            className={`sidebar-link ${
-              location.pathname === item.path ? "active" : ""
-            }`}
+            className={`sidebar-link ${location.pathname === item.path ? 'active' : ''}`}
           >
             <span className="sidebar-icon">{item.icon}</span>
             <span className="sidebar-title">{item.title}</span>
@@ -96,10 +89,11 @@ const StaffSidebar = () => {
             <p className="staff-role">Y tá tiêm chủng</p>
           </div>
         </div>
-        <button className="logout-button" onClick={handleLogoutConfirm}>
-          <span className="sidebar-icon">
-            <FaSignOutAlt />
-          </span>
+        <button 
+          className="logout-button"
+          onClick={handleLogoutConfirm}
+        >
+          <span className="sidebar-icon"><FaSignOutAlt /></span>
           <span className="logout-title">Đăng xuất</span>
         </button>
       </div>

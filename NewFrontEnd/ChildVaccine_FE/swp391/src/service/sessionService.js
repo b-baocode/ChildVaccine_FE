@@ -39,7 +39,7 @@ class SessionService {
     
             console.log("Checking session with token:", token.substring(0, 10) + "...");
     
-            const response = await fetch(`${API_BASE_URL}/auth/customer/session-info`, {
+            const response = await fetch(`${API_BASE_URL}/auth/session-info`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -100,72 +100,6 @@ class SessionService {
         }
     }
     
-    async checkStaffSession() {
-      try {
-        const token = localStorage.getItem('authToken');
-        
-        if (!token) {
-          console.log('No token found in localStorage');
-          return { success: false, message: 'No authentication token found' };
-        }
-        
-        const response = await fetch(`${API_BASE_URL}/auth/staff/session-info`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include'
-        });
-        
-        if (!response.ok) {
-          const errorStatus = response.status;
-          const errorText = await response.text();
-          
-          console.error("Staff session check failed:", {
-            status: errorStatus,
-            message: errorText || `Session invalid (Status: ${errorStatus})`
-          });
-          
-          // Auto logout on session failure
-          console.log("🚨 Staff session invalid or expired! Logging out automatically...");
-          this.syncLogout();
-          
-          return { success: false, message: errorText || 'Session validation failed' };
-        }
-        
-        // API trả về đối tượng staff với thông tin user bên trong
-        const staffData = await response.json();
-        
-        // Kiểm tra tính hợp lệ của dữ liệu
-        if (!staffData || !staffData.id || !staffData.user || staffData.user.role !== 'STAFF') {
-          console.error('Invalid staff data returned or not a staff role');
-          return { success: false, message: 'Invalid staff data or role' };
-        }
-        
-        console.log("✅ Staff session verified:", staffData);
-        
-        // Format lại response để phù hợp với cấu trúc dùng trong hệ thống
-        return {
-          success: true,
-          message: 'Staff session active',
-          body: {
-            staffId: staffData.id,
-            userId: staffData.user.id,
-            email: staffData.user.email,
-            fullName: staffData.user.fullName,
-            phone: staffData.user.phone,
-            department: staffData.department,
-            role: staffData.user.role,
-            qualification: staffData.qualification,
-            specialization: staffData.specialization
-          }
-        };
-      } catch (error) {
-        console.error('Error checking staff session:', error);
-        return { success: false, message: error.message };
-      }
-    }
     
     saveSession(sessionData) {
         if (!sessionData?.body) return;
@@ -255,6 +189,42 @@ class SessionService {
         const token = localStorage.getItem('authToken');
         const sessionData = localStorage.getItem('sessionData');
         return !!(token && sessionData);
+    }
+
+        // sessionService.js - thêm phương thức này nếu chưa có
+    async checkStaffSession() {
+      try {
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+          console.log('No token found in localStorage');
+          return null;
+        }
+        
+        const response = await fetch(`${API_BASE_URL}/auth/staff/session-info`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.message || 'Phiên đăng nhập đã hết hạn');
+        }
+        
+        // Kiểm tra xem người dùng có role là STAFF không
+        if (data.body && data.body.role === 'STAFF') {
+          return data;
+        } else {
+          throw new Error('Phiên đăng nhập không hợp lệ cho nhân viên');
+        }
+      } catch (error) {
+        console.error('Error checking staff session:', error);
+        throw error;
+      }
     }
 }
 

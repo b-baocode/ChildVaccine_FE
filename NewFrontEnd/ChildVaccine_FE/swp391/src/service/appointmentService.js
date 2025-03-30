@@ -391,14 +391,13 @@ const appointmentService = {
                 headers: Object.fromEntries(response.headers.entries()),
                 data: data,
             });
-    
-            // Đơn giản hóa: luôn trả về thành công nếu không có exception
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to update status');
+            }
+
             console.log('✅ Status Updated Successfully:', data);
-            return {
-                ok: true,
-                message: 'Cập nhật trạng thái thành công',
-                appointment: data
-            };
+            return data.appointment;
         } catch (error) {
             console.error('❌ Error Updating Status:', {
                 message: error.message,
@@ -436,54 +435,6 @@ const appointmentService = {
           console.error('Error rescheduling appointment:', error);
           return { ok: false, message: error.message || 'Đã xảy ra lỗi khi dời lịch hẹn' };
         }
-    },
-
-    getPastAppointments: async () => {
-      try {
-        const token = localStorage.getItem('authToken');
-    
-        const response = await fetch(`${API_BASE_URL}/appointment/past-appointments`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-    
-        if (!response.ok) {
-          throw new Error('Failed to fetch past appointments');
-        }
-    
-        const data = await response.json();
-        return { ok: true, appointments: data };
-      } catch (error) {
-        console.error('Error fetching past appointments:', error);
-        return { ok: false, message: error.message };
-      }
-    },
-
-    sendReminderEmails: async (customerId) => {
-      try {
-        const token = localStorage.getItem('authToken');
-        const response = await fetch(`${API_BASE_URL}/appointment/send-reminder-emails/${customerId}`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-    
-        const data = await response.json();
-        console.log('📧 Reminder Email Response:', {
-          status: response.status,
-          data: data
-        });
-    
-        return { ok: response.ok, data };
-      } catch (error) {
-        console.error('Error sending reminder emails:', error);
-        return { ok: false, message: error.message };
-      }
     }
 };
 

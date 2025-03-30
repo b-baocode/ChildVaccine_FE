@@ -18,7 +18,6 @@ import appointmentService from "../../service/appointmentService";
 import scheduleService from "../../service/scheduleService";
 import recordService from "../../service/recordService";
 import paymentService from "../../service/paymentService";
-import sessionService from "../../service/sessionService";
 import style from "../../styles/StaffStyles/ScheduleDetail.css";
 
 const ScheduleDetail = () => {
@@ -59,40 +58,6 @@ const ScheduleDetail = () => {
   const [newAppointmentDate, setNewAppointmentDate] = useState("");
   const [newAppointmentTime, setNewAppointmentTime] = useState("");
   const [reschedulingAppointment, setReschedulingAppointment] = useState(false);
-
-  const [currentStaffId, setCurrentStaffId] = useState("S001"); // Default value
-
-  useEffect(() => {
-    const getCurrentUser = async () => {
-      try {
-        // Lấy dữ liệu session sử dụng phương thức async
-        const sessionData = await sessionService.checkStaffSession();
-        console.log("🔑 Session Data:", sessionData);
-
-        if (!sessionData) {
-          console.error("Không tìm thấy thông tin phiên");
-          return;
-        }
-
-        // Truy cập staffId từ cấu trúc mới (nằm trong body.user.id)
-        if (
-          sessionData.body &&
-          sessionData.body.user &&
-          sessionData.body.user.id
-        ) {
-          const staffId = sessionData.body.user.id;
-          setCurrentStaffId(staffId);
-          console.log("Staff ID from session:", staffId);
-        } else {
-          console.warn("Không tìm thấy ID nhân viên trong phiên làm việc");
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy thông tin phiên:", error);
-      }
-    };
-
-    getCurrentUser();
-  }, []);
 
   // Trong useEffect khi tải dữ liệu, thêm phần tải records
   useEffect(() => {
@@ -271,7 +236,7 @@ const ScheduleDetail = () => {
 
     const { appointmentId, newStatus } = pendingStatusChange;
 
-    // Vẫn giữ lại các kiểm tra điều kiện hợp lệ trước khi gọi API
+    // Lấy thông tin về appointment hiện tại
     const currentAppointment = appointments.find(
       (app) => app.appId === appointmentId
     );
@@ -315,37 +280,83 @@ const ScheduleDetail = () => {
     }
 
     try {
-      // Gọi API cập nhật trạng thái
-      await appointmentService.updateAppointmentStatus(
+      // Cập nhật trạng thái appointment
+      const result = await appointmentService.updateAppointmentStatus(
         appointmentId,
         newStatus
       );
+      console.log("Update appointment status result:", result.status);
 
-      // Đơn giản hóa: không kiểm tra kết quả, cứ cho là thành công luôn
-      // Hiển thị thông báo thành công
-      setShowSuccessMessage(true);
-      setTimeout(() => setShowSuccessMessage(false), 3000);
-
-      // Cập nhật UI với dữ liệu mới
-      setAppointments(
-        appointments.map((app) =>
+      if ((result.status = "COMPLETED")) {
+        // Cập nhật state appointments
+        const updatedAppointments = appointments.map((app) =>
           app.appId === appointmentId ? { ...app, status: newStatus } : app
-        )
-      );
+        );
 
-      // Nếu đã chuyển sang COMPLETED, kiểm tra và cập nhật trạng thái schedule nếu cần
-      if (newStatus === "COMPLETED") {
-        try {
+        // Cập nhật trạng thái các appointment khác nếu CANCELLED
+        let finalAppointments = [...updatedAppointments];
+
+        if (newStatus === "CANCELLED") {
+          // Nếu hủy một lịch hẹn, hủy tất cả các lịch hẹn khác chưa hoàn thành
+          const appointmentsToCancel = finalAppointments.filter(
+            (app) =>
+              app.appId !== appointmentId &&
+              app.status !== "COMPLETED" &&
+              app.status !== "CANCELLED"
+          );
+
+          for (const app of appointmentsToCancel) {
+            await appointmentService.updateAppointmentStatus(
+              app.appId,
+              "CANCELLED"
+            );
+          }
+
+          finalAppointments = finalAppointments.map((app) =>
+            app.status !== "COMPLETED" && app.status !== "CANCELLED"
+              ? { ...app, status: "CANCELLED" }
+              : app
+          );
+
+          // Cập nhật schedule thành CANCELLED
+          if (schedule.status !== "CANCELLED") {
+            await scheduleService.updateScheduleStatus(scheduleId, "CANCELLED");
+            setSchedule({ ...schedule, status: "CANCELLED" });
+          }
+        }
+
+        // Cập nhật trạng thái schedule nếu appointment được đánh dấu COMPLETED
+        // Sử dụng API updateStatusIfCompleted thay vì kiểm tra thủ công
+        if (newStatus === "COMPLETED") {
+          console.log(
+            `Kiểm tra trạng thái cho schedule ${scheduleId} sau khi cập nhật appointment thành COMPLETED`
+          );
+
           const updateResult = await scheduleService.updateStatusIfCompleted(
             scheduleId
           );
+
           if (updateResult.ok && updateResult.updated) {
-            // Nếu schedule cũng đã hoàn thành, cập nhật state schedule
+            console.log("Schedule đã được cập nhật thành COMPLETED");
             setSchedule((prev) => ({ ...prev, status: "COMPLETED" }));
+          } else {
+            console.log(
+              "Schedule chưa đủ điều kiện để cập nhật thành COMPLETED"
+            );
           }
-        } catch (error) {
-          console.error("Error checking schedule completion:", error);
         }
+
+        setAppointments(finalAppointments);
+
+        // Hiển thị thông báo thành công
+        setShowSuccessMessage(true);
+        setTimeout(() => setShowSuccessMessage(false), 3000);
+      } else {
+        const errorMessage =
+          result.message || "Không có thông tin lỗi chi tiết";
+        console.error(`Lỗi cập nhật trạng thái: ${errorMessage}`);
+        setWarningMessage(`Không thể cập nhật trạng thái: ${errorMessage}`);
+        setShowWarningModal(true);
       }
     } catch (error) {
       console.error("Error updating appointment status:", error);
@@ -500,7 +511,7 @@ const ScheduleDetail = () => {
             appointmentDate:
               latestRecord.appointmentDate ||
               new Date().toISOString().split("T")[0],
-            staffId: latestRecord.staff?.id || currentStaffId,
+            staffId: latestRecord.staff?.id || "S001",
           });
           setIsViewOnly(true); // Bật chế độ chỉ xem
           setShowRecordModal(true);
@@ -513,7 +524,7 @@ const ScheduleDetail = () => {
             appointmentDate:
               recordData.appointmentDate ||
               new Date().toISOString().split("T")[0],
-            staffId: recordData.staff?.id || currentStaffId,
+            staffId: recordData.staff?.id || "S001",
           });
           setIsViewOnly(true); // Bật chế độ chỉ xem
           setShowRecordModal(true);
@@ -523,7 +534,7 @@ const ScheduleDetail = () => {
             symptoms: "",
             notes: "",
             appointmentDate: new Date().toISOString().split("T")[0],
-            staffId: currentStaffId,
+            staffId: "S001",
           });
           setIsViewOnly(false); // Cho phép chỉnh sửa
           setShowRecordModal(true);
@@ -534,7 +545,7 @@ const ScheduleDetail = () => {
           symptoms: "",
           notes: "",
           appointmentDate: new Date().toISOString().split("T")[0],
-          staffId: currentStaffId,
+          staffId: "S001",
         });
         setIsViewOnly(false); // Cho phép chỉnh sửa
         setShowRecordModal(true);
@@ -646,35 +657,9 @@ const ScheduleDetail = () => {
   // Hàm mở modal dời lịch
   const handleOpenRescheduleModal = (appointment) => {
     setAppointmentToReschedule(appointment);
-    setNewAppointmentDate(appointment.appointmentDate);
+    setNewAppointmentDate("");
     setNewAppointmentTime("");
     setShowRescheduleModal(true);
-  };
-
-  const calculateDateRange = (baseDate) => {
-    if (!baseDate) return { min: null, max: null };
-
-    const date = new Date(baseDate);
-
-    // Tính 3 ngày trước
-    const minDate = new Date(date);
-    minDate.setDate(date.getDate() - 3);
-
-    // Tính 3 ngày sau
-    const maxDate = new Date(date);
-    maxDate.setDate(date.getDate() + 3);
-
-    // Đảm bảo không chọn ngày quá khứ
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    return {
-      min:
-        minDate < today
-          ? today.toISOString().split("T")[0]
-          : minDate.toISOString().split("T")[0],
-      max: maxDate.toISOString().split("T")[0],
-    };
   };
 
   // Hàm đóng modal dời lịch
@@ -739,14 +724,6 @@ const ScheduleDetail = () => {
     }
   };
 
-  const calculatePendingTotal = () => {
-    return appointments
-      .filter(
-        (app) => app.paymentStatus === "PENDING" && app.status !== "CANCELLED"
-      )
-      .reduce((total, app) => total + (parseFloat(app.price) || 0), 0);
-  };
-
   return (
     <div className="schedule-detail">
       <div className="header-section">
@@ -809,12 +786,6 @@ const ScheduleDetail = () => {
                   <span className="value">{schedule.totalShot}</span>
                 </div>
                 <div className="summary-item">
-                  <span className="label">Tổng chi phí:</span>
-                  <span className="value">
-                    {calculatePendingTotal().toLocaleString()} VNĐ
-                  </span>
-                </div>
-                <div className="summary-item">
                   <span className="label">Trạng thái:</span>
                   <span
                     className={`status-badge ${schedule.status.toLowerCase()}`}
@@ -852,7 +823,6 @@ const ScheduleDetail = () => {
                     <th>Vắc xin</th>
                     <th>Ngày hẹn</th>
                     <th>Giờ hẹn</th>
-                    <th>Giá</th>
                     <th>Trạng thái</th>
                     <th>Thanh toán</th>
                     <th>Thao tác</th>
@@ -875,7 +845,6 @@ const ScheduleDetail = () => {
                       <td>{appointment.serviceName || "-"}</td>
                       <td>{formatDate(appointment.appointmentDate)}</td>
                       <td>{formatTime(appointment.appointmentTime)}</td>
-                      <td>{appointment.price}</td>
                       <td>
                         <span
                           className={getStatusBadgeClass(appointment.status)}
@@ -1199,28 +1168,14 @@ const ScheduleDetail = () => {
               <div className="reschedule-section">
                 <div className="form-group">
                   <label htmlFor="newDate">Chọn ngày mới:</label>
-                  {/* Tính toán range và áp dụng vào input */}
                   <input
                     type="date"
                     id="newDate"
                     value={newAppointmentDate}
                     onChange={(e) => setNewAppointmentDate(e.target.value)}
-                    min={
-                      calculateDateRange(
-                        appointmentToReschedule.appointmentDate
-                      ).min
-                    }
-                    max={
-                      calculateDateRange(
-                        appointmentToReschedule.appointmentDate
-                      ).max
-                    }
+                    min={new Date().toISOString().split("T")[0]}
                     required
                   />
-                  <small className="date-range-info">
-                    (Bạn chỉ có thể chọn trong phạm vi 3 ngày trước và sau ngày
-                    hẹn ban đầu)
-                  </small>
                 </div>
                 <div className="form-group">
                   <label htmlFor="newTime">Chọn thời gian mới:</label>

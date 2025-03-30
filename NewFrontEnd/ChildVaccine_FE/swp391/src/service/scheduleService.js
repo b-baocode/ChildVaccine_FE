@@ -58,7 +58,6 @@ const scheduleService = {
             return {ok: false, message: error.message};
         }
     },
-
     getSchedulesByCustomerId: async (cusId) => {
         try {
             const token = localStorage.getItem('authToken');
@@ -86,42 +85,6 @@ const scheduleService = {
             console.error('Error fetching customer schedules:', error);
             return {ok: false, message: error.message};
         }
-    },
-
-    getSchedulesByPhoneNumber: async (phoneNumber) => {
-      try {
-        const token = localStorage.getItem('authToken');
-        if (!phoneNumber || phoneNumber.trim() === '') {
-          return { ok: false, message: 'Vui lòng nhập số điện thoại' };
-        }
-    
-        const response = await fetch(`${BASE_URL}/by-phone/${phoneNumber}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': token ? `Bearer ${token}` : '',
-            'Content-Type': 'application/json',
-          },
-        });
-    
-        if (!response.ok) {
-          return {
-            ok: false,
-            message: `Lỗi khi tìm kiếm lịch tiêm: ${response.status}`,
-          };
-        }
-    
-        const data = await response.json();
-        return {
-          ok: true,
-          schedules: data,
-        };
-      } catch (error) {
-        console.error('Error fetching schedules by phone number:', error);
-        return {
-          ok: false,
-          message: error.message || 'Lỗi khi tìm kiếm lịch tiêm theo số điện thoại',
-        };
-      }
     },
 
     updateScheduleStatus: async (scheduleId, newStatus) => {

@@ -45,40 +45,38 @@ const PaymentResult = () => {
   }, []);
 
   // Countdown timer and redirect
-  useEffect(() => {
-    // Only start countdown when loading is complete
-    if (!loading) {
-      const timer = setInterval(() => {
-        setCountdown((prevCount) => {
-          if (prevCount <= 1) {
-            clearInterval(timer);
+  // useEffect(() => {
+  //   // Only start countdown when loading is complete
+  //   if (!loading) {
+  //     const timer = setInterval(() => {
+  //       setCountdown((prevCount) => {
+  //         if (prevCount <= 1) {
+  //           clearInterval(timer);
 
-            // Cố gắng đóng tab khi hết đếm ngược
-            try {
-              window.close();
+  //           // Cố gắng đóng tab khi hết đếm ngược
+  //           try {
+  //             window.close();
 
-              // Phòng trường hợp đóng tab không thành công thì chuyển về trang chủ
-              // Sau một khoảng thời gian nhỏ
-              setTimeout(() => {
-                navigate("/staff/schedule-info");
-              }, 500);
-            } catch (error) {
-              console.log(
-                "Không thể đóng tab tự động, chuyển hướng về trang chủ"
-              );
-              navigate("/");
-            }
+  //             // Phòng trường hợp đóng tab không thành công thì chuyển về trang chủ
+  //             // Sau một khoảng thời gian nhỏ
+  //             setTimeout(() => {
+  //               navigate('/staff/schedule-info');
+  //             }, 500);
+  //           } catch (error) {
+  //             console.log('Không thể đóng tab tự động, chuyển hướng về trang chủ');
+  //             navigate('/');
+  //           }
 
-            return 0;
-          }
-          return prevCount - 1;
-        });
-      }, 1000);
+  //           return 0;
+  //         }
+  //         return prevCount - 1;
+  //       });
+  //     }, 1000);
 
-      // Cleanup timer on component unmount
-      return () => clearInterval(timer);
-    }
-  }, [loading, navigate]);
+  //     // Cleanup timer on component unmount
+  //     return () => clearInterval(timer);
+  //   }
+  // }, [loading, navigate]);
 
   if (loading) {
     return <div className="payment-result loading">Đang tải thông tin...</div>;

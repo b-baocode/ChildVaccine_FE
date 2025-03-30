@@ -329,37 +329,6 @@
   animation: stroke .3s cubic-bezier(0.65, 0, 0.45, 1) .8s forwards;
 }
 
-.input-error {
-  border: 2px solid #dc3545 !important;
-  background-color: #fff8f8;
-}
-
-.error-text {
-  color: #dc3545;
-  font-size: 0.8rem;
-  margin-top: 4px;
-  display: block;
-  font-weight: 500;
-}
-
-.validation-summary {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px 15px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  border: 1px solid #f5c6cb;
-}
-
-.validation-summary ul {
-  margin: 5px 0 0 20px;
-  padding: 0;
-}
-
-.validation-summary li {
-  margin-bottom: 3px;
-}
-
 @keyframes stroke {
   100% {
     stroke-dashoffset: 0;

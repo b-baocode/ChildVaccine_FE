@@ -23,7 +23,6 @@ import PostVaccinationInfo from './components/StaffComponent/PostVaccinationInfo
 import ChildProfilesList from './components/StaffComponent/StaffChildProfiles';
 import ScheduleInfo from './components/StaffComponent/ScheduleInfo';
 import ScheduleDetail from './components/StaffComponent/ScheduleDetail';
-import AppointmentOverdue from './components/StaffComponent/AppointmentOverdue';
 
 import AdminLayout from './layouts/AdminLayout';
 import Dashbroad from './components/AdminComponent/Dashbroad';
@@ -102,7 +101,6 @@ const AppWrapper = () => {
               </ProtectedRoute>
             }>
               <Route path="appointment-info" element={<AppointmentInfo />} />
-              <Route path="appointment-overdue" element={<AppointmentOverdue />} />
               <Route path="post-vaccination-info" element={<PostVaccinationInfo />} />
               <Route path="child-profiles" element={<ChildProfilesList />} />
               <Route path="schedule-info" element={<ScheduleInfo />} />

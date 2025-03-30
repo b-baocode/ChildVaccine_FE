@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaSave } from "react-icons/fa";
-import childService from "../../service/childService";
-import sessionService from "../../service/sessionService";
-import "../../styles/CusStyles/AddChildForm.css";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft, FaSave } from 'react-icons/fa';
+import childService from '../../service/childService';
+import sessionService from '../../service/sessionService';
+import '../../styles/CusStyles/AddChildForm.css';
 
 const AddChildForm = () => {
   const navigate = useNavigate();
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
   const [childInfo, setChildInfo] = useState({
-    fullName: "",
-    dateOfBirth: "",
-    gender: "MALE",
-    height: "",
-    weight: "",
-    bloodType: "",
-    allergies: "",
-    healthNote: "",
+    fullName: '',
+    dateOfBirth: '',
+    gender: 'MALE',
+    height: '',
+    weight: '',
+    bloodType: '',
+    allergies: '',
+    healthNote: ''
   });
 
   // Fetch session data when the component mounts
@@ -27,12 +27,10 @@ const AddChildForm = () => {
       try {
         const sessionData = await sessionService.checkSession();
         if (!sessionData || !sessionData.body.cusId) {
-          setError(
-            "Không thể tìm thấy thông tin khách hàng. Vui lòng đăng nhập lại."
-          );
+          setError('Không thể tìm thấy thông tin khách hàng. Vui lòng đăng nhập lại.');
         }
       } catch (err) {
-        setError("Lỗi khi kiểm tra session: " + err.message);
+        setError('Lỗi khi kiểm tra session: ' + err.message);
       }
     };
     fetchSession();
@@ -40,18 +38,9 @@ const AddChildForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     if (!validateForm()) {
-      // Cuộn đến lỗi đầu tiên
-      const firstErrorField = Object.keys(validationErrors)[0];
-      const errorElement = document.querySelector(
-        `[name="${firstErrorField}"]`
-      );
-      if (errorElement) {
-        errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
-        errorElement.focus();
-      }
       return;
     }
 
@@ -60,105 +49,69 @@ const AddChildForm = () => {
       const cusId = sessionData.body.cusId;
 
       if (!cusId) {
-        setError("Không thể tìm thấy ID khách hàng. Vui lòng đăng nhập lại.");
+        setError('Không thể tìm thấy ID khách hàng. Vui lòng đăng nhập lại.');
         return;
       }
 
       const genderMapping = {
         MALE: "0",
         FEMALE: "1",
-        OTHER: "2",
+        OTHER: "2"
       };
 
       const formattedData = {
         ...childInfo,
         height: parseFloat(childInfo.height) || 0,
         weight: parseFloat(childInfo.weight) || 0,
-        gender: genderMapping[childInfo.gender] || childInfo.gender,
+        gender: genderMapping[childInfo.gender] || childInfo.gender
       };
 
       // Call the service and handle the plain text response
       const response = await childService.addChildProfile(formattedData);
-      console.log("Response from addChildProfile:", response); // Should log "Thêm trẻ thành công"
+      console.log('Response from addChildProfile:', response); // Should log "Thêm trẻ thành công"
 
       setShowSuccessMessage(true);
       setTimeout(() => {
         navigate(-1); // Navigate back to the previous page after 2 seconds
       }, 2000);
     } catch (err) {
-      setError(err.message || "Có lỗi xảy ra khi thêm hồ sơ trẻ");
-      console.error("Error adding child:", err);
+      setError(err.message || 'Có lỗi xảy ra khi thêm hồ sơ trẻ');
+      console.error('Error adding child:', err);
     }
   };
 
   const validateForm = () => {
     const errors = {};
-
-    // Validate fullName
-    if (!childInfo.fullName.trim()) {
-      errors.fullName = "Vui lòng nhập tên của trẻ";
-    } else if (childInfo.fullName.trim().length < 2) {
-      errors.fullName = "Tên của trẻ phải có ít nhất 2 ký tự";
-    }
-
-    // Date of birth validation
-    if (!childInfo.dateOfBirth) {
-      errors.dateOfBirth = "Vui lòng chọn ngày sinh";
-    } else {
-      const birthDate = new Date(childInfo.dateOfBirth);
-      const today = new Date();
-      const year2000 = new Date("2000-01-01");
-
-      if (birthDate <= year2000) {
-        errors.dateOfBirth = "Ngày sinh phải sau năm 2000";
-      }
-
-      if (birthDate > today) {
-        errors.dateOfBirth = "Ngày sinh không thể trong tương lai";
-      }
-    }
-
+    
     // Height validation
-    if (!childInfo.height) {
-      errors.height = "Vui lòng nhập chiều cao";
-    } else if (isNaN(parseFloat(childInfo.height))) {
-      errors.height = "Chiều cao phải là số";
-    } else if (parseFloat(childInfo.height) <= 0) {
-      errors.height = "Chiều cao phải lớn hơn 0";
-    } else if (parseFloat(childInfo.height) > 200) {
-      errors.height = "Chiều cao không được quá 200 cm";
+    if (parseFloat(childInfo.height) > 200) {
+      errors.height = 'Chiều cao không được quá 200 cm';
     }
-
+    
     // Weight validation
-    if (!childInfo.weight) {
-      errors.weight = "Vui lòng nhập cân nặng";
-    } else if (isNaN(parseFloat(childInfo.weight))) {
-      errors.weight = "Cân nặng phải là số";
-    } else if (parseFloat(childInfo.weight) <= 0) {
-      errors.weight = "Cân nặng phải lớn hơn 0";
-    } else if (parseFloat(childInfo.weight) > 100) {
-      errors.weight = "Cân nặng không được quá 100 kg";
+    if (parseFloat(childInfo.weight) > 100) {
+      errors.weight = 'Cân nặng không được quá 100 kg';
     }
-
+    
+    // Date of birth validation
+    const birthDate = new Date(childInfo.dateOfBirth);
+    const year2000 = new Date('2000-12-31');
+    if (birthDate <= year2000) {
+      errors.dateOfBirth = 'Ngày sinh phải sau năm 2000';
+    }
+    
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setChildInfo((prev) => ({
+    setChildInfo(prev => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
-
-    // Xóa lỗi validation nếu người dùng đã sửa
-    if (validationErrors[name]) {
-      setValidationErrors((prev) => ({
-        ...prev,
-        [name]: undefined,
-      }));
-    }
   };
+
   const handleBack = () => {
     navigate(-1); // Navigate back to the previous page
   };
@@ -177,39 +130,17 @@ const AddChildForm = () => {
           <div className="success-modal">
             <div className="success-icon">
               <svg viewBox="0 0 52 52" className="checkmark">
-                <circle
-                  className="checkmark-circle"
-                  cx="26"
-                  cy="26"
-                  r="25"
-                  fill="none"
-                />
-                <path
-                  className="checkmark-check"
-                  fill="none"
-                  d="M14.1 27.2l7.1 7.2 16.7-16.8"
-                />
+                <circle className="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                <path className="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
               </svg>
             </div>
             <div className="success-title">Thành công!</div>
-            <div className="success-message">
-              Hồ sơ trẻ đã được lưu thành công
-            </div>
+            <div className="success-message">Hồ sơ trẻ đã được lưu thành công</div>
           </div>
         </div>
       )}
 
       {error && <div className="error-message">{error}</div>}
-      {Object.keys(validationErrors).length > 0 && (
-        <div className="validation-summary">
-          <p>Vui lòng sửa các lỗi sau để tiếp tục:</p>
-          <ul>
-            {Object.values(validationErrors).map((error, index) => (
-              <li key={index}>{error}</li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="add-child-form">
         <div className="form-section">
@@ -221,12 +152,8 @@ const AddChildForm = () => {
               name="fullName"
               value={childInfo.fullName}
               onChange={handleChange}
-              className={validationErrors.fullName ? "input-error" : ""}
               required
             />
-            {validationErrors.fullName && (
-              <span className="error-text">{validationErrors.fullName}</span>
-            )}
           </div>
 
           <div className="form-row">
@@ -238,13 +165,11 @@ const AddChildForm = () => {
                 value={childInfo.dateOfBirth}
                 onChange={handleChange}
                 required
-                max={new Date().toISOString().split("T")[0]} // Lấy ngày hiện tại
-                className={validationErrors.dateOfBirth ? "input-error" : ""}
+                max="2025-03-11" // Today's date to prevent future dates
+                className={validationErrors.dateOfBirth ? 'input-error' : ''}
               />
               {validationErrors.dateOfBirth && (
-                <span className="error-text">
-                  {validationErrors.dateOfBirth}
-                </span>
+                <span className="error-text">{validationErrors.dateOfBirth}</span>
               )}
             </div>
             <div className="form-group">
@@ -287,7 +212,7 @@ const AddChildForm = () => {
                 min="1"
                 max="200"
                 required
-                className={validationErrors.height ? "input-error" : ""}
+                className={validationErrors.height ? 'input-error' : ''}
               />
               {validationErrors.height && (
                 <span className="error-text">{validationErrors.height}</span>
@@ -304,7 +229,7 @@ const AddChildForm = () => {
                 step="any"
                 max="100"
                 required
-                className={validationErrors.weight ? "input-error" : ""}
+                className={validationErrors.weight ? 'input-error' : ''}
               />
               {validationErrors.weight && (
                 <span className="error-text">{validationErrors.weight}</span>
