@@ -1,93 +1,154 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { FaUserCircle, FaNotesMedical, FaRuler, FaWeight, FaSearch } from 'react-icons/fa';
-import childService from '../../service/childService';
-import '../../styles/StaffStyles/StaffChildProfiles.css';
-import appointmentService from '../../service/appointmentService';
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams } from "react-router-dom";
+import {
+  FaUserCircle,
+  FaNotesMedical,
+  FaRuler,
+  FaWeight,
+  FaSearch,
+} from "react-icons/fa";
+import childService from "../../service/childService";
+import "../../styles/StaffStyles/StaffChildProfiles.css";
+import appointmentService from "../../service/appointmentService";
 
 const StaffChildProfile = () => {
-    const { id } = useParams();
-    const [activeTab, setActiveTab] = useState('profile');
-    const [childData, setChildData] = useState(null);
-    const [childrenProfiles, setChildrenProfiles] = useState([]);
-    const [childMedicalRecords, setChildMedicalRecords] = useState([]);
-    const [selectedChildId, setSelectedChildId] = useState(id || '');
-    const [searchTerm, setSearchTerm] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [appointments, setAppointments] = useState([]);
+  const { id } = useParams();
+  const [activeTab, setActiveTab] = useState("profile");
+  const [childData, setChildData] = useState(null);
+  const [childrenProfiles, setChildrenProfiles] = useState([]);
+  const [childMedicalRecords, setChildMedicalRecords] = useState([]);
+  const [selectedChildId, setSelectedChildId] = useState(id || "");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [appointments, setAppointments] = useState([]);
+  const [exactIdSearch, setExactIdSearch] = useState("");
 
-    useEffect(() => {
-      const fetchChildren = async () => {
-          try {
-              setLoading(true);
-              const data = await childService.getAllChildren();
-  
-              const transformedData = data.map(child => ({
-                  child_id: child.childId,
-                  cus_id: child.customerId,
-                  full_name: child.fullName,
-                  date_of_birth: child.dateOfBirth,
-                  gender: child.gender === 'MALE' ? 'Nam' : 
-                         child.gender === 'FEMALE' ? 'Nữ' : 'Khác',
-                  height: child.height || 0,
-                  weight: child.weight || 0,
-                  blood_type: child.bloodType || 'Chưa xác định',
-                  allergies: child.allergies || 'Không',
-                  health_note: child.healthNote || 'Không có ghi chú'
-              }));
-  
-              console.log('Transformed children data:', transformedData);
-              setChildrenProfiles(transformedData);
-              
-              // Chỉ set selectedChildId nếu chưa có giá trị
-              if (!selectedChildId && transformedData.length > 0) {
-                  setSelectedChildId(transformedData[0].child_id);
-              }
-          } catch (err) {
-              console.error('Error fetching children:', err);
-              setError('Không thể tải danh sách trẻ');
-          } finally {
-              setLoading(false);
-          }
-      };
-  
-      fetchChildren();
-    }, []);// Empty dependency array as this should only run once on mount
+  const handleSearchChange = useCallback((e) => {
+    setSearchTerm(e.target.value);
+
+    if (e.target.value === "") {
+      setExactIdSearch("");
+      setError(null);
+    }
+  }, []);
+
+  const handleSearchById = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!searchTerm.trim()) {
+        setExactIdSearch("");
+        return;
+      }
+
+      const isId = /^\d+$/.test(searchTerm.trim());
+      if (isId) {
+        setExactIdSearch(searchTerm.trim());
+
+        const foundChild = childrenProfiles.find(
+          (child) => child.child_id.toString() === searchTerm.trim()
+        );
+
+        if (foundChild) {
+          setError(null);
+          setSelectedChildId(foundChild.child_id);
+        } else {
+          setError(`Không tìm thấy trẻ với ID: ${searchTerm}`);
+        }
+      } else {
+        setExactIdSearch("");
+      }
+    },
+    [searchTerm, childrenProfiles]
+  );
+
+  useEffect(() => {
+    const fetchChildren = async () => {
+      try {
+        setLoading(true);
+        const data = await childService.getAllChildren();
+
+        const transformedData = data.map((child) => ({
+          child_id: child.childId,
+          cus_id: child.customerId,
+          full_name: child.fullName,
+          date_of_birth: child.dateOfBirth,
+          gender:
+            child.gender === "MALE"
+              ? "Nam"
+              : child.gender === "FEMALE"
+              ? "Nữ"
+              : "Khác",
+          height: child.height || 0,
+          weight: child.weight || 0,
+          blood_type: child.bloodType || "Chưa xác định",
+          allergies: child.allergies || "Không",
+          health_note: child.healthNote || "Không có ghi chú",
+        }));
+
+        console.log("Transformed children data:", transformedData);
+        setChildrenProfiles(transformedData);
+
+        // Chỉ set selectedChildId nếu chưa có giá trị
+        if (!selectedChildId && transformedData.length > 0) {
+          setSelectedChildId(transformedData[0].child_id);
+        }
+      } catch (err) {
+        console.error("Error fetching children:", err);
+        setError("Không thể tải danh sách trẻ");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChildren();
+  }, []); // Empty dependency array as this should only run once on mount
 
   // Second useEffect to handle selected child changes
   useEffect(() => {
     if (!selectedChildId && childrenProfiles.length > 0) {
-        setSelectedChildId(childrenProfiles[0].child_id);
-    } 
+      setSelectedChildId(childrenProfiles[0].child_id);
+    }
   }, [childrenProfiles]); // Chạy khi danh sách trẻ em thay đổi
 
   useEffect(() => {
     const fetchAppointments = async () => {
-        if (selectedChildId) {
-            try {
-                const appointmentsData = await appointmentService.getAppointmentsByChildId(selectedChildId);
-                setAppointments(appointmentsData);
-            } catch (error) {
-                console.error('Error fetching appointments:', error);
-            }
+      if (selectedChildId) {
+        try {
+          const appointmentsData =
+            await appointmentService.getAppointmentsByChildId(selectedChildId);
+          setAppointments(appointmentsData);
+        } catch (error) {
+          console.error("Error fetching appointments:", error);
         }
+      }
     };
 
     fetchAppointments();
-}, [selectedChildId]);
+  }, [selectedChildId]);
 
-useEffect(() => {
+  useEffect(() => {
     if (selectedChildId) {
-        const selectedChild = childrenProfiles.find(child => child.child_id === selectedChildId);
-        setChildData(selectedChild || null);
+      const selectedChild = childrenProfiles.find(
+        (child) => child.child_id === selectedChildId
+      );
+      setChildData(selectedChild || null);
     }
-}, [selectedChildId, childrenProfiles]);
+  }, [selectedChildId, childrenProfiles]);
 
-  const filteredChildren = childrenProfiles.filter(child =>
+  // Thay đổi cách lọc danh sách trẻ em
+  const filteredChildren = childrenProfiles.filter((child) => {
+    // Nếu đang tìm kiếm chính xác theo ID
+    if (exactIdSearch) {
+      return child.child_id.toString() === exactIdSearch;
+    }
+
+    // Nếu không, tìm kiếm bình thường theo tên hoặc ID
+    return (
       child.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       child.child_id.toString().includes(searchTerm)
-  );
+    );
+  });
 
   if (!childData) {
     return <div className="loading">Đang tải thông tin...</div>;
@@ -99,65 +160,80 @@ useEffect(() => {
     const birth = new Date(birthDate);
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-        age--;
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
+      age--;
     }
 
     if (age === 0) {
-        const monthAge = today.getMonth() - birth.getMonth() + 
-            (today.getDate() < birth.getDate() ? -1 : 0) + 
-            (today.getFullYear() - birth.getFullYear()) * 12;
-        return `${monthAge} tháng`;
+      const monthAge =
+        today.getMonth() -
+        birth.getMonth() +
+        (today.getDate() < birth.getDate() ? -1 : 0) +
+        (today.getFullYear() - birth.getFullYear()) * 12;
+      return `${monthAge} tháng`;
     }
-    
+
     return `${age} tuổi`;
   };
 
   const formatDate = (dateString) => {
     if (!dateString) return "Không có dữ liệu";
     const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
+    return date.toLocaleDateString("vi-VN", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
     });
   };
-
-  
 
   // In the same file
   const ProfileList = () => (
     <div className="profiles-sidebar">
-        <div className="staff-search-box">
-            <FaSearch className="staff-search-icon" />
-            <input
-                type="text"
-                placeholder="Tìm kiếm theo tên hoặc ID..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="staff-search-input"
-            />
-        </div>
-        <div className="profiles-list">
-            {filteredChildren.map(child => (
-                <div
-                    key={child.child_id}
-                    className={`profile-item ${child.child_id === selectedChildId ? 'active' : ''}`}
-                    onClick={() => setSelectedChildId(child.child_id)}
-                >
-                    <FaUserCircle className="profile-icon" />
-                    <div className="profile-brief">
-                        <h3>{child.full_name}</h3>
-                        <p>
-                            <span>ID: {child.child_id}</span>
-                            <span> • </span>
-                            <span>{calculateAge(child.date_of_birth)}</span>
-                        </p>
-                    </div>
-                </div>
-            ))}
-        </div>
+      <form onSubmit={handleSearchById} className="staff-search-box">
+        <FaSearch className="staff-search-icon" />
+        <input
+          type="text"
+          placeholder="Tìm kiếm theo ID"
+          value={searchTerm}
+          onChange={handleSearchChange} // Sử dụng handleSearchChange thay vì inline function
+          className="staff-search-input"
+        />
+        <button type="submit" className="staff-search-button">
+          Tìm ID
+        </button>
+      </form>
+
+      {error && <div className="search-error">{error}</div>}
+
+      <div className="profiles-list">
+        {filteredChildren.map((child) => (
+          <div
+            key={child.child_id}
+            className={`profile-item ${
+              child.child_id === selectedChildId ? "active" : ""
+            }`}
+            onClick={() => setSelectedChildId(child.child_id)}
+          >
+            <FaUserCircle className="profile-icon" />
+            <div className="profile-brief">
+              <h3>{child.full_name}</h3>
+              <p>
+                <span>ID: {child.child_id}</span>
+                <span> • </span>
+                <span>{calculateAge(child.date_of_birth)}</span>
+              </p>
+            </div>
+          </div>
+        ))}
+
+        {filteredChildren.length === 0 && !loading && (
+          <div className="no-results">Không tìm thấy kết quả phù hợp</div>
+        )}
+      </div>
     </div>
   );
 
@@ -173,28 +249,32 @@ useEffect(() => {
             <div className="profile-tags">
               <span className="profile-tag">ID: {childData.child_id}</span>
               <span className="profile-tag">{childData.gender}</span>
-              <span className="profile-tag">{calculateAge(childData.date_of_birth)}</span>
-              <span className="profile-tag">Nhóm máu: {childData.blood_type}</span>
+              <span className="profile-tag">
+                {calculateAge(childData.date_of_birth)}
+              </span>
+              <span className="profile-tag">
+                Nhóm máu: {childData.blood_type}
+              </span>
             </div>
           </div>
         </div>
 
         <div className="profile-tabs">
-          <button 
-            className={`tab-btn ${activeTab === 'profile' ? 'active' : ''}`}
-            onClick={() => setActiveTab('profile')}
+          <button
+            className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
+            onClick={() => setActiveTab("profile")}
           >
             Thông tin chi tiết
           </button>
-          <button 
-            className={`tab-btn ${activeTab === 'medical' ? 'active' : ''}`}
-            onClick={() => setActiveTab('medical')}
+          <button
+            className={`tab-btn ${activeTab === "medical" ? "active" : ""}`}
+            onClick={() => setActiveTab("medical")}
           >
             Lịch sử khám bệnh
           </button>
         </div>
 
-        {activeTab === 'profile' ? (
+        {activeTab === "profile" ? (
           <div className="profile-details">
             <div className="details-grid">
               <div className="detail-card">
@@ -225,7 +305,11 @@ useEffect(() => {
                 <div className="card-content">
                   <div className="health-info">
                     <h4>Dị ứng:</h4>
-                    <p className={`health-text ${childData.allergies === 'Không' ? 'normal' : 'warning'}`}>
+                    <p
+                      className={`health-text ${
+                        childData.allergies === "Không" ? "normal" : "warning"
+                      }`}
+                    >
                       {childData.allergies}
                     </p>
                   </div>
@@ -239,43 +323,51 @@ useEffect(() => {
           </div>
         ) : (
           <div className="medical-records">
-                {appointments.length > 0 ? (
-                    appointments.map((appointment) => (
-                        <div key={appointment.appId} className="medical-record-card">
-                            <div className="record-header">
-                                <div className="record-date">
-                                    <h3>Lần tiêm ngày {formatDate(appointment.appointmentDate)}</h3>
-                                    <span className="record-id">Mã tiêm: {appointment.appId}</span>
-                                </div>
-                                <span className={`status ${appointment.status.toLowerCase()}`}>
-                                    {appointment.status === 'PENDING' && 'Chờ xác nhận'}
-                                    {appointment.status === 'CONFIRMED' && 'Đã xác nhận'}
-                                    {appointment.status === 'COMPLETED' && 'Đã hoàn thành'}
-                                    {appointment.status === 'CANCELLED' && 'Đã hủy'}
-                                </span>
-                            </div>
-                            <div className="record-content">
-                                <div className="record-field">
-                                    <h4>Thời gian:</h4>
-                                    <p>{appointment.appointmentTime}</p>
-                                </div>
-                                <div className="record-field">
-                                    <h4>Thanh toán:</h4>
-                                    <p>{appointment.paymentStatus === 'PAID' ? 'Đã thanh toán' : 'Chưa thanh toán'}</p>
-                                </div>
-                                <div className="record-field">
-                                    <h4>Dịch vụ:</h4>
-                                    <p>{appointment.serviceId}</p>
-                                </div>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <div className="no-records">
-                        Chưa có lịch sử tiêm chủng
+            {appointments.length > 0 ? (
+              appointments.map((appointment) => (
+                <div key={appointment.appId} className="medical-record-card">
+                  <div className="record-header">
+                    <div className="record-date">
+                      <h3>
+                        Lần tiêm ngày {formatDate(appointment.appointmentDate)}
+                      </h3>
+                      <span className="record-id">
+                        Mã tiêm: {appointment.appId}
+                      </span>
                     </div>
-                )}
-            </div>
+                    <span
+                      className={`status ${appointment.status.toLowerCase()}`}
+                    >
+                      {appointment.status === "PENDING" && "Chờ xác nhận"}
+                      {appointment.status === "CONFIRMED" && "Đã xác nhận"}
+                      {appointment.status === "COMPLETED" && "Đã hoàn thành"}
+                      {appointment.status === "CANCELLED" && "Đã hủy"}
+                    </span>
+                  </div>
+                  <div className="record-content">
+                    <div className="record-field">
+                      <h4>Thời gian:</h4>
+                      <p>{appointment.appointmentTime}</p>
+                    </div>
+                    <div className="record-field">
+                      <h4>Thanh toán:</h4>
+                      <p>
+                        {appointment.paymentStatus === "PAID"
+                          ? "Đã thanh toán"
+                          : "Chưa thanh toán"}
+                      </p>
+                    </div>
+                    <div className="record-field">
+                      <h4>Dịch vụ:</h4>
+                      <p>{appointment.serviceId}</p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="no-records">Chưa có lịch sử tiêm chủng</div>
+            )}
+          </div>
         )}
       </div>
     </div>
