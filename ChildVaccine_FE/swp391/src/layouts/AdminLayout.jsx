@@ -30,7 +30,7 @@ const AdminLayout = () => {
       <Sidebar />
       <div className="main-content">
         <header className="main-header">
-          <div className="header-title">
+          {/* <div className="header-title">
             <h1>{getPageTitle()}</h1>
             <p>Welcome back, Admin</p>
           </div>
@@ -46,7 +46,7 @@ const AdminLayout = () => {
               <span>John Doe</span>
               <ChevronDown size={16} />
             </div>
-          </div>
+          </div> */}
         </header>
         <div className="content-wrapper">
           <Outlet />
