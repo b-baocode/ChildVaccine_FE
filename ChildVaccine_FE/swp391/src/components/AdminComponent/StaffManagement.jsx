@@ -224,6 +224,7 @@ const StaffManagement = () => {
   const [searchPosition, setSearchPosition] = useState('');
   const [searchGender, setSearchGender] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
   const [newStaff, setNewStaff] = useState({
     fullName: '',
     email: '',
@@ -293,7 +294,6 @@ const StaffManagement = () => {
       const response = await adminService.createStaff(newStaff);
 
       // Show success message
-      alert('Đăng ký nhân viên thành công!');
       const updatedData = await adminService.getAllStaffs();
       const formattedStaffList = updatedData.map(staff => ({
         id: staff.id,
@@ -311,11 +311,23 @@ const StaffManagement = () => {
       // Update the staff list with the new staff member
       setStaffList(formattedStaffList);
 
+      setNotification({
+        show: true,
+        message: 'Thêm nhân viên thành công!',
+        type: 'success'
+      });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
+
       // Close modal and reset form
       handleCloseModal();
 
     } catch (error) {
-      console.error('Failed to create staff:', error);
+      setNotification({
+        show: true,
+        message: error.message || 'Không thể thêm nhân viên',
+        type: 'error'
+      });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
       setCreateError(error.response?.data || 'Email đã tồn tại trong hệ thống');
     }
   };
@@ -363,12 +375,22 @@ const StaffManagement = () => {
       setShowUpdateModal(false);
       setSelectedStaff(null);
       setUpdateError(null);
+       
+    setNotification({
+      show: true,
+      message: 'Cập nhật thông tin nhân viên thành công!',
+      type: 'success'
+    });
+    setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
 
       // Show success message
-      alert('Cập nhật thông tin nhân viên thành công!');
     } catch (error) {
-      console.error('Failed to update staff:', error);
-      setUpdateError(error.message || 'Không thể cập nhật thông tin nhân viên');
+      setNotification({
+        show: true,
+        message: error.message || 'Không thể cập nhật thông tin nhân viên',
+        type: 'error'
+      });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
     }
   };
 
@@ -404,12 +426,21 @@ const StaffManagement = () => {
 
       // Update state with new data
       setStaffList(formattedStaffList);
+      setNotification({
+        show: true,
+        message: 'Xóa nhân viên thành công!',
+        type: 'success'
+      });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
 
       // Show success message
-      alert('Xóa nhân viên thành công!');
     } catch (error) {
-      console.error('Failed to delete staff:', error);
-      alert(error.message || 'Không thể xóa nhân viên');
+      setNotification({
+        show: true,
+        message: error.message || 'Không thể xóa nhân viên',
+        type: 'error'
+      });
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
     } finally {
       setShowDeleteModal(false);
       setStaffToDelete(null);
@@ -434,10 +465,22 @@ const StaffManagement = () => {
     });
   };
 
-
+  const Notification = ({ message, type, onClose }) => (
+    <div className={`notification ${type}`}>
+      {message}
+      <button onClick={onClose}>×</button>
+    </div>
+  );
 
   return (
     <div className="staff-management">
+      {notification.show && (
+      <Notification
+        message={notification.message}
+        type={notification.type}
+        onClose={() => setNotification({ show: false, message: '', type: '' })}
+      />
+    )}
       <div className="header">
         <h1>Quản lý nhân viên</h1>
         <div className="search-bar">

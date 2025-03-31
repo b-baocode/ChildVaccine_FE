@@ -3,6 +3,13 @@ import { Users, Calendar, DollarSign, Activity } from 'lucide-react';
 import '../../styles/AdminStyles/Dashboard.css';
 import adminService from '../../service/adminService';
 
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND'
+  }).format(value);
+};
+
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [staffCount, setStaffCount] = useState(0);
@@ -51,6 +58,8 @@ const Dashboard = () => {
 }, []);
 
 
+
+
   if (error) {
     return <div className="error-message">{error}</div>;
   }
@@ -93,7 +102,7 @@ const Dashboard = () => {
         <div className="card">
           <div className="card-content">
             <h3>Tổng doanh thu</h3>
-            <div className="card-value">{revenue} VND</div>
+            <div className="card-value">{formatCurrency(revenue)}</div>
             <div className="card-date">
               <span className="trend-down"></span>
             </div>
