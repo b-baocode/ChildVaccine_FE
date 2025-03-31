@@ -527,3 +527,49 @@
   border-bottom: 1px solid #eee;
 }
 
+.staff-search-box {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 8px 12px;
+  background-color: #f5f7fa;
+  border-radius: 6px;
+}
+
+.staff-search-button {
+  padding: 6px 12px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-left: 8px;
+}
+
+.staff-search-button:hover {
+  background-color: #0d47a1;
+}
+
+.search-error {
+  text-align: center;
+  padding: 10px;
+  color: #d32f2f;
+  font-size: 14px;
+  background-color: #ffebee;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.no-results {
+  text-align: center;
+  padding: 15px;
+  color: #707070;
+  font-style: italic;
+}
+
+.staff-search-input:focus {
+  outline: 2px solid #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+}

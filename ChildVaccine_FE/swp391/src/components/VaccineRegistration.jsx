@@ -44,6 +44,12 @@ const VaccineRegistration = () => {
     address: "",
   });
 
+  const [packagesVaccines, setPackagesVaccines] = useState({});
+  const [expandedPackageId, setExpandedPackageId] = useState(null);
+  const [loadingPackageDetails, setLoadingPackageDetails] = useState(false);
+  const [showPackageDetailsModal, setShowPackageDetailsModal] = useState(false);
+  const [selectedAgeFilter, setSelectedAgeFilter] = useState(null);
+
   // State cho UI/UX
   const [selectedType, setSelectedType] = useState(""); // 'single' or 'package'
   const [showConfirmModal, setShowConfirmModal] = useState(false); // Hiển thị modal xác nhận
@@ -175,6 +181,112 @@ const VaccineRegistration = () => {
       );
     }
   }, [location.state]);
+
+  const fetchPackageDetails = async (packageId) => {
+    if (expandedPackageId === packageId) {
+      setExpandedPackageId(null);
+      return;
+    }
+
+    setLoadingPackageDetails(true);
+    try {
+      if (!packagesVaccines[packageId]) {
+        const vaccines = await vaccineService.getVaccinesByPackageId(packageId);
+        setPackagesVaccines((prev) => ({
+          ...prev,
+          [packageId]: vaccines,
+        }));
+      }
+      setExpandedPackageId(packageId);
+    } catch (error) {
+      console.error("Error fetching package details:", error);
+    } finally {
+      setLoadingPackageDetails(false);
+    }
+  };
+
+  const PackageDetailsModal = () => {
+    if (!showPackageDetailsModal) return null;
+
+    return (
+      <div className="package-details-modal">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h3>Danh sách chi tiết các gói tiêm</h3>
+            <button
+              className="close-modal-btn"
+              onClick={() => setShowPackageDetailsModal(false)}
+            >
+              ×
+            </button>
+          </div>
+
+          {packages.length === 0 ? (
+            <p>Không có gói tiêm nào.</p>
+          ) : (
+            <div className="package-accordion">
+              {packages.map((pkg) => (
+                <div key={pkg.packageId} className="package-accordion-item">
+                  <div
+                    className="package-header"
+                    onClick={() => fetchPackageDetails(pkg.packageId)}
+                  >
+                    <h4>{pkg.name}</h4>
+                    <div className="package-price">
+                      {Number(pkg.price).toLocaleString("vi-VN")} VND
+                    </div>
+                    <span className="expand-icon">
+                      {expandedPackageId === pkg.packageId ? "▼" : "►"}
+                    </span>
+                  </div>
+
+                  {expandedPackageId === pkg.packageId && (
+                    <div className="package-content">
+                      {loadingPackageDetails ? (
+                        <p>Đang tải danh sách vắc xin...</p>
+                      ) : (
+                        <div>
+                          <p className="package-description">
+                            {pkg.description}
+                          </p>
+                          <h5>Vắc xin trong gói:</h5>
+                          {packagesVaccines[pkg.packageId]?.length > 0 ? (
+                            <ul className="vaccine-list">
+                              {packagesVaccines[pkg.packageId].map(
+                                (vaccine) => (
+                                  <li
+                                    key={vaccine.vaccineId}
+                                    className="vaccine-item"
+                                  >
+                                    <strong>{vaccine.name}</strong>
+                                    <p>{vaccine.description}</p>
+                                    <div className="vaccine-details">
+                                      {vaccine.shotNumber > 0 && (
+                                        <span>
+                                          Số mũi: {vaccine.shotNumber}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </li>
+                                )
+                              )}
+                            </ul>
+                          ) : (
+                            <p>Không có thông tin về vắc xin trong gói này.</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="modal-footer"></div>
+        </div>
+      </div>
+    );
+  };
 
   const handleInputChange = async (e) => {
     const { name, value } = e.target;
@@ -560,17 +672,25 @@ const VaccineRegistration = () => {
     );
   };
 
-  // Phần JSX hiển thị danh sách
+  // Cập nhật hàm renderItemList
   const renderItemList = () => {
     const items = selectedType === "single" ? vaccines : packages;
 
+    // Lọc vaccine theo độ tuổi đã chọn
+    const filteredItems =
+      selectedType === "single" && selectedAgeFilter
+        ? items.filter((item) => item.ageMonth === selectedAgeFilter)
+        : items;
+
     console.log("🎯 Rendering items:", {
       selectedType,
-      itemsCount: items.length,
-      items: items.map((item) => ({
+      itemsCount: filteredItems.length,
+      selectedAge: selectedAgeFilter,
+      items: filteredItems.map((item) => ({
         id: selectedType === "single" ? item.vaccineId : item.packageId,
         name: item.name,
         price: item.price,
+        age: item.ageMonth,
         shots: selectedType === "single" ? item.shotNumber : "N/A",
         isSelected:
           formData.selectedItem ===
@@ -578,17 +698,21 @@ const VaccineRegistration = () => {
       })),
     });
 
+    if (filteredItems.length === 0) {
+      return (
+        <div className="no-items-message">
+          {selectedType === "single" && selectedAgeFilter
+            ? "Không có vaccine phù hợp cho độ tuổi này"
+            : "Không có dữ liệu để hiển thị"}
+        </div>
+      );
+    }
+
     return (
       <div className="item-grid">
-        {items.map((item) => {
+        {filteredItems.map((item) => {
           const itemId =
             selectedType === "single" ? item.vaccineId : item.packageId;
-          console.log(`📦 Rendering item: ${item.name}`, {
-            id: itemId,
-            description: item.description,
-            price: item.price,
-            shots: selectedType === "single" ? item.shotNumber : "N/A",
-          });
 
           return (
             <div
@@ -611,6 +735,39 @@ const VaccineRegistration = () => {
             </div>
           );
         })}
+      </div>
+    );
+  };
+
+  // Thêm hàm để xử lý việc chọn filter theo độ tuổi
+  const handleAgeFilterSelect = (age) => {
+    setSelectedAgeFilter((prevAge) => (prevAge === age ? null : age));
+  };
+
+  // Thêm component hiển thị các lựa chọn độ tuổi
+  const renderAgeFilters = () => {
+    if (selectedType !== "single") return null;
+
+    const ageFilters = [
+      { age: 2, label: "Vaccine dành cho trẻ từ 0 - 2 tuổi" },
+      { age: 4, label: "Vaccine dành cho trẻ từ 2 - 4 tuổi" },
+      { age: 6, label: "Vaccine dành cho trẻ từ 4 - 6 tuổi" },
+      { age: 12, label: "Vaccine dành cho trẻ từ 6 - 12 tuổi" },
+    ];
+
+    return (
+      <div className="age-filter-container">
+        {ageFilters.map((filter) => (
+          <div
+            key={filter.age}
+            className={`age-filter-item ${
+              selectedAgeFilter === filter.age ? "active" : ""
+            }`}
+            onClick={() => handleAgeFilterSelect(filter.age)}
+          >
+            {filter.label}
+          </div>
+        ))}
       </div>
     );
   };
@@ -727,7 +884,17 @@ const VaccineRegistration = () => {
               {formErrors.selectedItem && (
                 <div className="error-message">{formErrors.selectedItem}</div>
               )}
-              <h3>THÔNG TIN DỊCH VỤ</h3>
+              <div className="service-info-header">
+                <h3>THÔNG TIN DỊCH VỤ</h3>
+                <button
+                  type="button"
+                  className="details-btn"
+                  onClick={() => setShowPackageDetailsModal(true)}
+                >
+                  Danh sách chi tiết các gói tiêm
+                </button>
+              </div>
+
               <div className="vaccine-type">
                 <label>Loại vắc xin muốn đăng ký:</label>
                 <div className="vaccine-buttons">
@@ -755,7 +922,8 @@ const VaccineRegistration = () => {
               {selectedType && (
                 <div className="item-selection">
                   <h4>Chọn {selectedType === "single" ? "Vắc xin" : "Gói"}:</h4>
-                  {renderItemList()}
+                  {selectedType === "single" && renderAgeFilters()}
+                  {renderItemList()} {/* Hiển thị danh sách cho cả 2 loại */}
                 </div>
               )}
 
@@ -794,6 +962,7 @@ const VaccineRegistration = () => {
 
           {showConfirmModal && <ConfirmationModal />}
           {showSuccessModal && <SuccessModal />}
+          {showPackageDetailsModal && <PackageDetailsModal />}
         </>
       )}
     </div>

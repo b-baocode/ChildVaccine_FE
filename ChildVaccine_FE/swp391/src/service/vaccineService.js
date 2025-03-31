@@ -23,6 +23,16 @@ const vaccineService = {
       console.error('Error fetching vaccine packages:', error);
       throw error;
     }
+  },
+
+  getVaccinesByPackageId: async (packageId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/vaccine/vaccines-by-package/${packageId}`);
+      return await response.json();
+    } catch (error) {
+      console.error(`Error fetching vaccines for package ${packageId}:`, error);
+      throw error;
+    }
   }
   
 };

@@ -3447,3 +3447,177 @@ html {
     border-bottom: 1px solid #e0e0e0;
 }
 
+/* Thêm vào file CSS */
+.package-details-list {
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  background-color: #f9f9f9;
+}
+
+.package-details-list h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.package-accordion-item {
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.package-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: #eaf5ff;
+  cursor: pointer;
+}
+
+.package-header h4 {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.package-price {
+  font-weight: bold;
+  margin-right: 15px;
+  color: #0056b3;
+}
+
+.package-content {
+  padding: 15px;
+  border-top: 1px solid #ddd;
+  background-color: white;
+}
+
+.vaccine-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.vaccine-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.vaccine-item strong {
+  color: #0056b3;
+}
+
+.vaccine-details {
+  margin-top: 5px;
+  color: #666;
+}
+
+.expand-icon {
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+/* Thêm vào file CSS tương ứng */
+.service-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.details-btn {
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.details-btn:hover {
+  background-color: #003d82;
+}
+
+.package-details-modal {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.package-details-modal .modal-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+}
+
+.close-modal-btn:hover {
+  color: #333;
+}
+
+.modal-footer {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+  text-align: right;
+}
+
+.age-filter-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  border-left: 3px solid #0056b3;
+  padding-left: 15px;
+}
+
+.age-filter-item {
+  padding: 10px 15px;
+  margin: 5px 0;
+  background-color: #f1f8fe;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.age-filter-item:hover {
+  background-color: #d8ebfd;
+}
+
+.age-filter-item.active {
+  background-color: #0056b3;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

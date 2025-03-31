@@ -135,6 +135,30 @@ const reactionService = {
             console.error('❌ Error fetching reactions:', error);
             throw error;
         }
+    },
+
+    updateCheckStatus: async (id) => {
+        try {
+            const token = localStorage.getItem('authToken');
+            const response = await fetch(`${API_BASE_URL}/api/reactions/update-check/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update reaction check status');
+            }
+
+            const data = await response.json();
+            console.log('✅ Reaction check status updated successfully:', data);
+            return data;
+        } catch (error) {
+            console.error('❌ Error updating reaction check status:', error);
+            throw error;
+        }
     }
 };
 
