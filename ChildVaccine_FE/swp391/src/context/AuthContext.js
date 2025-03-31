@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(parsedUser);
     const [token, setToken] = useState(storedToken);
     const [staffInfo, setStaffInfo] = useState(null);
+    const [adminInfo, setAdminInfo] = useState(null); // Thêm state cho admin
     
     console.log('🔍 AuthContext - Khởi tạo với:', { 
         token: token ? 'Có token' : 'Không có token', 
@@ -52,6 +53,13 @@ export const AuthProvider = ({ children }) => {
                 // Kiểm tra session customer
                 const customerSession = await sessionService.checkSession();
                 return customerSession && customerSession.success;
+            } else if (currentUser.role === 'ADMIN') {
+                // Kiểm tra session admin
+                const adminSession = await sessionService.checkAdminSession();
+                if (adminSession && adminSession.success) {
+                    setAdminInfo(adminSession.body);
+                    return true;
+                }
             }
             return false;
         } catch (error) {
@@ -141,6 +149,17 @@ export const AuthProvider = ({ children }) => {
                     console.error('❌ Lỗi lấy thông tin staff:', error);
                 }
             }
+
+            if (userData.role === 'ADMIN') {
+                try {
+                    const adminSession = await sessionService.checkAdminSession();
+                    if (adminSession && adminSession.success) {
+                        setAdminInfo(adminSession.body);
+                    }
+                } catch (error) {
+                    console.error('❌ Lỗi lấy thông tin admin:', error);
+                }
+            }
             
             console.log('✅ Đăng nhập thành công:', {
                 token: response.body.token.substring(0, 10) + '...',
@@ -163,6 +182,7 @@ export const AuthProvider = ({ children }) => {
             setUser(null);
             setToken(null);
             setStaffInfo(null); // Reset staff info
+            setAdminInfo(null);
             // Notify other tabs
             window.dispatchEvent(new Event("storage"));
         }
@@ -199,7 +219,7 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{ user, token, 
-            staffInfo, login, logout
+            staffInfo, adminInfo, login, logout,  validateSession 
 
         }}>
             {children}

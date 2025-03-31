@@ -166,6 +166,71 @@ class SessionService {
         return { success: false, message: error.message };
       }
     }
+
+    async checkAdminSession() {
+      try {
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+          console.log('No token found in localStorage');
+          return { success: false, message: 'No authentication token found' };
+        }
+        
+        // Kiểm tra phiên đăng nhập của admin thông qua endpoint API
+        const response = await fetch(`${API_BASE_URL}/auth/admin/session-info`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          const errorStatus = response.status;
+          const errorText = await response.text();
+          
+          console.error("Admin session check failed:", {
+            status: errorStatus,
+            message: errorText || `Session invalid (Status: ${errorStatus})`
+          });
+          
+          if (errorStatus === 401 || errorStatus === 403) {
+            // Auto logout nếu không có quyền hoặc session hết hạn
+            console.log("🚨 Admin session invalid or expired! Logging out automatically...");
+            this.syncLogout();
+          }
+          
+          return { success: false, message: errorText || 'Session validation failed' };
+        }
+        
+        const adminData = await response.json();
+        
+        // Kiểm tra dữ liệu admin có hợp lệ không
+        if (!adminData || adminData.user?.role !== 'ADMIN') {
+          console.error('Invalid admin data or not an admin role');
+          return { success: false, message: 'Invalid admin data or role' };
+        }
+        
+        console.log("✅ Admin session verified:", adminData);
+        
+        // Format lại response để phù hợp với cấu trúc sử dụng trong app
+        return {
+          success: true,
+          message: 'Admin session active',
+          body: {
+            adminId: adminData.id,
+            userId: adminData.user.id,
+            email: adminData.user.email,
+            fullName: adminData.user.fullName,
+            role: adminData.user.role
+          }
+        };
+      } catch (error) {
+        console.error('Error checking admin session:', error);
+        return { success: false, message: error.message };
+      }
+    }
     
     saveSession(sessionData) {
         if (!sessionData?.body) return;

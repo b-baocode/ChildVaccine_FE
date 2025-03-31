@@ -55,3 +55,38 @@
   .nav-label {
     font-size: 14px;
   }
+
+    /* Thêm vào cuối file CSS */
+  .logout-container {
+    margin-top: auto;
+    padding-top: 20px;
+    margin-bottom: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .logout-button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 15px;
+    color: #fff;
+    background-color: rgba(255, 59, 48, 0.8);
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .logout-button:hover {
+    background-color: rgba(255, 59, 48, 1);
+    transform: translateY(-2px);
+  }
+  
+  .logout-button .nav-icon {
+    margin-right: 10px;
+    font-size: 18px;
+  }
+
+  
