@@ -151,6 +151,17 @@ const adminService = {
           return 0; // Return 0 instead of throwing error
         }
       },
+
+      getTop5Vaccines: async () => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/top-vaccines`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching top vaccines:', error);
+            return [];
+        }
+    },
+      
 };
 
 export default adminService;

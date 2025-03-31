@@ -69,7 +69,7 @@ const Dashboard = () => {
             <h3>Tổng số nhân viên</h3>
             <div className="card-value">{staffCount}</div>
             <div className="card-date">
-              <span className="trend-up">↑ 12% so với tháng trước</span>
+              <span className="trend-up"> </span>
             </div>
           </div>
           <div className="card-icon blue">
