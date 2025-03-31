@@ -193,6 +193,7 @@
 .schedule-detail .status-badge.cancelled {
   background-color: #fee2e2;
   color: #991b1b;
+  text-align: center;
 }
 
 .schedule-detail .payment-status {

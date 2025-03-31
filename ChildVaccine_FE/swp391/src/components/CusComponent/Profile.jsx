@@ -987,7 +987,7 @@ const Profile = () => {
                               {appointment.status === "CONFIRMED" && (
                                 <div className="info-row reschedule">
                                   <button
-                                    className="reschedule-btn"
+                                    className="profile-reschedule-btn"
                                     onClick={() =>
                                       handleOpenRescheduleModal(appointment)
                                     }

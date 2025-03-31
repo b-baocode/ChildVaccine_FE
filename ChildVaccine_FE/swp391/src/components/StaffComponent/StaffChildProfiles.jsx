@@ -164,7 +164,7 @@ useEffect(() => {
   const DetailView = () => (
     <div className="profile-content">
       <div className="child-profile-container">
-        <div className="profile-header">
+        <div className="staff-profile-header">
           <div className="profile-avatar">
             <FaUserCircle size={80} color="#1976d2" />
           </div>

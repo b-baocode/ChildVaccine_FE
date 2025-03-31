@@ -266,30 +266,24 @@ const VaccinationReactionForm = () => {
 
         <div className="form-group">
           <label>Mức Độ:</label>
-          <div className="severity-buttons">
+          <div className="severity-options">
             <button
               type="button"
-              className={`severity-btn mild ${
-                severity === "MILD" ? "active" : ""
-              }`}
+              className={`severity-option ${severity === "MILD" ? "active" : ""}`}
               onClick={() => setSeverity("MILD")}
             >
               Nhẹ
             </button>
             <button
               type="button"
-              className={`severity-btn severe ${
-                severity === "SEVERE" ? "active" : ""
-              }`}
+              className={`severity-option ${severity === "SEVERE" ? "active" : ""}`}
               onClick={() => setSeverity("SEVERE")}
             >
               Vừa
             </button>
             <button
               type="button"
-              className={`severity-btn emergency ${
-                severity === "EMERGENCY" ? "active" : ""
-              }`}
+              className={`severity-option ${severity === "EMERGENCY" ? "active" : ""}`}
               onClick={() => setSeverity("EMERGENCY")}
             >
               Nặng

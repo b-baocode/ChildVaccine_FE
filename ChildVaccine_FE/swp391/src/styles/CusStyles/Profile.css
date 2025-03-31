@@ -16,6 +16,7 @@
   padding: 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   height: fit-content;
+  margin-top: 93px;
 }
 
 
@@ -266,6 +267,7 @@
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 25px;
 }
 
 
@@ -298,11 +300,7 @@
 
 /* Thêm style cho profile-header */
 .profile-header {
-  position: relative;
-  top: 0;
-  left: 0;
-  right: 0;
-  padding: 1rem 2rem;
+  position: absolute;
   background-color: #f8f9fa;
   border-bottom: 1px solid #e9ecef;
   border-radius: 15px 15px 0 0;
@@ -415,71 +413,118 @@
 
 .feedback-modal {
   background: white;
-  border-radius: 8px;
-  width: 400px; /* Reduced from 500px */
-  max-width: 90%;
-  padding: 16px; /* Reduced from 20px */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  width: 465px;
+  max-width: 95%;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(20px);
+  opacity: 0;
+  animation: modalFadeIn 0.3s ease forwards;
 }
 
+@keyframes modalFadeIn {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 
 .modal-header {
-  margin-bottom: 12px; /* Reduced from 20px */
-  padding-bottom: 8px; /* Reduced from 10px */
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
 }
 
-
 .modal-header h3 {
-  font-size: 18px; /* Reduced from default */
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
   margin: 0;
 }
 
-
 .appointment-info {
-  margin-bottom: 12px;
-  padding: 10px;
+  margin-bottom: 20px;
+  padding: 15px;
   background: #f8f9fa;
-  border-radius: 4px;
-  font-size: 14px; /* Reduced text size */
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
 }
-
 
 .appointment-info p {
-  margin: 4px 0;
+  margin: 8px 0;
+  color: #4a5568;
 }
-
 
 .rating-section {
-  margin: 12px 0;
+  margin: 24px 0;
 }
-
 
 .star-rating {
-  gap: 8px; /* Reduced from 10px */
+  display: flex;
+  gap: 12px;
+  justify-content: center;
 }
-
 
 .star {
-  font-size: 20px; /* Reduced from 24px */
+  font-size: 28px;
+  color: #cbd5e0;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
+.star:hover {
+  transform: scale(1.2);
+}
+
+.star.active {
+  color: #f6e05e;
+}
+
+.comment-section {
+  margin-top: 20px;
+}
 
 .comment-section textarea {
-  padding: 8px;
-  height: 80px; /* Fixed height */
-  margin-top: 8px;
+  width: 100%;
+  padding: 12px;
+  height: 100px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  resize: vertical;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: border-color 0.2s ease;
 }
 
+.comment-section textarea:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+}
 
 .modal-footer {
-  margin-top: 16px;
-  padding-top: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
-
 .modal-footer button {
-  padding: 6px 12px;
+  padding: 8px 16px;
   font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 200px;
+}
+
+.modal-footer button:hover {
+  transform: translateY(-1px);
 }
 
 
