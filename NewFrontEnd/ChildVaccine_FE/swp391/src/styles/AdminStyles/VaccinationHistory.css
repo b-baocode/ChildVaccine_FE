@@ -1,0 +1,169 @@
+.vaccination-history {
+  height: calc(100vh - 64px); /* Adjust based on your layout */
+  display: flex;
+  flex-direction: column;
+  }
+  
+  .search-filters {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .search-field {
+    flex: 2;
+    position: relative;
+    display: flex;
+  }
+  
+  .search-field input {
+    width: 100%;
+    padding: 12px 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  
+  .search-field svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+  }
+  
+  .filter-field {
+    flex: 1;
+  }
+  
+  .filter-field select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: white;
+    cursor: pointer;
+  }
+  
+  .appointments-table {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: auto;
+    max-height: calc(100vh - 200px); /* Adjust the value based on your header height */
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
+  }
+  
+  th {
+    background-color: #f8f9fa;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #e0e0e0;
+  }
+  
+  td {
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #2c3e50;
+  }
+  
+  .status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  .status-completed {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  .status-pending {
+    background-color: #fff3e0;
+    color: #ef6c00;
+  }
+  
+  .status-cancelled {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+  
+  .payment-completed {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  .payment-pending {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+  
+  .payment-partial {
+    background-color: #e3f2fd;
+    color: #1565c0;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .btn-view,
+  .btn-edit {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .btn-view {
+    background-color: #e3f2fd;
+    color: #1565c0;
+  }
+  
+  .btn-edit {
+    background-color: #fff3e0;
+    color: #ef6c00;
+  }
+  
+  .btn-view:hover {
+    background-color: #bbdefb;
+  }
+  
+  .btn-edit:hover {
+    background-color: #ffe0b2;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1200px) {
+    .search-filters {
+      flex-direction: column;
+    }
+    
+    .search-field,
+    .filter-field {
+      flex: 1;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .appointments-table {
+      overflow-x: auto;
+    }
+    
+    table {
+      min-width: 1000px;
+    }
+  }

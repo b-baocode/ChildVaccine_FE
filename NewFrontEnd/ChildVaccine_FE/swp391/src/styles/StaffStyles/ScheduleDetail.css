@@ -1,0 +1,607 @@
+/* Overall Layout */
+.schedule-detail {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+}
+
+/* Header Section */
+.schedule-detail .header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.schedule-detail .header-section h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #2c3e50;
+  text-align: center;
+  width: 100%;
+}
+
+.schedule-detail .back-btn {
+  position: absolute;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+.schedule-detail .back-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Success Message */
+.schedule-detail .success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  animation: fadeOut 3s forwards;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Loading & Error States */
+.schedule-detail .loading,
+.schedule-detail .error {
+  padding: 30px;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #666;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.schedule-detail .error {
+  color: #721c24;
+  background-color: #f8d7da;
+}
+
+/* Schedule Summary */
+.schedule-detail .schedule-summary {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+}
+
+.schedule-detail .schedule-summary h2 {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.schedule-detail .summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+.schedule-detail .summary-item {
+  margin-bottom: 15px;
+}
+
+.schedule-detail .label {
+  display: block;
+  font-weight: 500;
+  color: #6c757d;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.schedule-detail .value {
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+.schedule-detail .vaccine-type {
+  font-size: 0.8rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Status Badges */
+.schedule-detail .status-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.schedule-detail .status-badge.completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.schedule-detail .status-badge.confirmed {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.schedule-detail .status-badge.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.schedule-detail .status-badge.cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.schedule-detail .payment-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.schedule-detail .payment-status.paid {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.schedule-detail .payment-status.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Appointments Section */
+.schedule-detail .appointments-section {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.schedule-detail .appointments-section h2 {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.schedule-detail .no-data {
+  padding: 30px;
+  text-align: center;
+  color: #6c757d;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+}
+
+/* Appointments Table */
+.schedule-detail .appointments-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.schedule-detail .appointments-table th {
+  background-color: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  font-weight: 500;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.schedule-detail .appointments-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.schedule-detail .appointments-table tr:last-child td {
+  border-bottom: none;
+}
+
+.schedule-detail .appointments-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.schedule-detail .shot-number {
+  font-weight: 500;
+  color: #495057;
+}
+
+.schedule-detail .processing-payment {
+  background-color: #e8f4fd !important;
+}
+
+/* Action Buttons */
+.schedule-detail .action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.schedule-detail .action-buttons button {
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+}
+
+.schedule-detail .confirm-btn {
+  background-color: #28a745;
+}
+
+.schedule-detail .confirm-btn:hover {
+  background-color: #218838;
+}
+
+.schedule-detail .cancel-btn {
+  background-color: #dc3545;
+}
+
+.schedule-detail .cancel-btn:hover {
+  background-color: #c82333;
+}
+
+.schedule-detail .payment-btn {
+  background-color: #fd7e14;
+}
+
+.schedule-detail .payment-btn:hover {
+  background-color: #e96b02;
+}
+
+.schedule-detail .record-btn {
+  background-color: #20c997;
+}
+
+.schedule-detail .record-btn:hover {
+  background-color: #1ba87e;
+}
+
+.schedule-detail .view-btn {
+  background-color: #17a2b8;
+}
+
+.schedule-detail .view-btn:hover {
+  background-color: #138496;
+}
+
+.schedule-detail button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Modal Styles */
+.schedule-detail .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s;
+}
+
+.schedule-detail .confirm-modal,
+.schedule-detail .warning-modal,
+.schedule-detail .payment-modal,
+.schedule-detail .record-modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  padding: 24px;
+  width: 100%;
+  max-width: 500px;
+  animation: slideIn 0.3s;
+}
+
+.schedule-detail .modal-overlay h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.schedule-detail .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.schedule-detail .modal-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.schedule-detail .modal-actions .confirm-btn,
+.schedule-detail .modal-actions .save-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.schedule-detail .modal-actions .confirm-btn:hover,
+.schedule-detail .modal-actions .save-btn:hover {
+  background-color: #0069d9;
+}
+
+.schedule-detail .modal-actions .cancel-btn,
+.schedule-detail .modal-actions .close-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.schedule-detail .modal-actions .cancel-btn:hover,
+.schedule-detail .modal-actions .close-btn:hover {
+  background-color: #5a6268;
+}
+
+.schedule-detail .warning-modal h3 {
+  color: #721c24;
+}
+
+/* Payment Options */
+.schedule-detail .payment-options {
+  margin: 20px 0;
+}
+
+.schedule-detail .payment-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.schedule-detail .payment-option input {
+  margin-right: 10px;
+}
+
+.schedule-detail .payment-option label {
+  cursor: pointer;
+}
+
+/* Form groups for modal forms */
+.schedule-detail .form-group {
+  margin-bottom: 16px;
+}
+
+.schedule-detail .form-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.schedule-detail .form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.schedule-detail .form-group textarea:focus {
+  outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 992px) {
+  .schedule-detail .summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .schedule-detail .appointments-table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .schedule-detail .summary-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .schedule-detail .header-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .schedule-detail .header-section h1 {
+    margin-left: 0;
+    font-size: 1.3rem;
+  }
+  
+  .schedule-detail .back-btn {
+    position: relative;
+    left: 0;
+    margin-bottom: 10px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .schedule-detail {
+    padding: 10px;
+  }
+  
+  .schedule-detail .confirm-modal,
+  .schedule-detail .warning-modal,
+  .schedule-detail .payment-modal,
+  .schedule-detail .record-modal {
+    width: 90%;
+    padding: 15px;
+  }
+  
+  .schedule-detail .action-buttons {
+    flex-wrap: wrap;
+  }
+}
+.readonly {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  border-color: #ddd;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.info-label {
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.modal-info {
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 5px;
+  margin-bottom: 16px;
+  border: 1px solid #eee;
+}
+
+.readonly {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+  border: 1px solid #ced4da;
+  opacity: 0.9;
+  color: #495057;
+}
+
+.readonly:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Nút dời lịch */
+.reschedule-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 5px;
+  transition: background-color 0.2s;
+}
+
+.reschedule-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Modal dời lịch */
+.reschedule-modal {
+  background-color: white;
+  border-radius: 6px;
+  max-width: 450px;
+  width: 100%;
+  padding: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.reschedule-modal h3 {
+  margin-top: 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.reschedule-section {
+  margin-top: 15px;
+}
+
+.complete-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 8px;
+  margin-right: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.complete-btn:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+}
+
+.complete-btn:focus {
+  outline: none;
+}
