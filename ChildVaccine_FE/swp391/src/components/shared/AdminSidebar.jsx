@@ -17,6 +17,11 @@ const Sidebar = () => {
     },
     { path: "/admin/feedback", icon: "⭐", label: "Feedback & Rating" },
     { path: "/admin/revenue", icon: "💰", label: "Doanh thu" },
+    {
+      path: "/admin/vaccineManage",
+      icon: "💉",
+      label: "Quản lý vaccinevaccine",
+    },
   ];
 
   const handleLogout = () => {

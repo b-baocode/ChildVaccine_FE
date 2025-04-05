@@ -8,6 +8,8 @@
 }
 
 
+
+
 /* Sidebar Styles */
 .profile-sidebar {
   flex: 0 0 350px;
@@ -20,10 +22,14 @@
 }
 
 
+
+
 .user-avatar {
   text-align: center;
   margin-bottom: 2rem;
 }
+
+
 
 
 .user-avatar img {
@@ -35,11 +41,15 @@
 }
 
 
+
+
 .user-info {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
+
+
 
 
 .info-item {
@@ -48,6 +58,8 @@
   gap: 10px;
   color: #555;
 }
+
+
 
 
 .info-item.name h2 {
@@ -59,10 +71,14 @@
 }
 
 
+
+
 .info-icon {
   color: #4a90e2;
   font-size: 1.2rem;
 }
+
+
 
 
 /* Edit Form Styles */
@@ -73,11 +89,15 @@
 }
 
 
+
+
 .edit-item {
   display: flex;
   align-items: center;
   gap: 10px;
 }
+
+
 
 
 .edit-item input {
@@ -89,11 +109,15 @@
 }
 
 
+
+
 .edit-buttons {
   display: flex;
   gap: 10px;
   margin-top: 1rem;
 }
+
+
 
 
 .edit-btn, .save-btn, .cancel-btn {
@@ -109,11 +133,15 @@
 }
 
 
+
+
 .edit-btn {
   background: #4a90e2;
   color: white;
   width: 100%;
 }
+
+
 
 
 .save-btn {
@@ -123,11 +151,15 @@
 }
 
 
+
+
 .cancel-btn {
   background: #f44336;
   color: white;
   flex: 1;
 }
+
+
 
 
 /* Content Section Styles */
@@ -137,9 +169,13 @@
 }
 
 
+
+
 .content-header {
   margin-bottom: 2rem;
 }
+
+
 
 
 .tab-buttons {
@@ -147,6 +183,8 @@
   gap: 1rem;
   margin-bottom: 2rem;
 }
+
+
 
 
 .tab-btn {
@@ -161,16 +199,22 @@
 }
 
 
+
+
 .tab-btn.active {
   background: #4a90e2;
   color: white;
 }
 
 
+
+
 /* Children List Styles */
 .add-child-section {
   margin-bottom: 2rem;
 }
+
+
 
 
 .add-child-btn {
@@ -188,10 +232,14 @@
 }
 
 
+
+
 .children-list {
   display: grid;
   gap: 1.5rem;
 }
+
+
 
 
 .child-card {
@@ -202,6 +250,8 @@
 }
 
 
+
+
 .child-header {
   display: flex;
   justify-content: space-between;
@@ -210,16 +260,22 @@
 }
 
 
+
+
 .child-header h3 {
   margin: 0;
   color: #333;
 }
 
 
+
+
 .child-id {
   color: #666;
   font-size: 0.9rem;
 }
+
+
 
 
 .child-info {
@@ -229,11 +285,15 @@
 }
 
 
+
+
 .info-row {
   display: flex;
   justify-content: space-between;
   color: #555;
 }
+
+
 
 
 .health-status {
@@ -243,10 +303,14 @@
 }
 
 
+
+
 .health-status.healthy {
   background: #e8f5e9;
   color: #2e7d32;
 }
+
+
 
 
 .health-status.monitoring {
@@ -255,11 +319,15 @@
 }
 
 
+
+
 /* Vaccine History Styles */
 .vaccine-history {
   display: grid;
   gap: 1.5rem;
 }
+
+
 
 
 .history-card {
@@ -271,6 +339,8 @@
 }
 
 
+
+
 .history-header {
   display: flex;
   justify-content: space-between;
@@ -279,10 +349,14 @@
 }
 
 
+
+
 .history-header h3 {
   margin: 0;
   color: #333;
 }
+
+
 
 
 .status {
@@ -292,10 +366,14 @@
 }
 
 
+
+
 .status.hoàn.thành {
   background: #e8f5e9;
   color: #2e7d32;
 }
+
+
 
 
 /* Thêm style cho profile-header */
@@ -310,6 +388,8 @@
   border-bottom: 1px solid #e9ecef;
   border-radius: 15px 15px 0 0;
 }
+
+
 
 
 /* Cập nhật style cho back-home-btn */
@@ -328,12 +408,16 @@
 }
 
 
+
+
 .back-home-btn:hover {
   background: #4a90e2;
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
+
 
 
 /* Responsive Design */
@@ -347,6 +431,8 @@
     width: 100%;
   }
 }
+
+
 
 
 @media (max-width: 768px) {
@@ -371,12 +457,16 @@
 }
 
 
+
+
 .info-row.feedback {
   justify-content: flex-end;
   margin-top: 15px;
   padding-top: 15px;
   border-top: 1px dashed #eee;
 }
+
+
 
 
 .feedback-btn {
@@ -391,15 +481,21 @@
 }
 
 
+
+
 .feedback-btn:hover {
   background-color: #45a049;
 }
+
+
 
 
 .feedback-btn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
+
+
 
 
 .modal-overlay {
@@ -416,6 +512,8 @@
 }
 
 
+
+
 .feedback-modal {
   background: white;
   border-radius: 12px;
@@ -428,6 +526,7 @@
   animation: modalFadeIn 0.3s ease forwards;
 }
 
+
 @keyframes modalFadeIn {
   to {
     transform: translateY(0);
@@ -435,11 +534,13 @@
   }
 }
 
+
 .modal-header {
   margin-bottom: 20px;
   padding-bottom: 15px;
   border-bottom: 1px solid #eee;
 }
+
 
 .modal-header h3 {
   font-size: 20px;
@@ -447,6 +548,7 @@
   color: #2c3e50;
   margin: 0;
 }
+
 
 .appointment-info {
   margin-bottom: 20px;
@@ -457,20 +559,24 @@
   line-height: 1.5;
 }
 
+
 .appointment-info p {
   margin: 8px 0;
   color: #4a5568;
 }
 
+
 .rating-section {
   margin: 24px 0;
 }
+
 
 .star-rating {
   display: flex;
   gap: 12px;
   justify-content: center;
 }
+
 
 .star {
   font-size: 28px;
@@ -479,17 +585,21 @@
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
+
 .star:hover {
   transform: scale(1.2);
 }
+
 
 .star.active {
   color: #f6e05e;
 }
 
+
 .comment-section {
   margin-top: 20px;
 }
+
 
 .comment-section textarea {
   width: 100%;
@@ -503,11 +613,13 @@
   transition: border-color 0.2s ease;
 }
 
+
 .comment-section textarea:focus {
   outline: none;
   border-color: #4a90e2;
   box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
 }
+
 
 .modal-footer {
   margin-top: 24px;
@@ -517,6 +629,7 @@
   justify-content: flex-end;
   gap: 12px;
 }
+
 
 .modal-footer button {
   padding: 8px 16px;
@@ -528,9 +641,12 @@
   width: 200px;
 }
 
+
 .modal-footer button:hover {
   transform: translateY(-1px);
 }
+
+
 
 
 .feedback-submitted {
@@ -542,18 +658,24 @@
 }
 
 
+
+
 .feedback-submitted-text {
-  color: #666;
+  color: yellow;
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 14px;
+  font-size: 15px;
 }
+
+
 
 
 .feedback-submitted .info-icon {
   margin-right: 4px;
 }
+
+
 
 
 .cancel-appointment-btn {
@@ -569,9 +691,13 @@
 }
 
 
+
+
 .cancel-appointment-btn:hover {
   background-color: #c82333;
 }
+
+
 
 
 .cancel-appointment-btn:disabled {
@@ -580,21 +706,153 @@
 }
 
 
+
+
 /* CSS cho modal hủy lịch hẹn */
 .cancel-modal {
   background-color: white;
-  border-radius: 8px;
+  border-radius: 16px;
   max-width: 500px;
   width: 100%;
   position: relative;
-  padding: 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  animation: modalSlideIn 0.3s ease;
+}
+
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 
 .reason-section {
-  margin-top: 20px;
+  margin-top: 1.5rem;
 }
+
+
+.reason-section label {
+  display: block;
+  margin-bottom: 1rem;
+  color: #374151;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background-color: #f9fafb;
+}
+
+
+.radio-option:hover {
+  background-color: #f3f4f6;
+}
+
+
+.radio-option input[type="radio"] {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+  margin: 0;
+  transition: all 0.2s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+
+.radio-option input[type="radio"]:checked {
+  border-color: #dc2626;
+  background-color: #dc2626;
+}
+
+
+.radio-option input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: white;
+  border-radius: 50%;
+}
+
+
+.radio-option label {
+  font-size: 0.95rem;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+
+.modal-footer {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+
+.modal-footer button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+
+.modal-footer .confirm-button {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+}
+
+
+.modal-footer .confirm-button:hover {
+  background-color: #b91c1c;
+  transform: translateY(-1px);
+}
+
+
+.modal-footer .cancel-button {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+}
+
+
+.modal-footer .cancel-button:hover {
+  background-color: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+
 
 
 .reason-options {
@@ -605,11 +863,15 @@
 }
 
 
+
+
 .reason-option {
   display: flex;
   align-items: center;
   gap: 10px;
 }
+
+
 
 
 .reason-option input[type="radio"] {
@@ -618,10 +880,14 @@
 }
 
 
+
+
 .reason-option label {
   cursor: pointer;
   font-size: 15px;
 }
+
+
 
 
 .other-reason {
@@ -634,8 +900,10 @@
 }
 
 
+
+
 .confirm-btn {
-  background-color: #dc3545;
+  background-color: #45a049;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -646,13 +914,25 @@
 }
 
 
+
+
 .confirm-btn:hover:not(:disabled) {
-  background-color: #c82333;
+  background-color: #45a049;
 }
+
+
 
 
 .confirm-btn:disabled {
   background-color: #e9a7ad;
   cursor: not-allowed;
 }
+
+
+
+
+
+
+
+
 

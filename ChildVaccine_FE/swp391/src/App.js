@@ -31,6 +31,7 @@ import StaffManagement from './components/AdminComponent/StaffManagement';
 import VaccinationHistory from './components/AdminComponent/VaccinationHistory';
 import Feedback from './components/AdminComponent/Feedback';
 import Revenue from './components/AdminComponent/Revenue';
+import VaccineManage from'./components/AdminComponent/VaccineManage';
 
 import Profile from './components/CusComponent/Profile';
 import AddChildForm from './components/CusComponent/AddChildForm';
@@ -120,6 +121,7 @@ const AppWrapper = () => {
               <Route path="vaccination-history" element={<VaccinationHistory />} />
               <Route path="feedback" element={<Feedback />} />
               <Route path="revenue" element={<Revenue />} />
+              <Route path="vaccineManage" element={<VaccineManage />} />
             </Route>
           </Routes>
         </div>
