@@ -3621,3 +3621,81 @@ html {
   color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* CSS cho các gói không khả dụng */
+.item-card.unavailable {
+  opacity: 0.6;
+  cursor: not-allowed;
+  position: relative;
+  overflow: hidden;
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+}
+
+.item-card.unavailable:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.unavailable-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff5252;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.package-accordion-item.unavailable {
+  opacity: 0.6;
+}
+
+.package-accordion-item.unavailable .package-header {
+  cursor: not-allowed;
+  background-color: #f8f8f8;
+}
+
+/* Thêm vào file CSS của bạn - VaccineRegistration.css */
+.quantity {
+  font-size: 0.85rem;
+  color: #555;
+  background-color: #f1f1f1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.item-card.unavailable .quantity {
+  color: #999;
+  background-color: #e6e6e6;
+}
+
+/* CSS cho các vaccine không có sẵn */
+.item-card.unavailable {
+  opacity: 0.6;
+  cursor: not-allowed;
+  position: relative;
+  overflow: hidden;
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+}
+
+.item-card.unavailable:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.unavailable-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff5252;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}

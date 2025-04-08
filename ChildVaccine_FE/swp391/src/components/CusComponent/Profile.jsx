@@ -433,6 +433,27 @@ const Profile = () => {
           "CANCELLED"
         );
 
+      const scheduleId = appointmentToCancel.scheduleId;
+
+      if (scheduleId) {
+        // Gọi API để cập nhật status của Schedule
+        await scheduleService.updateStatusIfCompleted(scheduleId);
+
+        // Cập nhật UI để hiển thị trạng thái schedule mới
+        // Tìm schedule tương ứng và cập nhật nếu có
+        setSchedules((prevSchedules) =>
+          prevSchedules.map((schedule) => {
+            if (schedule.scheduleId === scheduleId) {
+              // Kiểm tra xem có cần cập nhật status không
+              // Ví dụ: Nếu tất cả các appointment của schedule đều đã CANCELLED
+              // thì schedule sẽ có status là CANCELLED
+              return { ...schedule, status: "CANCELLED" };
+            }
+            return schedule;
+          })
+        );
+      }
+
       // Update the local state with the cancelled appointment
       setAppointments(
         appointments.map((app) =>
@@ -441,6 +462,17 @@ const Profile = () => {
             : app
         )
       );
+
+      // Cập nhật scheduleAppointments nếu đang xem chi tiết schedule
+      if (selectedSchedule && scheduleAppointments.length > 0) {
+        setScheduleAppointments(
+          scheduleAppointments.map((app) =>
+            app.appId === appointmentToCancel.appId
+              ? { ...app, status: "CANCELLED" }
+              : app
+          )
+        );
+      }
 
       // Đóng modal và hiển thị thông báo
       setShowCancelModal(false);

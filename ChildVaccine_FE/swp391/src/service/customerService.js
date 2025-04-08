@@ -1,6 +1,27 @@
 const API_BASE_URL = 'http://localhost:8080/vaccinatecenter';
 
 const customerService = {
+    getAllCustomers: async () => {
+        try {
+          const response = await fetch(`${API_BASE_URL}/customers/profiles`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          });
+    
+          if (!response.ok) {
+            throw new Error(`Lỗi: ${response.status}`);
+          }
+    
+          return await response.json();
+        } catch (error) {
+          console.error("Lỗi khi lấy danh sách khách hàng:", error);
+          throw error;
+        }
+      },
+    
     getCustomerProfile: async (userId) => {
         try {
             const token = localStorage.getItem('authToken');

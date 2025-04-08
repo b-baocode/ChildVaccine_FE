@@ -306,6 +306,7 @@ const appointmentService = {
             throw error;
         }
     },
+    
     getAppointmentsByScheduleId: async (scheduleId) => {
         try {
             const token = localStorage.getItem('authToken');

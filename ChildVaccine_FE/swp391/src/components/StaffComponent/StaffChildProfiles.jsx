@@ -6,10 +6,16 @@ import {
   FaRuler,
   FaWeight,
   FaSearch,
+  FaAngleDown,
+  FaAngleUp,
+  FaCalendarCheck,
+  FaSyringe,
+  FaClock,
 } from "react-icons/fa";
 import childService from "../../service/childService";
 import "../../styles/StaffStyles/StaffChildProfiles.css";
 import appointmentService from "../../service/appointmentService";
+import scheduleService from "../../service/scheduleService";
 
 const StaffChildProfile = () => {
   const { id } = useParams();
@@ -24,6 +30,11 @@ const StaffChildProfile = () => {
   const [appointments, setAppointments] = useState([]);
   const [exactIdSearch, setExactIdSearch] = useState("");
 
+  const [schedules, setSchedules] = useState([]);
+  const [expandedScheduleId, setExpandedScheduleId] = useState(null);
+  const [scheduleAppointments, setScheduleAppointments] = useState({});
+  const [loadingAppointments, setLoadingAppointments] = useState(false);
+
   const handleSearchChange = useCallback((e) => {
     setSearchTerm(e.target.value);
 
@@ -33,34 +44,134 @@ const StaffChildProfile = () => {
     }
   }, []);
 
-  const handleSearchById = useCallback(
-    (e) => {
-      e.preventDefault();
-      if (!searchTerm.trim()) {
-        setExactIdSearch("");
-        return;
-      }
-
-      const isId = /^\d+$/.test(searchTerm.trim());
-      if (isId) {
-        setExactIdSearch(searchTerm.trim());
-
-        const foundChild = childrenProfiles.find(
-          (child) => child.child_id.toString() === searchTerm.trim()
-        );
-
-        if (foundChild) {
-          setError(null);
-          setSelectedChildId(foundChild.child_id);
-        } else {
-          setError(`Không tìm thấy trẻ với ID: ${searchTerm}`);
+  useEffect(() => {
+    const fetchSchedules = async () => {
+      if (selectedChildId) {
+        try {
+          const schedulesData = await scheduleService.getSchedulesByChildId(
+            selectedChildId
+          );
+          console.log("Schedules for child:", schedulesData);
+          setSchedules(Array.isArray(schedulesData) ? schedulesData : []);
+        } catch (error) {
+          console.error("Error fetching schedules:", error);
         }
-      } else {
-        setExactIdSearch("");
       }
-    },
-    [searchTerm, childrenProfiles]
-  );
+    };
+
+    fetchSchedules();
+  }, [selectedChildId]);
+
+  // Thêm hàm để toggle và fetch appointments
+  const toggleScheduleDetails = async (scheduleId) => {
+    // Nếu đang mở rộng schedule này, thì đóng lại
+    if (expandedScheduleId === scheduleId) {
+      setExpandedScheduleId(null);
+      return;
+    }
+
+    // Đặt scheduleId được chọn
+    setExpandedScheduleId(scheduleId);
+
+    // Kiểm tra nếu chưa tải appointments cho schedule này
+    if (!scheduleAppointments[scheduleId]) {
+      try {
+        setLoadingAppointments(true);
+        const response = await appointmentService.getAppointmentsByScheduleId(
+          scheduleId
+        );
+        console.log(`Appointments for schedule ${scheduleId}:`, response);
+
+        // Xử lý cấu trúc dữ liệu đúng - kiểm tra xem có thuộc tính appointments không
+        const appointmentsData = response.appointments || response;
+
+        setScheduleAppointments((prev) => ({
+          ...prev,
+          [scheduleId]: Array.isArray(appointmentsData)
+            ? appointmentsData
+            : [appointmentsData],
+        }));
+      } catch (error) {
+        console.error(
+          `Error fetching appointments for schedule ${scheduleId}:`,
+          error
+        );
+      } finally {
+        setLoadingAppointments(false);
+      }
+    }
+  };
+
+  const handleSearchById = useCallback(async (e) => {
+    e.preventDefault();
+
+    // Lấy giá trị từ input thông qua target của form
+    const searchInput = e.target.elements.searchInput.value;
+
+    if (!searchInput.trim()) {
+      setError(null);
+      return;
+    }
+
+    const isId =
+      /^\d+$/.test(searchInput.trim()) ||
+      /^[A-Za-z0-9]+$/.test(searchInput.trim());
+
+    if (isId) {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Sử dụng getChildProfile để lấy dữ liệu trực tiếp từ API
+        const childData = await childService.getChildProfile(searchInput);
+
+        if (childData) {
+          // Chuyển đổi dữ liệu từ API để phù hợp với định dạng trong ứng dụng
+          const transformedData = {
+            child_id: childData.childId,
+            cus_id: childData.customerId,
+            full_name: childData.fullName,
+            date_of_birth: childData.dateOfBirth,
+            gender:
+              childData.gender === "MALE"
+                ? "Nam"
+                : childData.gender === "FEMALE"
+                ? "Nữ"
+                : "Khác",
+            height: childData.height || 0,
+            weight: childData.weight || 0,
+            blood_type: childData.bloodType || "Chưa xác định",
+            allergies: childData.allergies || "Không",
+            health_note: childData.healthNote || "Không có ghi chú",
+          };
+
+          // Cập nhật state trực tiếp với dữ liệu từ API
+          setChildData(transformedData);
+          setSelectedChildId(transformedData.child_id);
+
+          // Thêm vào childrenProfiles nếu chưa có
+          if (
+            !childrenProfiles.some(
+              (child) => child.child_id === transformedData.child_id
+            )
+          ) {
+            setChildrenProfiles((prev) => [...prev, transformedData]);
+          }
+        } else {
+          setError(`Không tìm thấy trẻ với ID: ${searchInput}`);
+        }
+      } catch (err) {
+        console.error("Error fetching child profile:", err);
+        setError(
+          `Không thể tìm kiếm trẻ. ${err.message || "Vui lòng thử lại."}`
+        );
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setError("Vui lòng nhập ID hợp lệ");
+    }
+  }, []);
 
   useEffect(() => {
     const fetchChildren = async () => {
@@ -190,6 +301,164 @@ const StaffChildProfile = () => {
     });
   };
 
+  const MedicalHistory = () => (
+    <div className="medical-records">
+      {schedules.length > 0 ? (
+        <div className="schedule-list">
+          {schedules.map((schedule) => (
+            <div key={schedule.scheduleId} className="schedule-card">
+              <div className="schedule-header">
+                <div className="schedule-info">
+                  <div className="schedule-id">
+                    <FaCalendarCheck className="icon" />
+                    <span>Lịch tiêm #{schedule.scheduleId}</span>
+                  </div>
+                  <div className="schedule-service">
+                    <FaSyringe className="icon" />
+                    <span>
+                      {schedule.packageName
+                        ? `Gói: ${schedule.packageName}`
+                        : `Vaccine: ${
+                            schedule.vaccineName || schedule.serviceName
+                          }`}
+                    </span>
+                  </div>
+                  <div className="schedule-date">
+                    <FaClock className="icon" />
+                    <span>Bắt đầu: {formatDate(schedule.startDate)}</span>
+                  </div>
+                  <span
+                    className={`schedule-status ${
+                      schedule.status
+                        ? schedule.status.toLowerCase()
+                        : "pending"
+                    }`}
+                  >
+                    {schedule.status === "PENDING" && "Chờ xác nhận"}
+                    {schedule.status === "CONFIRMED" && "Đã xác nhận"}
+                    {schedule.status === "COMPLETED" && "Đã hoàn thành"}
+                    {schedule.status === "CANCELLED" && "Đã hủy"}
+                  </span>
+                </div>
+                <button
+                  className="toggle-details-btn"
+                  onClick={() => toggleScheduleDetails(schedule.scheduleId)}
+                >
+                  {expandedScheduleId === schedule.scheduleId ? (
+                    <>
+                      Thu gọn <FaAngleUp />
+                    </>
+                  ) : (
+                    <>
+                      Chi tiết <FaAngleDown />
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {expandedScheduleId === schedule.scheduleId && (
+                <div className="schedule-details">
+                  {loadingAppointments ? (
+                    <div className="appointments-loading">
+                      Đang tải chi tiết...
+                    </div>
+                  ) : scheduleAppointments[schedule.scheduleId]?.length > 0 ? (
+                    <div className="appointments-table-container">
+                      <h4>Các buổi hẹn trong lịch tiêm:</h4>
+                      <div className="appointments-table-wrapper">
+                        <table className="appointments-table">
+                          <thead>
+                            <tr>
+                              <th>Mã hẹn</th>
+                              <th>Mũi số</th>
+                              <th>Vắc xin</th>
+                              <th>Ngày hẹn</th>
+                              <th>Giờ hẹn</th>
+                              <th>Giá</th>
+                              <th>Trạng thái</th>
+                              <th>Thanh toán</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {scheduleAppointments[schedule.scheduleId].map(
+                              (appointment) => (
+                                <tr key={appointment.appId}>
+                                  <td>{appointment.appId}</td>
+                                  <td>{appointment.shotNumber || "N/A"}</td>
+                                  <td>{appointment.serviceName || "N/A"}</td>
+                                  <td>
+                                    {formatDate(appointment.appointmentDate)}
+                                  </td>
+                                  <td>
+                                    {appointment.appointmentTime
+                                      ? appointment.appointmentTime.substring(
+                                          0,
+                                          5
+                                        )
+                                      : "N/A"}
+                                  </td>
+                                  <td>
+                                    {new Intl.NumberFormat("vi-VN", {
+                                      style: "currency",
+                                      currency: "VND",
+                                    }).format(appointment.price || 0)}
+                                  </td>
+                                  <td>
+                                    <span
+                                      className={`status-badge ${
+                                        appointment.status
+                                          ? appointment.status.toLowerCase()
+                                          : "pending"
+                                      }`}
+                                    >
+                                      {appointment.status === "PENDING" &&
+                                        "Chờ xác nhận"}
+                                      {appointment.status === "CONFIRMED" &&
+                                        "Đã xác nhận"}
+                                      {appointment.status === "COMPLETED" &&
+                                        "Đã hoàn thành"}
+                                      {appointment.status === "CANCELLED" &&
+                                        "Đã hủy"}
+                                    </span>
+                                  </td>
+                                  <td>
+                                    <span
+                                      className={`payment-status ${
+                                        appointment.paymentStatus
+                                          ? appointment.paymentStatus.toLowerCase()
+                                          : "pending"
+                                      }`}
+                                    >
+                                      {appointment.paymentStatus ===
+                                        "PENDING" && "Chưa thanh toán"}
+                                      {appointment.paymentStatus ===
+                                        "COMPLETED" && "Đã thanh toán"}
+                                      {!appointment.paymentStatus && "N/A"}
+                                    </span>
+                                  </td>
+                                </tr>
+                              )
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="no-appointments">
+                      Không có thông tin buổi hẹn
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="no-records">Chưa có lịch sử tiêm chủng</div>
+      )}
+    </div>
+  );
+
   // In the same file
   const ProfileList = () => (
     <div className="profiles-sidebar">
@@ -197,10 +466,10 @@ const StaffChildProfile = () => {
         <FaSearch className="staff-search-icon" />
         <input
           type="text"
+          name="searchInput" // Thêm name để dễ dàng truy cập trong handleSearchById
           placeholder="Tìm kiếm theo ID"
-          value={searchTerm}
-          onChange={handleSearchChange} // Sử dụng handleSearchChange thay vì inline function
           className="staff-search-input"
+          // Bỏ value và onChange để input trở thành uncontrolled component
         />
         <button type="submit" className="staff-search-button">
           Tìm ID
@@ -322,52 +591,7 @@ const StaffChildProfile = () => {
             </div>
           </div>
         ) : (
-          <div className="medical-records">
-            {appointments.length > 0 ? (
-              appointments.map((appointment) => (
-                <div key={appointment.appId} className="medical-record-card">
-                  <div className="record-header">
-                    <div className="record-date">
-                      <h3>
-                        Lần tiêm ngày {formatDate(appointment.appointmentDate)}
-                      </h3>
-                      <span className="record-id">
-                        Mã tiêm: {appointment.appId}
-                      </span>
-                    </div>
-                    <span
-                      className={`status ${appointment.status.toLowerCase()}`}
-                    >
-                      {appointment.status === "PENDING" && "Chờ xác nhận"}
-                      {appointment.status === "CONFIRMED" && "Đã xác nhận"}
-                      {appointment.status === "COMPLETED" && "Đã hoàn thành"}
-                      {appointment.status === "CANCELLED" && "Đã hủy"}
-                    </span>
-                  </div>
-                  <div className="record-content">
-                    <div className="record-field">
-                      <h4>Thời gian:</h4>
-                      <p>{appointment.appointmentTime}</p>
-                    </div>
-                    <div className="record-field">
-                      <h4>Thanh toán:</h4>
-                      <p>
-                        {appointment.paymentStatus === "PAID"
-                          ? "Đã thanh toán"
-                          : "Chưa thanh toán"}
-                      </p>
-                    </div>
-                    <div className="record-field">
-                      <h4>Dịch vụ:</h4>
-                      <p>{appointment.serviceId}</p>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="no-records">Chưa có lịch sử tiêm chủng</div>
-            )}
-          </div>
+          <MedicalHistory />
         )}
       </div>
     </div>

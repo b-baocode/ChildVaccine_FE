@@ -14,6 +14,27 @@ const vaccineService = {
     }
   },
 
+  getVaccineById: async (vaccineId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/vaccine/vaccines/${vaccineId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Không thể lấy thông tin vaccine: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error(`Lỗi khi lấy thông tin vaccine ${vaccineId}:`, error);
+      throw error;
+    }
+  },
+
   // Lấy danh sách gói vaccine
   getVaccinePackages: async () => {
     try {

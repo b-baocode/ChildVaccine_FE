@@ -28,10 +28,12 @@ import AppointmentOverdue from './components/StaffComponent/AppointmentOverdue';
 import AdminLayout from './layouts/AdminLayout';
 import Dashbroad from './components/AdminComponent/Dashbroad';
 import StaffManagement from './components/AdminComponent/StaffManagement';
+import CustomerManage from './components/AdminComponent/CustomerManage';
 import VaccinationHistory from './components/AdminComponent/VaccinationHistory';
 import Feedback from './components/AdminComponent/Feedback';
 import Revenue from './components/AdminComponent/Revenue';
 import VaccineManage from'./components/AdminComponent/VaccineManage';
+import PackageManage from './components/AdminComponent/PackageManage';
 
 import Profile from './components/CusComponent/Profile';
 import AddChildForm from './components/CusComponent/AddChildForm';
@@ -118,10 +120,12 @@ const AppWrapper = () => {
             }>
               <Route index element={<Dashbroad />} />
               <Route path="staff" element={<StaffManagement />} />
+              <Route path="customers" element={<CustomerManage />} /> 
               <Route path="vaccination-history" element={<VaccinationHistory />} />
-              <Route path="feedback" element={<Feedback />} />
+              <Route path="feedback" element={<Feedback />} />s
               <Route path="revenue" element={<Revenue />} />
               <Route path="vaccineManage" element={<VaccineManage />} />
+              <Route path="pakageManage" element={<PackageManage />} />
             </Route>
           </Routes>
         </div>

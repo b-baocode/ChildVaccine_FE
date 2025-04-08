@@ -6,6 +6,7 @@ import childService from "../service/childService";
 import appointmentService from "../service/appointmentService";
 import reactionService from "../service/reactionService";
 import sessionService from "../service/sessionService";
+import vaccineService from "../service/vaccineService";
 import "../styles/VaccinationReactionForm.css";
 
 const VaccinationReactionForm = () => {
@@ -21,6 +22,7 @@ const VaccinationReactionForm = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [submittedReaction, setSubmittedReaction] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [eligibilityStatus, setEligibilityStatus] = useState(null);
 
   // Fetch children when component mounts
   useEffect(() => {
@@ -68,22 +70,40 @@ const VaccinationReactionForm = () => {
 
       try {
         setLoading(true);
-        // Thay đổi hàm để lấy cuộc hẹn gần nhất
+        // Lấy cuộc hẹn gần nhất
         const latestAppointment =
           await appointmentService.getLatedAppointmentsByChildId(selectedChild);
 
-        // Nếu có cuộc hẹn, tự động chọn nó
+        // Nếu có cuộc hẹn
         if (latestAppointment) {
-          setAppointments([latestAppointment]); // Chỉ lưu 1 appointment trong mảng
-          setSelectedAppointment(latestAppointment.appId); // Tự động chọn
+          // Kiểm tra tính hợp lệ cho báo cáo phản ứng
+          const eligibility = await checkReactionReportingEligibility(
+            latestAppointment
+          );
+          setEligibilityStatus(eligibility);
+
+          if (eligibility.eligible) {
+            setAppointments([latestAppointment]);
+            setSelectedAppointment(latestAppointment.appId);
+          } else {
+            // Nếu không hợp lệ, vẫn hiển thị appointment nhưng không cho phép báo cáo
+            setAppointments([latestAppointment]);
+            setSelectedAppointment("");
+          }
         } else {
           setAppointments([]);
           setSelectedAppointment("");
+          setEligibilityStatus({
+            eligible: false,
+            message:
+              "Không tìm thấy buổi tiêm gần đây nào cho trẻ này. Vui lòng chọn trẻ khác hoặc liên hệ trung tâm tiêm chủng.",
+          });
         }
       } catch (err) {
         console.error("Error fetching latest appointment:", err);
         setError("Không thể tải thông tin buổi tiêm gần nhất");
         setAppointments([]);
+        setEligibilityStatus(null);
       } finally {
         setLoading(false);
       }
@@ -91,6 +111,70 @@ const VaccinationReactionForm = () => {
 
     fetchAppointments();
   }, [selectedChild]);
+
+  // Thêm hàm kiểm tra thời hạn báo cáo phản ứng
+  const checkReactionReportingEligibility = async (appointment) => {
+    try {
+      if (!appointment || !appointment.serviceName) {
+        return {
+          eligible: false,
+          message: "Không có thông tin buổi tiêm.",
+        };
+      }
+
+      // Lấy vaccineId từ appointment
+      const vaccineId = appointment.vaccineId;
+
+      if (!vaccineId) {
+        return {
+          eligible: true,
+          message: "Không xác định được loại vaccine, cho phép báo cáo.",
+        };
+      }
+
+      // Lấy thông tin vaccine để biết gapDays
+      const vaccineInfo = await vaccineService.getVaccineById(vaccineId);
+
+      if (!vaccineInfo || !vaccineInfo.gapDays) {
+        return {
+          eligible: true,
+          message: "Không có thông tin về thời hạn báo cáo.",
+        };
+      }
+
+      // Tính ngày cuối cùng có thể báo cáo
+      const appointmentDate = new Date(appointment.appointmentDate);
+      const reportDeadline = new Date(appointmentDate);
+      reportDeadline.setDate(appointmentDate.getDate() + vaccineInfo.gapDays);
+
+      // So sánh với ngày hiện tại
+      const today = new Date();
+
+      if (today <= reportDeadline) {
+        // Vẫn trong thời hạn báo cáo
+        return {
+          eligible: true,
+          deadline: reportDeadline,
+          daysRemaining: Math.ceil(
+            (reportDeadline - today) / (1000 * 60 * 60 * 24)
+          ),
+        };
+      } else {
+        // Đã quá thời hạn báo cáo
+        return {
+          eligible: false,
+          message: `Đã quá thời hạn báo cáo phản ứng sau tiêm (${vaccineInfo.gapDays} ngày).`,
+          deadline: reportDeadline,
+        };
+      }
+    } catch (error) {
+      console.error("Lỗi khi kiểm tra khả năng báo cáo:", error);
+      return {
+        eligible: true,
+        message: "Không thể kiểm tra thời hạn báo cáo, cho phép báo cáo.",
+      };
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -229,7 +313,11 @@ const VaccinationReactionForm = () => {
         <div className="form-group">
           <label>Buổi Tiêm Gần Nhất:</label>
           {appointments.length > 0 ? (
-            <div className="appointment-info">
+            <div
+              className={`appointment-info ${
+                !eligibilityStatus?.eligible ? "ineligible" : ""
+              }`}
+            >
               <p>
                 <strong>Ngày tiêm:</strong>{" "}
                 {new Date(appointments[0].appointmentDate).toLocaleDateString()}
@@ -240,6 +328,30 @@ const VaccinationReactionForm = () => {
               <p>
                 <strong>Vaccine/Gói:</strong> {appointments[0].serviceName}
               </p>
+
+              {eligibilityStatus && !eligibilityStatus.eligible && (
+                <div className="eligibility-warning">
+                  <p className="warning-message">{eligibilityStatus.message}</p>
+                  <p className="warning-detail">
+                    Hạn báo cáo:{" "}
+                    {eligibilityStatus.deadline
+                      ? new Date(
+                          eligibilityStatus.deadline
+                        ).toLocaleDateString()
+                      : "Không xác định"}
+                  </p>
+                </div>
+              )}
+
+              {eligibilityStatus &&
+                eligibilityStatus.eligible &&
+                eligibilityStatus.daysRemaining && (
+                  <p className="deadline-info">
+                    Còn {eligibilityStatus.daysRemaining} ngày để báo cáo phản
+                    ứng sau tiêm.
+                  </p>
+                )}
+
               <input
                 type="hidden"
                 name="selectedAppointment"
@@ -248,8 +360,8 @@ const VaccinationReactionForm = () => {
             </div>
           ) : (
             <div className="no-appointment">
-              Không tìm thấy buổi tiêm gần đây nào cho trẻ này. Vui lòng chọn
-              trẻ khác hoặc liên hệ trung tâm tiêm chủng.
+              {eligibilityStatus?.message ||
+                "Không tìm thấy buổi tiêm gần đây nào cho trẻ này. Vui lòng chọn trẻ khác hoặc liên hệ trung tâm tiêm chủng."}
             </div>
           )}
         </div>
@@ -269,21 +381,27 @@ const VaccinationReactionForm = () => {
           <div className="severity-options">
             <button
               type="button"
-              className={`severity-option ${severity === "MILD" ? "active" : ""}`}
+              className={`severity-option ${
+                severity === "MILD" ? "active" : ""
+              }`}
               onClick={() => setSeverity("MILD")}
             >
               Nhẹ
             </button>
             <button
               type="button"
-              className={`severity-option ${severity === "SEVERE" ? "active" : ""}`}
+              className={`severity-option ${
+                severity === "SEVERE" ? "active" : ""
+              }`}
               onClick={() => setSeverity("SEVERE")}
             >
               Vừa
             </button>
             <button
               type="button"
-              className={`severity-option ${severity === "EMERGENCY" ? "active" : ""}`}
+              className={`severity-option ${
+                severity === "EMERGENCY" ? "active" : ""
+              }`}
               onClick={() => setSeverity("EMERGENCY")}
             >
               Nặng
@@ -291,8 +409,20 @@ const VaccinationReactionForm = () => {
           </div>
         </div>
 
-        <button type="submit" className="submit-btn" disabled={isSubmitting}>
-          {isSubmitting ? "Đang gửi..." : "Gửi Báo Cáo"}
+        <button
+          type="submit"
+          className="submit-btn"
+          disabled={
+            isSubmitting ||
+            (eligibilityStatus && !eligibilityStatus.eligible) ||
+            !selectedAppointment
+          }
+        >
+          {isSubmitting
+            ? "Đang gửi..."
+            : eligibilityStatus && !eligibilityStatus.eligible
+            ? "Không thể báo cáo"
+            : "Gửi Báo Cáo"}
         </button>
       </form>
     </div>

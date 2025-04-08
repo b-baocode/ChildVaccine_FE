@@ -49,7 +49,7 @@ const StaffSidebar = () => {
     {
       path: "/staff/child-profiles",
       icon: <FaUserMd />,
-      title: "Hồ sơ bệnh nhân",
+      title: "Hồ sơ trẻ em",
     },
     {
       path: "/staff/post-vaccination-info",

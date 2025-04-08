@@ -226,58 +226,75 @@ const VaccineRegistration = () => {
           ) : (
             <div className="package-accordion">
               {packages.map((pkg) => (
-                <div key={pkg.packageId} className="package-accordion-item">
+                <div
+                  key={pkg.packageId}
+                  className={`package-accordion-item ${
+                    pkg.available === false ? "unavailable" : ""
+                  }`}
+                >
                   <div
                     className="package-header"
-                    onClick={() => fetchPackageDetails(pkg.packageId)}
+                    onClick={() =>
+                      pkg.available !== false &&
+                      fetchPackageDetails(pkg.packageId)
+                    }
                   >
                     <h4>{pkg.name}</h4>
+                    {pkg.available === false && (
+                      <span className="unavailable-tag">Không khả dụng</span>
+                    )}
                     <div className="package-price">
                       {Number(pkg.price).toLocaleString("vi-VN")} VND
                     </div>
                     <span className="expand-icon">
-                      {expandedPackageId === pkg.packageId ? "▼" : "►"}
+                      {pkg.available !== false &&
+                      expandedPackageId === pkg.packageId
+                        ? "▼"
+                        : "►"}
                     </span>
                   </div>
 
-                  {expandedPackageId === pkg.packageId && (
-                    <div className="package-content">
-                      {loadingPackageDetails ? (
-                        <p>Đang tải danh sách vắc xin...</p>
-                      ) : (
-                        <div>
-                          <p className="package-description">
-                            {pkg.description}
-                          </p>
-                          <h5>Vắc xin trong gói:</h5>
-                          {packagesVaccines[pkg.packageId]?.length > 0 ? (
-                            <ul className="vaccine-list">
-                              {packagesVaccines[pkg.packageId].map(
-                                (vaccine) => (
-                                  <li
-                                    key={vaccine.vaccineId}
-                                    className="vaccine-item"
-                                  >
-                                    <strong>{vaccine.name}</strong>
-                                    <p>{vaccine.description}</p>
-                                    <div className="vaccine-details">
-                                      {vaccine.shotNumber > 0 && (
-                                        <span>
-                                          Số mũi: {vaccine.shotNumber}
-                                        </span>
-                                      )}
-                                    </div>
-                                  </li>
-                                )
-                              )}
-                            </ul>
-                          ) : (
-                            <p>Không có thông tin về vắc xin trong gói này.</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  {pkg.available !== false &&
+                    expandedPackageId === pkg.packageId && (
+                      <div className="package-content">
+                        {loadingPackageDetails ? (
+                          <p>Đang tải danh sách vắc xin...</p>
+                        ) : (
+                          <div>
+                            <p className="package-description">
+                              {pkg.description}
+                            </p>
+                            <h5>Vắc xin trong gói:</h5>
+                            {packagesVaccines[pkg.packageId]?.length > 0 ? (
+                              <ul className="vaccine-list">
+                                {packagesVaccines[pkg.packageId].map(
+                                  (vaccine) => (
+                                    <li
+                                      key={vaccine.vaccineId}
+                                      className="vaccine-item"
+                                    >
+                                      <strong>{vaccine.name}</strong>
+                                      <p>{vaccine.description}</p>
+                                      <div className="vaccine-details">
+                                        {vaccine.shotNumber > 0 && (
+                                          <span>
+                                            Số mũi: {vaccine.shotNumber}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            ) : (
+                              <p>
+                                Không có thông tin về vắc xin trong gói này.
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
                 </div>
               ))}
             </div>
@@ -492,6 +509,15 @@ const VaccineRegistration = () => {
 
   // Xử lý chọn vaccine/gói cụ thể
   const handleSelectItem = (item) => {
+    // Kiểm tra khả dụng dựa trên loại sản phẩm
+    if (selectedType === "package" && item.available === false) {
+      return; // Không cho phép chọn gói không khả dụng
+    }
+
+    if (selectedType === "single" && item.quantity <= 0) {
+      return; // Không cho phép chọn vaccine đã hết
+    }
+
     const itemId = selectedType === "single" ? item.vaccineId : item.packageId;
     setFormData((prev) => ({
       ...prev,
@@ -499,6 +525,10 @@ const VaccineRegistration = () => {
     }));
     setSelectedItemName(item.name);
     setSelectedItemPrice(item.price);
+
+    if (selectedType === "single") {
+      setSelectedItemShots(item.shotNumber);
+    }
   };
 
   const ConfirmationModal = () => (
@@ -695,6 +725,8 @@ const VaccineRegistration = () => {
         isSelected:
           formData.selectedItem ===
           (selectedType === "single" ? item.vaccineId : item.packageId),
+        available:
+          selectedType === "package" ? item.available : item.quantity > 0,
       })),
     });
 
@@ -714,22 +746,43 @@ const VaccineRegistration = () => {
           const itemId =
             selectedType === "single" ? item.vaccineId : item.packageId;
 
+          // Kiểm tra xem item có khả dụng không
+          const isAvailable =
+            selectedType === "single"
+              ? item.quantity > 0 // Với vaccine, kiểm tra quantity
+              : item.available !== false; // Với package, kiểm tra available
+
           return (
             <div
               key={itemId}
               className={`item-card ${
                 formData.selectedItem === itemId ? "selected" : ""
-              }`}
-              onClick={() => handleSelectItem(item)}
+              } ${!isAvailable ? "unavailable" : ""}`}
+              onClick={() => isAvailable && handleSelectItem(item)}
+              title={
+                !isAvailable
+                  ? selectedType === "single"
+                    ? "Vaccine này hiện đã hết"
+                    : "Gói vaccine này hiện không khả dụng"
+                  : ""
+              }
             >
               <h4>{item.name}</h4>
+              {!isAvailable && (
+                <span className="unavailable-tag">
+                  {selectedType === "single" ? "Hết hàng" : "Không khả dụng"}
+                </span>
+              )}
               <p>{item.description}</p>
               <div className="item-details">
                 <span className="price">
                   {Number(item.price).toLocaleString("vi-VN")} VND
                 </span>
                 {selectedType === "single" && (
-                  <span className="shots">Số mũi: {item.shotNumber}</span>
+                  <>
+                    <span className="shots">Số mũi: {item.shotNumber}</span>
+                    <span className="quantity">Còn lại: {item.quantity}</span>
+                  </>
                 )}
               </div>
             </div>

@@ -10,6 +10,7 @@ const Sidebar = () => {
   const menuItems = [
     { path: "/admin", icon: "📊", label: "Dashboard" },
     { path: "/admin/staff", icon: "👥", label: "Quản lý nhân viên" },
+    { path: "/admin/customers", icon: "👪", label: "Quản lý khách hàng" },
     {
       path: "/admin/vaccination-history",
       icon: "💉",
@@ -20,8 +21,9 @@ const Sidebar = () => {
     {
       path: "/admin/vaccineManage",
       icon: "💉",
-      label: "Quản lý vaccinevaccine",
+      label: "Quản lý vaccine",
     },
+    { path: "/admin/pakageManage", icon: "📦", label: "Quản lý Gói Vaccine" },
   ];
 
   const handleLogout = () => {
