@@ -1,114 +1,174 @@
-.admin-layout {
-    display: flex;
-    min-height: 100vh;
-  }
+/* CSS cho AdminLayout.css */
 
-  .main-content {
-    flex: 1;
-    background: #f8f9fa;
-    max-height: 100vh; /* Giới hạn chiều cao tối đa */
-    overflow: hidden; /* Ngăn scroll cho main-content */
+/* Layout chính */
+.admin-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden; /* Ngăn scroll của toàn trang */
+  background-color: #f5f7fa;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  height: 100%;
+  overflow-y: auto; /* Cho phép sidebar cuộn riêng nếu menu dài */
+  flex-shrink: 0;
+  background-color: #1e293b;
+  color: white;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+/* Khu vực nội dung chính */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden; /* Không cho cuộn toàn bộ main-content */
+}
+
+/* Header cố định */
+.main-header {
+  padding: 16px 24px;
+  background-color: white;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  z-index: 5;
+  flex-shrink: 0; /* Ngăn header co lại khi nội dung dài */
+  position: relative;
+}
+
+.header-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #334155;
+}
+
+.header-title p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+/* Khu vực nội dung có thể cuộn */
+.content-wrapper {
+  flex-grow: 1;
+  padding: 24px;
+  overflow-y: auto; /* Chỉ khu vực content-wrapper được cuộn */
+  height: calc(100vh - 73px); /* Trừ đi chiều cao của header */
+}
+
+/* Loading state */
+.admin-loading {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8fafc;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(30, 41, 59, 0.1);
+  border-top-color: #1e293b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Thanh cuộn tùy chỉnh */
+.content-wrapper::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content-wrapper::-webkit-scrollbar-track,
+.sidebar::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.content-wrapper::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.content-wrapper::-webkit-scrollbar-thumb:hover,
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
   }
   
-  .content-wrapper {
-    padding-bottom: 24px; /* Thêm padding bottom để tránh nội dung bị che khuất */
-  } 
-  
-  .main-header {
-    background: #ffffff;
-    padding: 16px 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  
-  .header-title h1 {
-    font-size: 24px;
-    color: #2c3e50;
-    margin: 0;
-  }
-  
-  .header-title p {
-    color: #95a5a6;
-    margin: 4px 0 0 0;
-    font-size: 14px;
-  }
-  
-  .user-profile {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-  
-  .notification, .messages {
-    position: relative;
-    cursor: pointer;
-    color: #6c757d;
-  }
-  
-  .notification::after,
-  .messages::after {
-    content: '';
+  .sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
     position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 8px;
-    height: 8px;
-    background: #e74c3c;
-    border-radius: 50%;
+    top: 0;
+    left: 0;
+    transform: translateX(-100%);
+    z-index: 20;
   }
   
-  .avatar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
+  .sidebar.open {
+    transform: translateX(0);
   }
   
-  .avatar img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  
-  .avatar span {
-    font-weight: 500;
-    color: #2c3e50;
-  }
-  
-  .content-wrapper {
-    padding: 24px;
-    margin-top: 20px;
+  .main-content {
+    height: 100vh;
     width: 100%;
   }
-
-    /* Thêm vào file AdminLayout.css */
-  .admin-loading {
+  
+  .content-wrapper {
+    padding: 16px;
+    height: calc(100vh - 64px); /* Điều chỉnh theo chiều cao header trên mobile */
+  }
+  
+  /* Thêm menu toggle cho mobile */
+  .menu-toggle {
+    display: block;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: #1e293b;
+    color: white;
+    border-radius: 50%;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    background-color: #f5f5f5;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 25;
   }
-  
-  .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-radius: 50%;
-    border-top-color: #1976d2;
-    animation: spin 1s linear infinite;
-    margin-bottom: 15px;
-  }
-  
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
+}

@@ -284,13 +284,18 @@ const VaccineManage = () => {
 
               <div className="form-group half">
                 <label>Độ tuổi (tháng):</label>
-                <input
-                  type="number"
+                <select
                   name="ageMonth"
-                  defaultValue="0"
-                  min="0"
+                  defaultValue=""
                   required
-                />
+                  className="age-select"
+                >
+                  <option value="">-- Chọn độ tuổi --</option>
+                  <option value="2">2 tháng tuổi</option>
+                  <option value="4">4 tháng tuổi</option>
+                  <option value="6">6 tháng tuổi</option>
+                  <option value="12">12 tháng tuổi</option>
+                </select>
               </div>
             </div>
 
