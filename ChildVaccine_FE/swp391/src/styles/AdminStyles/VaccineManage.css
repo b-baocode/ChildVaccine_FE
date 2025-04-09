@@ -1,4 +1,5 @@
 
+
 /* Cập nhật thiết lập cho html, body */
 html, body {
   height: 100%;
@@ -8,20 +9,24 @@ html, body {
   font-family: sans-serif;
 }
 
+
 body {
   overflow-y: scroll; /* Luôn hiển thị thanh cuộn dọc để tránh nhảy layout */
 }
+
 
 /* Cập nhật container chính */
 .vaccine-manage-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  min-height: calc(100vh - 40px); /* Trừ đi padding */
+  height: calc(100vh - 40px); /* Trừ đi padding */
   display: flex;
   flex-direction: column;
-  position: relative; /* Để container có thể được scroll */
+  position: relative;
+  overflow-y: auto; /* Thêm thanh cuộn dọc */
 }
+
 
 /* Cập nhật vaccines-grid */
 .vaccines-grid {
@@ -32,6 +37,7 @@ body {
   flex: 1; /* Cho phép grid mở rộng để lấp đầy không gian có sẵn */
 }
 
+
 /* Thêm media query để điều chỉnh grid trên màn hình nhỏ */
 @media (max-width: 768px) {
   .vaccines-grid {
@@ -39,12 +45,14 @@ body {
   }
 }
 
+
 .green-title {
   color: #4CAF50;
   font-weight: 600;
   /* Tùy chọn: thêm các hiệu ứng khác */
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
+
 
 /* Thêm animation khi trang load */
 @keyframes fadeIn {
@@ -58,9 +66,11 @@ body {
   }
 }
 
+
 .green-title {
   animation: fadeIn 0.5s ease-out;
 }
+
 
 /* Đảm bảo modal luôn có thể scroll được */
 .vaccine-modal {
@@ -78,6 +88,7 @@ body {
   padding: 20px 0; /* Thêm padding để modal không bị sát cạnh */
 }
 
+
 .vaccine-modal-content {
   background-color: white;
   border-radius: 8px;
@@ -90,10 +101,12 @@ body {
   position: relative; /* Cho phép định vị tuyệt đối bên trong */
 }
 
+
 /* Đảm bảo nút đóng modal luôn hiển thị */
 .vaccine-modal-content h2 {
   padding-right: 30px; /* Để tránh chồng lên nút đóng */
 }
+
 
 .vaccine-header {
   display: flex;
@@ -101,6 +114,7 @@ body {
   align-items: center;
   margin-bottom: 30px;
 }
+
 
 .create-button {
   background-color: #4CAF50;
@@ -116,9 +130,11 @@ body {
   transition: background-color 0.3s;
 }
 
+
 .create-button:hover {
   background-color: #45a049;
 }
+
 
 .loading, .error {
   text-align: center;
@@ -126,113 +142,133 @@ body {
   font-size: 18px;
 }
 
+
 .error {
   color: #d32f2f;
 }
 
+
 .vaccines-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
+  gap: 24px;
+  padding: 20px 0 60px;
 }
+
 
 .vaccine-card {
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
 }
+
 
 .vaccine-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
+
 .vaccine-card-header {
-  background-color: #f5f5f5;
-  padding: 15px;
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background-color: #f8f9fa;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e9ecef;
 }
+
 
 .vaccine-card-header h3 {
   margin: 0;
-  color: #333;
+  color: #2c3e50;
   font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
 }
+
 
 .vaccine-id {
-  font-size: 12px;
-  color: #666;
-  background-color: #e0e0e0;
-  padding: 3px 8px;
-  border-radius: 4px;
+  font-size: 13px;
+  color: #6c757d;
+  background-color: #e9ecef;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 500;
 }
 
+
 .vaccine-card-content {
-  padding: 15px;
+  padding: 20px;
+  flex: 1;
 }
+
 
 .vaccine-detail {
   display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  gap: 12px;
 }
 
-.vaccine-detail-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
 
 .vaccine-detail .icon {
-  color: #2196F3;
-  min-width: 18px;
+  color: #3498db;
+  min-width: 20px;
+  margin-top: 2px;
 }
+
 
 .vaccine-detail p {
   margin: 0;
   font-size: 14px;
-  color: #333;
+  color: #2c3e50;
+  line-height: 1.5;
 }
 
+
 .description {
-  color: #666;
+  color: #6c757d;
   font-size: 14px;
-  line-height: 1.4;
+  line-height: 1.6;
+  margin: 16px 0;
 }
+
 
 .vaccine-price {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px dashed #e0e0e0;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed #dee2e6;
 }
 
+
 .vaccine-price .icon {
-  color: #4CAF50;
+  color: #2ecc71;
+  font-size: 18px;
 }
+
 
 .vaccine-price p {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
-  color: #4CAF50;
+  color: #2ecc71;
 }
 
+
 .vaccine-card-actions {
-  padding: 15px;
+  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
-  gap: 10px;
-  border-top: 1px solid #e0e0e0;
+  gap: 12px;
+  border-top: 1px solid #e9ecef;
+  background-color: #f8f9fa;
 }
+
 
 .update-quantity-button, .update-info-button {
   flex: 1;
@@ -248,23 +284,28 @@ body {
   transition: background-color 0.3s;
 }
 
+
 .update-quantity-button {
   background-color: #FF9800;
   color: white;
 }
 
+
 .update-quantity-button:hover {
   background-color: #F57C00;
 }
+
 
 .update-info-button {
   background-color: #2196F3;
   color: white;
 }
 
+
 .update-info-button:hover {
   background-color: #1976D2;
 }
+
 
 /* Modal Styles */
 .vaccine-modal {
@@ -280,6 +321,7 @@ body {
   z-index: 1000;
 }
 
+
 .vaccine-modal-content {
   background-color: white;
   border-radius: 8px;
@@ -290,6 +332,7 @@ body {
   padding: 20px;
 }
 
+
 .vaccine-modal-content h2 {
   margin-top: 0;
   color: #333;
@@ -297,14 +340,17 @@ body {
   padding-bottom: 15px;
 }
 
+
 .vaccine-modal-content h3 {
   color: #2196F3;
   margin-top: 0;
 }
 
+
 .form-group {
   margin-bottom: 15px;
 }
+
 
 .form-row {
   display: flex;
@@ -312,9 +358,11 @@ body {
   margin-bottom: 15px;
 }
 
+
 .form-group.half {
   flex: 1;
 }
+
 
 .form-group label {
   display: block;
@@ -322,6 +370,7 @@ body {
   font-weight: 500;
   color: #333;
 }
+
 
 .form-group input, .form-group textarea {
   width: 100%;
@@ -331,10 +380,12 @@ body {
   font-size: 16px;
 }
 
+
 .form-group textarea {
   height: 100px;
   resize: vertical;
 }
+
 
 .modal-buttons {
   display: flex;
@@ -342,6 +393,7 @@ body {
   gap: 10px;
   margin-top: 20px;
 }
+
 
 .cancel-button, .submit-button {
   padding: 10px 20px;
@@ -352,23 +404,28 @@ body {
   transition: background-color 0.3s;
 }
 
+
 .cancel-button {
   background-color: #e0e0e0;
   color: #333;
 }
 
+
 .cancel-button:hover {
   background-color: #d5d5d5;
 }
+
 
 .submit-button {
   background-color: #4CAF50;
   color: white;
 }
 
+
 .submit-button:hover {
   background-color: #45a049;
 }
+
 
 /* Thêm kiểu dáng cho form cập nhật vaccine */
 .age-select {
@@ -381,16 +438,19 @@ body {
   cursor: pointer;
 }
 
+
 .age-select:focus {
   border-color: #2196F3;
   outline: none;
   box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.25);
 }
 
+
 .price-input {
   font-weight: 600;
   color: #4CAF50;
 }
+
 
 .form-text {
   display: block;
@@ -398,6 +458,7 @@ body {
   color: #666;
   font-size: 0.85em;
 }
+
 
 .form-info {
   margin-top: 20px;
@@ -407,11 +468,13 @@ body {
   border-radius: 4px;
 }
 
+
 .form-info p {
   margin: 0;
   font-size: 0.9em;
   color: #0d47a1;
 }
+
 
 .vaccine-modal-content h3 {
   margin-top: 0;
@@ -420,6 +483,7 @@ body {
   border-bottom: 1px dashed #e0e0e0;
   padding-bottom: 10px;
 }
+
 
 /* Thêm vào VaccineManage.css */
 .current-quantity-display {
@@ -433,10 +497,12 @@ body {
   align-items: center;
 }
 
+
 .quantity-label {
   font-weight: 600;
   color: #333;
 }
+
 
 .quantity-value {
   font-size: 18px;
@@ -444,17 +510,20 @@ body {
   color: #2196F3;
 }
 
+
 .method-label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
 }
 
+
 .method-options {
   display: flex;
   gap: 25px;
   margin-bottom: 15px;
 }
+
 
 .method-option {
   display: flex;
@@ -466,13 +535,16 @@ body {
   transition: background-color 0.2s;
 }
 
+
 .method-option:hover {
   background-color: #e0e0e0;
 }
 
+
 .method-option input {
   margin-right: 8px;
 }
+
 
 .result-preview {
   background-color: #e8f5e9;
@@ -481,25 +553,30 @@ body {
   margin: 15px 0;
 }
 
+
 .result-preview p {
   margin: 5px 0;
   font-size: 14px;
 }
+
 
 .result-preview strong {
   font-size: 16px;
   color: #4caf50;
 }
 
+
 .error-text {
   color: #f44336 !important;
   font-weight: 600;
 }
 
+
 .submit-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
+
 
 /* Thêm vào VaccineManage.css */
 .vaccine-header {
@@ -511,16 +588,19 @@ body {
   gap: 15px;
 }
 
+
 .vaccine-search-container {
   flex-grow: 1;
   max-width: 500px;
   margin: 0 15px;
 }
 
+
 .search-form {
   display: flex;
   position: relative;
 }
+
 
 .search-input {
   flex: 1;
@@ -530,11 +610,13 @@ body {
   font-size: 16px;
 }
 
+
 .search-input:focus {
   outline: none;
   border-color: #4CAF50;
   box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
+
 
 .search-button {
   padding: 0 20px;
@@ -547,9 +629,11 @@ body {
   transition: background-color 0.3s;
 }
 
+
 .search-button:hover {
   background-color: #45a049;
 }
+
 
 .clear-search {
   position: absolute;
@@ -564,9 +648,11 @@ body {
   padding: 0 8px;
 }
 
+
 .clear-search:hover {
   color: #333;
 }
+
 
 .loading-spinner {
   display: inline-block;
@@ -578,9 +664,11 @@ body {
   animation: spin 1s ease-in-out infinite;
 }
 
+
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -588,18 +676,2309 @@ body {
     flex-direction: column;
     align-items: stretch;
   }
-  
+ 
   .vaccine-search-container {
     order: 2;
     max-width: 100%;
     margin: 15px 0;
   }
-  
+ 
   .create-button {
     order: 3;
     width: 100%;
   }
 }
+
+
+/* Enhanced Quantity Update Form Styles */
+.quantity-update-form {
+  padding: 24px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+.quantity-update-form h3 {
+  color: #2196F3;
+  font-size: 1.5rem;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e3f2fd;
+}
+
+
+.current-quantity-display {
+  background: linear-gradient(to right, #e3f2fd, #f5f9ff);
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  border-left: 4px solid #2196F3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+
+.current-quantity-display:hover {
+  transform: translateX(5px);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15);
+}
+
+
+.quantity-label {
+  font-weight: 600;
+  color: #1976D2;
+  font-size: 1.1rem;
+}
+
+
+.quantity-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2196F3;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+
+.method-label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #455a64;
+  font-size: 1.1rem;
+}
+
+
+.method-options {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+
+.method-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+
+.method-option:hover {
+  background-color: #e3f2fd;
+  border-color: #90caf9;
+}
+
+
+.method-option.selected {
+  background-color: #e3f2fd;
+  border-color: #2196F3;
+}
+
+
+.method-option input[type="radio"] {
+  margin-right: 12px;
+  width: 20px;
+  height: 20px;
+  accent-color: #2196F3;
+}
+
+
+.method-option label {
+  font-weight: 500;
+  color: #455a64;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+
+.quantity-input {
+  margin-top: 20px;
+}
+
+
+.quantity-input label {
+  display: block;
+  margin-bottom: 8px;
+  color: #455a64;
+  font-weight: 500;
+}
+
+
+.quantity-input input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+
+.quantity-input input:focus {
+  border-color: #2196F3;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+  outline: none;
+}
+
+
+.result-preview {
+  margin: 24px 0;
+  padding: 16px 20px;
+  background: linear-gradient(to right, #f1f8e9, #f9fbe7);
+  border-radius: 8px;
+  border-left: 4px solid #8bc34a;
+}
+
+
+.result-preview p {
+  margin: 8px 0;
+  font-size: 1rem;
+  color: #33691e;
+}
+
+
+.result-preview strong {
+  font-size: 1.2rem;
+  color: #689f38;
+}
+
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+
+.cancel-button, .submit-button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+.cancel-button {
+  background-color: #f5f5f5;
+  color: #455a64;
+  border: none;
+}
+
+
+.cancel-button:hover {
+  background-color: #e0e0e0;
+}
+
+
+.submit-button {
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+
+.submit-button:hover {
+  background-color: #1976D2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+}
+
+
+.submit-button:disabled {
+  background-color: #90caf9;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+
+.error-text {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.error-text i {
+  font-size: 1.1rem;
+}
+
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.quantity-update-form > * {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+
+.error-text {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Thêm vào VaccineManage.css */
+.vaccine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+
+.vaccine-search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 15px;
+}
+
+
+.search-form {
+  display: flex;
+  position: relative;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+}
+
+
+.search-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+
+.search-button {
+  padding: 0 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+
+.clear-search {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+
+.clear-search:hover {
+  color: #333;
+}
+
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vaccine-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+ 
+  .vaccine-search-container {
+    order: 2;
+    max-width: 100%;
+    margin: 15px 0;
+  }
+ 
+  .create-button {
+    order: 3;
+    width: 100%;
+  }
+}
+
+
+/* Enhanced Form Styles */
+.form-group {
+  margin-bottom: 24px;
+}
+
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+}
+
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+  background-color: #fff;
+}
+
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #2196F3;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+  outline: none;
+}
+
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+
+.form-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+
+.form-group.half {
+  flex: 1;
+  min-width: 0;
+}
+
+
+.form-info {
+  background: linear-gradient(to right, #e3f2fd, #f5f9ff);
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin: 24px 0;
+  border-left: 4px solid #2196F3;
+}
+
+
+.form-info p {
+  margin: 0;
+  color: #1976D2;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+
+.form-text {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 6px;
+}
+
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e0e0e0;
+}
+
+
+.cancel-button,
+.submit-button {
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+.cancel-button {
+  background-color: #f5f5f5;
+  color: #455a64;
+  border: none;
+}
+
+
+.cancel-button:hover {
+  background-color: #e0e0e0;
+}
+
+
+.submit-button {
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+
+.submit-button:hover {
+  background-color: #1976D2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+}
+
+
+.submit-button:disabled {
+  background-color: #90caf9;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+
+/* Animation for form elements */
+@keyframes formSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.form-group,
+.form-row,
+.form-info,
+.modal-buttons {
+  animation: formSlideIn 0.3s ease-out forwards;
+}
+
+
+.error-text {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Thêm vào VaccineManage.css */
+.vaccine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+
+.vaccine-search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 15px;
+}
+
+
+.search-form {
+  display: flex;
+  position: relative;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+}
+
+
+.search-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+
+.search-button {
+  padding: 0 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+
+.clear-search {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+
+.clear-search:hover {
+  color: #333;
+}
+
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vaccine-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+ 
+  .vaccine-search-container {
+    order: 2;
+    max-width: 100%;
+    margin: 15px 0;
+  }
+ 
+  .create-button {
+    order: 3;
+    width: 100%;
+  }
+}
+
+
+.error-text {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.error-text i {
+  font-size: 1.1rem;
+}
+
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.quantity-update-form > * {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+
+.error-text {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Thêm vào VaccineManage.css */
+.vaccine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+
+.vaccine-search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 15px;
+}
+
+
+.search-form {
+  display: flex;
+  position: relative;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+}
+
+
+.search-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+
+.search-button {
+  padding: 0 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+
+.clear-search {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+
+.clear-search:hover {
+  color: #333;
+}
+
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vaccine-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+ 
+  .vaccine-search-container {
+    order: 2;
+    max-width: 100%;
+    margin: 15px 0;
+  }
+ 
+  .create-button {
+    order: 3;
+    width: 100%;
+  }
+}
+
+
+.error-text {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.error-text i {
+  font-size: 1.1rem;
+}
+
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.quantity-update-form > * {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+
+.error-text {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Thêm vào VaccineManage.css */
+.vaccine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+
+.vaccine-search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 15px;
+}
+
+
+.search-form {
+  display: flex;
+  position: relative;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+}
+
+
+.search-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+
+.search-button {
+  padding: 0 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+
+.clear-search {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+
+.clear-search:hover {
+  color: #333;
+}
+
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vaccine-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+ 
+  .vaccine-search-container {
+    order: 2;
+    max-width: 100%;
+    margin: 15px 0;
+  }
+ 
+  .create-button {
+    order: 3;
+    width: 100%;
+  }
+}
+
+
+.error-text {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.error-text i {
+  font-size: 1.1rem;
+}
+
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.quantity-update-form > * {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+
+.error-text {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Thêm vào VaccineManage.css */
+.vaccine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+
+.vaccine-search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 15px;
+}
+
+
+.search-form {
+  display: flex;
+  position: relative;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+}
+
+
+.search-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+
+.search-button {
+  padding: 0 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+
+.clear-search {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+
+.clear-search:hover {
+  color: #333;
+}
+
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vaccine-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+ 
+  .vaccine-search-container {
+    order: 2;
+    max-width: 100%;
+    margin: 15px 0;
+  }
+ 
+  .create-button {
+    order: 3;
+    width: 100%;
+  }
+}
+
+
+.error-text {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.error-text i {
+  font-size: 1.1rem;
+}
+
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.quantity-update-form > * {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+
+.error-text {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Thêm vào VaccineManage.css */
+.vaccine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+
+.vaccine-search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 15px;
+}
+
+
+.search-form {
+  display: flex;
+  position: relative;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+}
+
+
+.search-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+
+.search-button {
+  padding: 0 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+
+.clear-search {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+
+.clear-search:hover {
+  color: #333;
+}
+
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vaccine-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+ 
+  .vaccine-search-container {
+    order: 2;
+    max-width: 100%;
+    margin: 15px 0;
+  }
+ 
+  .create-button {
+    order: 3;
+    width: 100%;
+  }
+}
+
+
+.error-text {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.error-text i {
+  font-size: 1.1rem;
+}
+
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.quantity-update-form > * {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+
+.error-text {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Thêm vào VaccineManage.css */
+.vaccine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+
+.vaccine-search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 15px;
+}
+
+
+.search-form {
+  display: flex;
+  position: relative;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+}
+
+
+.search-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+
+.search-button {
+  padding: 0 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+
+.clear-search {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+
+.clear-search:hover {
+  color: #333;
+}
+
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vaccine-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+ 
+  .vaccine-search-container {
+    order: 2;
+    max-width: 100%;
+    margin: 15px 0;
+  }
+ 
+  .create-button {
+    order: 3;
+    width: 100%;
+  }
+}
+
+
+.error-text {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.error-text i {
+  font-size: 1.1rem;
+}
+
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.quantity-update-form > * {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+
+.error-text {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Thêm vào VaccineManage.css */
+.vaccine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+
+.vaccine-search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 15px;
+}
+
+
+.search-form {
+  display: flex;
+  position: relative;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+}
+
+
+.search-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+
+.search-button {
+  padding: 0 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+
+.clear-search {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+
+.clear-search:hover {
+  color: #333;
+}
+
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vaccine-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+ 
+  .vaccine-search-container {
+    order: 2;
+    max-width: 100%;
+    margin: 15px 0;
+  }
+ 
+  .create-button {
+    order: 3;
+    width: 100%;
+  }
+}
+
+
+.error-text {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.error-text i {
+  font-size: 1.1rem;
+}
+
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.quantity-update-form > * {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+
+.error-text {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Thêm vào VaccineManage.css */
+.vaccine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+
+.vaccine-search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 15px;
+}
+
+
+.search-form {
+  display: flex;
+  position: relative;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+}
+
+
+.search-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+
+.search-button {
+  padding: 0 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+
+.clear-search {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+
+.clear-search:hover {
+  color: #333;
+}
+
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vaccine-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+ 
+  .vaccine-search-container {
+    order: 2;
+    max-width: 100%;
+    margin: 15px 0;
+  }
+ 
+  .create-button {
+    order: 3;
+    width: 100%;
+  }
+}
+
+
+.error-text {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.error-text i {
+  font-size: 1.1rem;
+}
+
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.quantity-update-form > * {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+
+.error-text {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Thêm vào VaccineManage.css */
+.vaccine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+
+.vaccine-search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 15px;
+}
+
+
+.search-form {
+  display: flex;
+  position: relative;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+}
+
+
+.search-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+
+.search-button {
+  padding: 0 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+
+.clear-search {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+
+.clear-search:hover {
+  color: #333;
+}
+
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vaccine-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+ 
+  .vaccine-search-container {
+    order: 2;
+    max-width: 100%;
+    margin: 15px 0;
+  }
+ 
+  .create-button {
+    order: 3;
+    width: 100%;
+  }
+}
+
+
+.error-text {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.error-text i {
+  font-size: 1.1rem;
+}
+
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.quantity-update-form > * {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+
+.error-text {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Thêm vào VaccineManage.css */
+.vaccine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+
+.vaccine-search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 15px;
+}
+
+
+.search-form {
+  display: flex;
+  position: relative;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+}
+
+
+.search-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+
+.search-button {
+  padding: 0 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+
+.clear-search {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+
+.clear-search:hover {
+  color: #333;
+}
+
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vaccine-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+ 
+  .vaccine-search-container {
+    order: 2;
+    max-width: 100%;
+    margin: 15px 0;
+  }
+ 
+  .create-button {
+    order: 3;
+    width: 100%;
+  }
+}
+
+
+.error-text {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.error-text i {
+  font-size: 1.1rem;
+}
+
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.quantity-update-form > * {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+
+.error-text {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Thêm vào VaccineManage.css */
+.vaccine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+
+.vaccine-search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 15px;
+}
+
+
+.search-form {
+  display: flex;
+  position: relative;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+}
+
+
+.search-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+
+.search-button {
+  padding: 0 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+
+.search-button:hover {
+  background-color: #45a049;
+}
+
+
+.clear-search {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #999;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+
+.clear-search:hover {
+  color: #333;
+}
+
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vaccine-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+ 
+  .vaccine-search-container {
+    order: 2;
+    max-width: 100%;
+    margin: 15px 0;
+  }
+ 
+  .create-button {
+    order: 3;
+    width: 100%;
+  }
+}
+
+
+.error-text {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.error-text i {
+  font-size: 1.1rem;
+}
+
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.quantity-update-form > * {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+
+.error-text {
+  color: #f44336 !important;
+  font-weight: 600;
+}
+
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* Thêm vào VaccineManage.css */
+.vaccine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 15px;
+}
+
+
+.vaccine-search-container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 1
+}
+
 
 .age-select {
   width: 100%;
@@ -617,8 +2996,10 @@ body {
   padding-right: 30px;
 }
 
+
 .age-select:focus {
   outline: none;
   border-color: #4CAF50;
   box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
+
